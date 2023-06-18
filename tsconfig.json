@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "target": "es5",
+    "target": "esnext",
     "lib": [
       "dom",
       "dom.iterable",
@@ -18,9 +18,17 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "noEmit": true,
-    "jsx": "react-jsx"
+    "jsx": "react-jsx",
+    "removeComments": false,
+    "traceResolution": false,
+    "noImplicitAny": false,
+    "noEmitOnError": true,
+    "sourceMap": false,
+    "rootDir": "./src",
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
   },
   "include": [
-    "src"
+    "src",
+    "declaration.d.ts",
   ]
 }

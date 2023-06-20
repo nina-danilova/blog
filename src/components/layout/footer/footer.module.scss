@@ -1,10 +1,17 @@
+@import '../../app/variables.module.scss';
+
 .footer {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 16px 22px 16px 22px;
+  background-color: $background-color-base;
 }
 
 .footer__copyright {
   margin: 0;
-  padding: 20px;
-  background-color: #ffffff;
-  box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  color: $heading-color;
+  font-size: $h6-font-size;
+  line-height: $h6-line-height;
 }

@@ -1,0 +1,16 @@
+@import '../../app/variables.module';
+
+.header {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 22px 16px 22px;
+  background-color: $background-color-base;
+}
+
+.site-title {
+  color: $heading-color;
+  font-size: $h6-font-size;
+  line-height: $h6-line-height;
+}

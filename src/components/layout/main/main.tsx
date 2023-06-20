@@ -2,11 +2,11 @@ import React from 'react';
 
 import { ArticlesPage } from '../../pages/articles-page';
 
-import './main.module.scss';
+import styles from './main.module.scss';
 
 export const Main = () => {
   return (
-    <main>
+    <main className={styles.main}>
       <ArticlesPage />
     </main>
   );

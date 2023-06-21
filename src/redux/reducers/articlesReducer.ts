@@ -13,6 +13,7 @@ export const articlesReducer = (state = initialState, action) => {
       return {
         ...state,
         loading: true,
+        articleList: [],
         error: null,
       };
     case 'LOAD_ARTICLES_SUCCESS':
@@ -27,6 +28,11 @@ export const articlesReducer = (state = initialState, action) => {
         ...state,
         loading: false,
         error: action.error,
+      };
+    case 'CHANGE_CURRENT_PAGE':
+      return {
+        ...state,
+        currentPage: action.page,
       };
     default:
       return state;

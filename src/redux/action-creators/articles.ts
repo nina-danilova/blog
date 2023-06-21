@@ -22,6 +22,13 @@ export const loadArticlesError = (error) => {
   };
 };
 
+export const changeCurrentPage = (newPage) => {
+  return {
+    type: 'CHANGE_CURRENT_PAGE',
+    page: newPage,
+  };
+};
+
 const addIdToArticles = (articleList) => {
   let id = 0;
   const articleListWithId = articleList.map((article) => {
@@ -32,7 +39,12 @@ const addIdToArticles = (articleList) => {
   return articleListWithId;
 };
 
-export const getArticles = () => {
+const getOffset = (page) => {
+  return (page - 1) * 20;
+};
+
+export const getArticles = (currentPage) => {
+  const offset = getOffset(currentPage);
   return async (dispatch) => {
     const { articles } = store.getState();
     if (articles.loading) {
@@ -40,7 +52,7 @@ export const getArticles = () => {
     }
     try {
       dispatch(loadArticles());
-      const response = await getData('https://api.realworld.io/api/articles?limit=20&offset=0');
+      const response = await getData(`https://api.realworld.io/api/articles?limit=20&offset=${offset}`);
       const preparedArticleList = addIdToArticles(response.articles);
       const preparedResponse = { ...response, articles: preparedArticleList };
       dispatch(loadArticlesSuccess(preparedResponse));

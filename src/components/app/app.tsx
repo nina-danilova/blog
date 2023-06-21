@@ -7,6 +7,8 @@ import { getArticles } from '../../redux/action-creators/articles';
 import './app.module.scss';
 
 export const App = () => {
-  store.dispatch(getArticles());
+  const state = store.getState();
+  const currentPageForArticles = state.articles.currentPage;
+  store.dispatch(getArticles(currentPageForArticles));
   return <PageWrapper />;
 };

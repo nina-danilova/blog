@@ -21,7 +21,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: 13px;
+  column-gap: 13px;
   align-items: center;
 }
 
@@ -33,8 +33,7 @@
 }
 
 .article-like-button {
-  position: relative;
-  padding: 1px 1px 1px 20px;
+  padding: 5px 5px 5px 20px;
   color: $text-color;
   cursor: pointer;
   background-color: transparent;
@@ -42,10 +41,14 @@
   font-size: $font-size-sm;
 }
 
-.article-like-button::before {
+.article-like-button-name {
+  position: relative;
+}
+
+.article-like-button-name::before {
   content: '';
   position: absolute;
-  right: 20px;
+  left: -20px;
   top: -1px;
   width: 16px;
   height: 15px;

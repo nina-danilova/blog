@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Spin, Alert } from 'antd';
 
-import { ArticleCard } from '../article-card';
+import { ArticleCardPreview } from '../article-card-preview';
 import { RootState } from '../../../redux/reducers';
 import { getArticles } from '../../../redux/action-creators/articles';
 import { store } from '../../../redux/store';
@@ -42,7 +42,7 @@ export const ArticleList = () => {
       <ul className={styles['article-list']}>
         {articleList.map((article) => (
           <li key={article.id}>
-            <ArticleCard article={article} />
+            <ArticleCardPreview article={article} />
           </li>
         ))}
       </ul>

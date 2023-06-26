@@ -23,7 +23,7 @@ export const ArticleList = () => {
       <Alert
         type="error"
         closable={false}
-        message="Loading error. Please update."
+        message="Article list loading error. Please update."
       />
     ) : null;
   const noDataMessage =

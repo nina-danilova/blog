@@ -1,8 +1,17 @@
 import React from 'react';
+import { withRouter } from 'react-router-dom';
 
 import styles from './article-description.module.scss';
 
-export const ArticleDescription = ({ articleTitle, articleFavoritesCount, articleTagList, articleDescription }) => {
+const ArticleDescription = ({
+  articleTitle,
+  articleFavoritesCount,
+  articleTagList,
+  articleDescription,
+  articleSlug,
+  history,
+}) => {
+  const path = `/articles/${articleSlug}`;
   const tags = [...articleTagList];
   const styledTags = tags.map((tag) => (
     <span
@@ -15,7 +24,20 @@ export const ArticleDescription = ({ articleTitle, articleFavoritesCount, articl
   return (
     <div className={styles['article-description']}>
       <div className={styles['article-description-header']}>
-        <p className={styles['article-title']}>{articleTitle}</p>
+        <p className={styles['article-title']}>
+          <p
+            className={styles['article-title']}
+            role="button"
+            onClick={() => {
+              history.push(path);
+            }}
+            onKeyDown={() => {
+              history.push(path);
+            }}
+          >
+            {articleTitle}
+          </p>
+        </p>
         <button
           className={styles['article-like-button']}
           type="button"
@@ -28,3 +50,4 @@ export const ArticleDescription = ({ articleTitle, articleFavoritesCount, articl
     </div>
   );
 };
+export default withRouter(ArticleDescription);

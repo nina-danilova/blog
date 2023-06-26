@@ -1,3 +1,3 @@
-import { ArticleDescription } from './article-description';
+import ArticleDescription from './article-description';
 
 export { ArticleDescription };

@@ -57,6 +57,7 @@
     "import/no-unresolved": [2, { "caseSensitive": false }],
     "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
+    "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
     "import/order": [
       2,
       {

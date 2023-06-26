@@ -13,6 +13,7 @@
   flex-wrap: wrap;
   column-gap: 13px;
   align-items: center;
+  cursor: pointer;
 }
 
 .article-title {
@@ -20,6 +21,7 @@
   font-size: $h5-font-size;
   line-height: $h5-line-height;
   margin: 0;
+  text-decoration: none;
 }
 
 .article-like-button {

@@ -3,12 +3,14 @@ import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import { ArticlesPage } from '../../pages/articles-page';
 import { ArticlePage } from '../../pages/article-page';
+import { LogInPage } from '../../pages/log-in-page';
 
 import styles from './main.module.scss';
 
 export const Main = () => {
   return (
     <main className={styles.main}>
+      <LogInPage />
       <Router>
         <Switch>
           <Route
@@ -31,12 +33,3 @@ export const Main = () => {
     </main>
   );
 };
-
-/* <Route
-            path="/articles/:id"
-            render={({ match }) => {
-              const { id } = match.params;
-              console.log(id);
-              <ArticlePage />;
-            }}
-          /> */

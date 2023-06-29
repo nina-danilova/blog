@@ -8,9 +8,9 @@ html {
 }
 
 body {
-  width: 1440px;
   margin: 0 auto;
-  min-height: 100%;
+  width: 1440px;
+  height: 100%;
   font-family: 'Inter', 'Roboto', sans-serif;
   font-size: $font-size-base;
   line-height: 22px;
@@ -20,6 +20,10 @@ body {
   box-sizing: border-box;
 }
 
-body div {
+body:first-child {
+  width: 1440px;
+  margin: 0 auto;
+  min-height: 100%;
   display: grid;
+  grid-template-rows: min-content 1fr min-content;
 }

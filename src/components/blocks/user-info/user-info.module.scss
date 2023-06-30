@@ -1,0 +1,15 @@
+@import '../../app/variables.module.scss';
+
+.user-info {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 13px;
+}
+
+.user-name {
+  margin: 0;
+  font-size: $h6-font-size;
+  line-height: $h6-line-height;
+  color: $heading-color;
+}

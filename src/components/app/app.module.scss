@@ -20,7 +20,7 @@ body {
   box-sizing: border-box;
 }
 
-body:first-child {
+:global(#root) {
   width: 1440px;
   margin: 0 auto;
   min-height: 100%;

@@ -81,7 +81,9 @@ export const RegistrationForm = () => {
           className={`registration-form-label ${styles['registration-form-label--agreement']}`}
           htmlFor="personal-info-agreement"
         >
-          <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
+          <p
+            className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}
+          >
             I agree to the processing of my personal information
           </p>
         </label>

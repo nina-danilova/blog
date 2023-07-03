@@ -1,8 +1,11 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
 import styles from './log-in-form.module.scss';
+import { logIn } from './utility';
 
 export const LogInForm = () => {
+  const history = useHistory();
   return (
     <form
       className={styles['log-in-form']}
@@ -44,6 +47,10 @@ export const LogInForm = () => {
         <button
           type="submit"
           className={styles['log-in-form-button']}
+          onClick={(evt) => {
+            logIn(evt);
+            history.push('/');
+          }}
         >
           Login
         </button>

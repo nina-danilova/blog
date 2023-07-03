@@ -18,7 +18,7 @@ export const loadArticlesSuccess = (json) => {
 export const loadArticlesError = (error) => {
   return {
     type: 'LOAD_ARTICLES_ERROR',
-    error: error.body,
+    error: error.errors.body,
   };
 };
 
@@ -52,9 +52,7 @@ export const getArticles = (currentPage) => {
     }
     try {
       dispatch(loadArticles());
-      const response = await getData(
-        `https://blog.kata.academy/api/articles?limit=20&offset=${offset}`
-      );
+      const response = await getData(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`);
       const preparedArticleList = addIdToArticles(response.articles);
       const preparedResponse = { ...response, articles: preparedArticleList };
       dispatch(loadArticlesSuccess(preparedResponse));

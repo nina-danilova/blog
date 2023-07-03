@@ -42,9 +42,7 @@ const ArticleDescription = ({
           className={styles['article-like-button']}
           type="button"
         >
-          <span className={styles['article-like-button-name']}>
-            {articleFavoritesCount}
-          </span>
+          <span className={styles['article-like-button-name']}>{articleFavoritesCount}</span>
         </button>
       </div>
       <p className={styles['article-tag-list']}>{styledTags}</p>

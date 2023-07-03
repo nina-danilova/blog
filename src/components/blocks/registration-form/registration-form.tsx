@@ -1,8 +1,11 @@
 import React from 'react';
+import { useHistory } from 'react-router-dom';
 
+import { registerNewUser } from './utility';
 import styles from './registration-form.module.scss';
 
 export const RegistrationForm = () => {
+  const history = useHistory();
   return (
     <form
       className={styles['registration-form']}
@@ -81,9 +84,7 @@ export const RegistrationForm = () => {
           className={`registration-form-label ${styles['registration-form-label--agreement']}`}
           htmlFor="personal-info-agreement"
         >
-          <p
-            className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}
-          >
+          <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
             I agree to the processing of my personal information
           </p>
         </label>
@@ -92,6 +93,10 @@ export const RegistrationForm = () => {
         <button
           type="submit"
           className={styles['registration-form-button']}
+          onClick={(evt) => {
+            registerNewUser(evt);
+            history.push('/');
+          }}
         >
           Create
         </button>

@@ -18,11 +18,13 @@
   border-radius: 5px;
 }
 
-.user-menu-item--log-out {
+.button-log-out {
   font-size: $h6-font-size;
   line-height: $h6-line-height;
   color: $text-color;
   padding: 10px 18px 10px 18px;
   border: 1px solid $text-color;
   border-radius: 5px;
+  cursor: pointer;
+  background-color: transparent;
 }

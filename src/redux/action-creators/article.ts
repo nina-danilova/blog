@@ -16,7 +16,7 @@ export const loadArticleSuccess = (json) => {
 export const loadArticleError = (error) => {
   return {
     type: 'LOAD_ARTICLE_ERROR',
-    error: error.body, // или error.errors.body
+    error: error.errors.body, // или error.body
   };
 };
 

@@ -4,8 +4,8 @@ const initialState = {
   loggingIn: false,
   loginError: null,
   authorized: false,
-  userName: 'John Doe',
-  userImage: './img/icon-author-avatar.svg',
+  userName: '',
+  userImage: '',
   userBio: '',
 };
 
@@ -18,6 +18,7 @@ export const userReducer = (state = initialState, action) => {
         authorized: false,
         userName: '',
         userImage: '',
+        userBio: '',
       };
     case 'USER_REGISTER':
       return {
@@ -34,7 +35,13 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         registering: false,
-        error: action.error,
+        registerError: action.error,
+      };
+    case 'USER_LOGIN':
+      return {
+        ...state,
+        loggingIn: true,
+        loginError: null,
       };
     case 'USER_LOGIN_SUCCESS':
       return {
@@ -43,6 +50,13 @@ export const userReducer = (state = initialState, action) => {
         authorized: true,
         userName: action.userName,
         userImage: action.userImage,
+        userBio: action.userBio,
+      };
+    case 'USER_LOGIN_ERROR':
+      return {
+        ...state,
+        loggingIn: false,
+        loginError: action.error,
       };
     default:
       return state;

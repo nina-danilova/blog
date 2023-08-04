@@ -22,6 +22,7 @@
   line-height: $h5-line-height;
   margin: 0;
   text-decoration: none;
+  overflow-wrap: anywhere;
 }
 
 .article-like-button {
@@ -60,9 +61,11 @@
   padding: 3px 5px 2px 5px;
   border: 1px solid $text-color;
   border-radius: 2px;
+  overflow-wrap: anywhere;
 }
 
 .article-tag-lead {
   margin: 0;
   font-size: $font-size-sm;
+  overflow-wrap: anywhere;
 }

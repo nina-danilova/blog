@@ -77,3 +77,11 @@
   text-decoration: none;
   color: $primary-color;
 }
+
+.log-in-form-error {
+  margin: 0;
+  font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
+  font-size: $font-size-base;
+  line-height: $label-name-line-height;
+  color: $error-color;
+}

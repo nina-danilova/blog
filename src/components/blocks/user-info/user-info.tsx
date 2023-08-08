@@ -1,14 +1,16 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
-
-import { RootState } from '../../../redux/reducers';
 
 import styles from './user-info.module.scss';
 
 export const UserInfo = () => {
-  const user = useSelector((state: RootState) => state.user);
-  const imageSrc = user.userImage ? user.userImage : './img/icon-author-avatar.svg';
+  // const user = useSelector((state: RootState) => state.user);
+  // const imageSrc = user.userImage ? user.userImage : './img/icon-author-avatar.svg';
+  const userName = localStorage.getItem('lastUserName') ? localStorage.getItem('lastUserName') : null;
+  const imageSrc =
+    localStorage.getItem('lastUserImage') === ''
+      ? localStorage.getItem('lastUserImage')
+      : './img/icon-author-avatar.svg';
   return (
     <div className={styles['user-info']}>
       <p className={styles['user-name']}>
@@ -16,7 +18,7 @@ export const UserInfo = () => {
           to="/profile"
           className={styles['user-name-link']}
         >
-          {user.userName}
+          {userName}
         </Link>
       </p>
       <Link to="/profile">

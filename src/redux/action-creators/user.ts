@@ -2,6 +2,10 @@ import { store } from '../store';
 import { sendLogInInfo, sendRegisterInfo } from '../../services/api';
 
 export const userLogOut = () => {
+  localStorage.setItem('userAuthorized', 'false');
+  localStorage.removeItem('lastUserName');
+  localStorage.removeItem('lastUserImage');
+  localStorage.removeItem('lastEmail');
   return {
     type: 'USER_LOG_OUT',
   };
@@ -31,15 +35,14 @@ export const userRegisterError = (text) => {
   };
 };
 
-export const registerNewUser = (evt, history) => {
+export const registerNewUser = (evt, history, formData) => {
   evt.preventDefault();
   store.dispatch(userRegister());
-  const formData = evt.target.form;
   const data = {
     user: {
-      username: formData.username.value,
-      email: formData.email.value,
-      password: formData.password.value,
+      username: formData.username,
+      email: formData.email,
+      password: formData.password,
     },
   };
   sendRegisterInfo('https://blog.kata.academy/api/users', data)
@@ -69,8 +72,9 @@ export const userLogin = () => {
 export const userLoginSuccess = (json) => {
   return {
     type: 'USER_LOGIN_SUCCESS',
-    userName: json.user.username,
-    userImage: json.user.image,
+    userName: json.user.userName,
+    userImage: json.user.userImage,
+    userBio: json.user.userBio,
   };
 };
 
@@ -81,14 +85,13 @@ export const userLoginError = (text) => {
   };
 };
 
-export const userLogIn = (evt, history) => {
+export const userLogIn = (evt, history, formData) => {
   evt.preventDefault();
   store.dispatch(userLogin());
-  const formData = evt.target.form;
   const data = {
     user: {
-      email: formData.email.value,
-      password: formData.password.value,
+      email: formData.email,
+      password: formData.password,
     },
   };
   const token = localStorage.getItem(`${data.user.email}-token`);
@@ -96,6 +99,11 @@ export const userLogIn = (evt, history) => {
     .then((response) => {
       if (response.user) {
         localStorage.setItem(`${response.user.email}-login-token`, response.user.token);
+        localStorage.setItem('userAuthorized', 'true');
+        localStorage.setItem('lastUserName', response.user.username);
+        localStorage.setItem('lastUserImage', response.user.image);
+        localStorage.setItem('lastEmail', response.user.email);
+        localStorage.setItem('lastUserBio', response.user.bio);
         store.dispatch(userLoginSuccess(response));
         history.push('/');
       }

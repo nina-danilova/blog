@@ -6,8 +6,9 @@
 - Git
 - React
 - React Hooks
+- React Hook Form
 - React Router
-- Redux ?
+- Redux
 - Redux Thunk ?
 - TypeScript
 - SASS

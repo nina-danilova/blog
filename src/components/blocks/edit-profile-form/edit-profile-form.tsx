@@ -4,28 +4,27 @@ import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { registerNewUser } from '../../../redux/action-creators/user';
+import { updateUser } from '../../../redux/action-creators/user';
 import { RootState } from '../../../redux/reducers';
 
-import styles from './registration-form.module.scss';
+import styles from './edit-profile-form.module.scss';
 
-type RegistrationFormInput = {
+type EditProfileFormInput = {
   username: string;
   email: string;
   password: string;
-  repeatPassword: string;
-  personalInfoAgreement: boolean;
+  image: string | null;
 };
 
-export const RegistrationForm = () => {
+export const EditProfileForm = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
-  } = useForm<RegistrationFormInput>();
+  } = useForm<EditProfileFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<RegistrationFormInput> = (data, event) => registerNewUser(event, history, data);
-  const error = useSelector((state: RootState) => state.user.registerError);
+  const onSubmit: SubmitHandler<EditProfileFormInput> = (data, event) => updateUser(event, history, data);
+  const error = useSelector((state: RootState) => state.user.updateProfileError);
   const errorMessage = error ? (
     <Alert
       message={error}
@@ -35,23 +34,22 @@ export const RegistrationForm = () => {
   return (
     <>
       <form
-        className={styles['registration-form']}
+        className={styles['edit-profile-form']}
         method="POST"
         action="https://blog.kata.academy"
         onSubmit={handleSubmit(onSubmit)}
       >
-        <p className={styles['registration-form-title']}>Create new account</p>
-        <div className={styles['registration-form-input-group']}>
+        <p className={styles['edit-profile-form-title']}>Edit profile</p>
+        <div className={styles['edit-profile-form-input-group']}>
           <label
             htmlFor="username"
-            className="registration-form-label"
+            className="edit-profile-form-label"
           >
-            <p className={styles['registration-form-label-name']}>Username</p>
+            <p className={styles['edit-profile-form-label-name']}>Username</p>
             <input
-              className={styles['registration-form-input']}
+              className={styles['edit-profile-form-input']}
               type="text"
               id="username"
-              placeholder="Username"
               /* minLength={3}
               maxLength={20}
               required */
@@ -74,11 +72,12 @@ export const RegistrationForm = () => {
                   message: 'Максимальная длина имени пользователя - 20 символов',
                 },
               })}
+              // value="John Doe"
             />
             {errors?.username?.type === 'required' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.username.message}
               </p>
@@ -86,7 +85,7 @@ export const RegistrationForm = () => {
             {errors?.username?.type === 'pattern' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.username.message}
               </p>
@@ -94,7 +93,7 @@ export const RegistrationForm = () => {
             {errors?.username?.type === 'minLength' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.username.message}
               </p>
@@ -102,7 +101,7 @@ export const RegistrationForm = () => {
             {errors?.username?.type === 'maxLength' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.username.message}
               </p>
@@ -110,14 +109,13 @@ export const RegistrationForm = () => {
           </label>
           <label
             htmlFor="email"
-            className="registration-form-label"
+            className="edit-profile-form-label"
           >
-            <p className={styles['registration-form-label-name']}>Email address</p>
+            <p className={styles['edit-profile-form-label-name']}>Email address</p>
             <input
-              className={styles['registration-form-input']}
+              className={styles['edit-profile-form-input']}
               type="email"
               id="email"
-              placeholder="Email address"
               /* required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email', {
@@ -130,11 +128,12 @@ export const RegistrationForm = () => {
                   message: 'Введите корректный email',
                 },
               })}
+              // value="john@example.com"
             />
             {errors?.email?.type === 'required' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.email.message}
               </p>
@@ -142,7 +141,7 @@ export const RegistrationForm = () => {
             {errors?.email?.type === 'pattern' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.email.message}
               </p>
@@ -150,23 +149,19 @@ export const RegistrationForm = () => {
           </label>
           <label
             htmlFor="password"
-            className="registration-form-label"
+            className="edit-profile-form-label"
           >
-            <p className={styles['registration-form-label-name']}>Password</p>
+            <p className={styles['edit-profile-form-label-name']}>New password</p>
             <input
-              className={styles['registration-form-input']}
+              className={styles['edit-profile-form-input']}
               type="password"
               id="password"
-              placeholder="Password"
+              placeholder="New password"
               /* minLength={6}
               maxLength={40}
               required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('password', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
                 pattern: {
                   value: /^[a-z0-9]*$/,
                   message: 'Допустимы латинские буквы в нижнем регистре и цифры',
@@ -181,18 +176,10 @@ export const RegistrationForm = () => {
                 },
               })}
             />
-            {errors?.password?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
             {errors?.password?.type === 'pattern' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.password.message}
               </p>
@@ -200,7 +187,7 @@ export const RegistrationForm = () => {
             {errors?.password?.type === 'minLength' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.password.message}
               </p>
@@ -208,102 +195,52 @@ export const RegistrationForm = () => {
             {errors?.password?.type === 'maxLength' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
                 {errors.password.message}
               </p>
             )}
           </label>
           <label
-            htmlFor="repeatPassword"
-            className="registration-form-label"
+            htmlFor="image"
+            className="edit-profile-form-label"
           >
-            <p className={styles['registration-form-label-name']}>Repeat Password</p>
+            <p className={styles['edit-profile-form-label-name']}>Avatar image (url)</p>
             <input
-              className={styles['registration-form-input']}
-              type="password"
-              id="repeatPassword"
-              placeholder="Password"
+              className={styles['edit-profile-form-input']}
+              type="text"
+              id="image"
+              placeholder="Avatar image"
               /* required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('repeatPassword', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
+              {...register('image', {
+                pattern: {
+                  value:
+                    /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)/,
+                  message: 'Введите корректный URL',
                 },
-                validate: (value, formValues) => value === formValues.password,
               })}
             />
-            {errors?.repeatPassword?.type === 'required' && (
+            {errors?.image?.type === 'pattern' && (
               <p
                 role="alert"
-                className={styles['registration-form-error']}
+                className={styles['edit-profile-form-error']}
               >
-                {errors.repeatPassword.message}
-              </p>
-            )}
-            {errors?.repeatPassword?.type === 'validate' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                Пароли должны совпадать
+                {errors.image.message}
               </p>
             )}
           </label>
         </div>
-        <div className={styles['registration-form-agreement']}>
-          <input
-            className={`${styles['registration-form-input']} ${styles['registration-form-input--agreement']} ${styles['visually-hidden']}`}
-            id="personalInfoAgreement"
-            type="checkbox"
-            /* required */
-            /* eslint-disable-next-line react/jsx-props-no-spreading */
-            {...register('personalInfoAgreement', {
-              required: {
-                value: true,
-                message: 'Требуется согласие',
-              },
-            })}
-          />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
-          <label
-            className={`registration-form-label ${styles['registration-form-label--agreement']}`}
-            htmlFor="personalInfoAgreement"
-          >
-            <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
-              I agree to the processing of my personal information
-            </p>
-            {errors?.personalInfoAgreement?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.personalInfoAgreement.message}
-              </p>
-            )}
-          </label>
-        </div>
-        <div className={styles['registration-form-actions']}>
+        <div className={styles['edit-profile-form-actions']}>
           <button
             type="submit"
-            className={styles['registration-form-button']}
+            className={styles['edit-profile-form-button']}
             /* onClick={(evt) => {
-              registerNewUser(evt, history);
+              updateUser(evt, history);
             }} */
           >
-            Create
+            Save
           </button>
-          <p className={styles['registration-form-comment']}>
-            Already have an account?{' '}
-            <a
-              href="/"
-              className={styles['registration-form-link']}
-            >
-              Sign In
-            </a>
-            .
-          </p>
         </div>
       </form>
       {errorMessage}

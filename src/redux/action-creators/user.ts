@@ -121,3 +121,7 @@ export const userLogIn = (evt, history, formData) => {
       }
     });
 };
+
+export const updateUser = (evt, history, formData) => {
+  console.log(evt, history, formData);
+};

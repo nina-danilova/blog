@@ -1,22 +1,15 @@
+import { profileReducer } from './profileReducer';
+
 const initialState = {
   registering: false,
   registerError: null,
   loggingIn: false,
   loginError: null,
   authorized: false,
-  loadingProfile: false,
-  loadProfileError: null,
-  updatingProfile: false,
-  updateProfileError: null,
-  profile: {
-    userName: '',
-    email: '',
-    bio: '',
-    image: '',
-  },
   userName: '',
   userImage: '',
   userBio: '',
+  profile: undefined,
 };
 
 // eslint-disable-next-line default-param-last
@@ -67,6 +60,51 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         loggingIn: false,
         loginError: action.error,
+      };
+    case 'LOAD_PROFILE_START':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'LOAD_PROFILE_SUCCESS':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'LOAD_PROFILE_ERROR':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_START':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_SUCCESS':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_ERROR':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_USER_NAME':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_EMAIL':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
+      };
+    case 'UPDATE_PROFILE_IMAGE_URL':
+      return {
+        ...state,
+        profile: profileReducer(state.profile, action),
       };
     default:
       return state;

@@ -4,8 +4,14 @@ import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
+import { store } from '../../../redux/store';
 import { updateUser } from '../../../redux/action-creators/user';
 import { RootState } from '../../../redux/reducers';
+import {
+  updateProfileUserName,
+  updateProfileEmail,
+  updateProfileImageUrl,
+} from '../../../redux/action-creators/profile';
 
 import styles from './edit-profile-form.module.scss';
 
@@ -24,13 +30,19 @@ export const EditProfileForm = () => {
   } = useForm<EditProfileFormInput>();
   const history = useHistory();
   const onSubmit: SubmitHandler<EditProfileFormInput> = (data, event) => updateUser(event, history, data);
-  const error = useSelector((state: RootState) => state.user.updateProfileError);
+  const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
   const errorMessage = error ? (
     <Alert
       message={error}
       type="error"
     />
   ) : null;
+  const userName = useSelector((state: RootState) => state.user.profile?.userName);
+  const name = userName || '';
+  const userEmail = useSelector((state: RootState) => state.user.profile?.email);
+  const email = userEmail || '';
+  const userImage = useSelector((state: RootState) => state.user.profile?.image);
+  const imageUrl = userImage || '';
   return (
     <>
       <form
@@ -50,9 +62,11 @@ export const EditProfileForm = () => {
               className={styles['edit-profile-form-input']}
               type="text"
               id="username"
+              placeholder="Username"
               /* minLength={3}
               maxLength={20}
               required */
+              value={name}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('username', {
                 required: {
@@ -72,7 +86,9 @@ export const EditProfileForm = () => {
                   message: 'Максимальная длина имени пользователя - 20 символов',
                 },
               })}
-              // value="John Doe"
+              onChange={(event) => {
+                store.dispatch(updateProfileUserName(event.target.value));
+              }}
             />
             {errors?.username?.type === 'required' && (
               <p
@@ -116,6 +132,7 @@ export const EditProfileForm = () => {
               className={styles['edit-profile-form-input']}
               type="email"
               id="email"
+              placeholder="Email address"
               /* required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email', {
@@ -128,7 +145,10 @@ export const EditProfileForm = () => {
                   message: 'Введите корректный email',
                 },
               })}
-              // value="john@example.com"
+              value={email}
+              onChange={(event) => {
+                store.dispatch(updateProfileEmail(event.target.value));
+              }}
             />
             {errors?.email?.type === 'required' && (
               <p
@@ -211,6 +231,7 @@ export const EditProfileForm = () => {
               type="text"
               id="image"
               placeholder="Avatar image"
+              value={imageUrl}
               /* required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('image', {
@@ -220,6 +241,9 @@ export const EditProfileForm = () => {
                   message: 'Введите корректный URL',
                 },
               })}
+              onChange={(event) => {
+                store.dispatch(updateProfileImageUrl(event.target.value));
+              }}
             />
             {errors?.image?.type === 'pattern' && (
               <p

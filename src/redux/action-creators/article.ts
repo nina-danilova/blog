@@ -33,6 +33,7 @@ export const getArticle = (slug) => {
       dispatch(setSlug(slug));
       dispatch(loadArticle());
       const response = await getData(`https://blog.kata.academy/api/articles/${slug}`);
+      //  в апи уже делаю распаковку респонса!
       dispatch(loadArticleSuccess(response));
     } catch (err) {
       dispatch(loadArticleError(err));

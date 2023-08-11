@@ -43,7 +43,7 @@ export const profileReducer = (state = initialState, action) => {
       return {
         ...state,
         updatingProfile: false,
-        userName: action.userName,
+        userName: action.username,
         image: action.image,
         bio: action.bio,
         email: action.email,
@@ -54,17 +54,17 @@ export const profileReducer = (state = initialState, action) => {
         updatingProfile: false,
         updateProfileError: action.error,
       };
-    case 'UPDATE_PROFILE_USER_NAME':
+    case 'UPDATE_PROFILE_FORM_USER_NAME':
       return {
         ...state,
         userName: action.value,
       };
-    case 'UPDATE_PROFILE_EMAIL':
+    case 'UPDATE_PROFILE_FORM_EMAIL':
       return {
         ...state,
         email: action.value,
       };
-    case 'UPDATE_PROFILE_IMAGE_URL':
+    case 'UPDATE_PROFILE_FORM_IMAGE_URL':
       return {
         ...state,
         image: action.value,

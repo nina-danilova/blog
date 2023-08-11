@@ -5,12 +5,12 @@ import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { store } from '../../../redux/store';
-import { updateUser } from '../../../redux/action-creators/user';
 import { RootState } from '../../../redux/reducers';
 import {
-  updateProfileUserName,
-  updateProfileEmail,
-  updateProfileImageUrl,
+  updateProfile,
+  updateProfileFormUserName,
+  updateProfileFormEmail,
+  updateProfileFormImageUrl,
 } from '../../../redux/action-creators/profile';
 
 import styles from './edit-profile-form.module.scss';
@@ -29,7 +29,9 @@ export const EditProfileForm = () => {
     handleSubmit,
   } = useForm<EditProfileFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<EditProfileFormInput> = (data, event) => updateUser(event, history, data);
+  const onSubmit: SubmitHandler<EditProfileFormInput> = (data, event) => {
+    store.dispatch(updateProfile(event, history, data));
+  };
   const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
   const errorMessage = error ? (
     <Alert
@@ -87,7 +89,7 @@ export const EditProfileForm = () => {
                 },
               })}
               onChange={(event) => {
-                store.dispatch(updateProfileUserName(event.target.value));
+                store.dispatch(updateProfileFormUserName(event.target.value));
               }}
             />
             {errors?.username?.type === 'required' && (
@@ -147,7 +149,7 @@ export const EditProfileForm = () => {
               })}
               value={email}
               onChange={(event) => {
-                store.dispatch(updateProfileEmail(event.target.value));
+                store.dispatch(updateProfileFormEmail(event.target.value));
               }}
             />
             {errors?.email?.type === 'required' && (
@@ -242,7 +244,7 @@ export const EditProfileForm = () => {
                 },
               })}
               onChange={(event) => {
-                store.dispatch(updateProfileImageUrl(event.target.value));
+                store.dispatch(updateProfileFormImageUrl(event.target.value));
               }}
             />
             {errors?.image?.type === 'pattern' && (

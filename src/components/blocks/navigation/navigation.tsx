@@ -6,6 +6,7 @@ import { NavMenu } from '../nav-menu';
 import { UserMenu } from '../user-menu';
 import { store } from '../../../redux/store';
 import { userLoginSuccess } from '../../../redux/action-creators/user';
+import { loadProfile } from '../../../redux/action-creators/profile';
 
 export const Navigation = () => {
   const isAuthorized = useSelector((state: RootState) => state.user.authorized);
@@ -14,14 +15,8 @@ export const Navigation = () => {
     result = localStorage.getItem('userAuthorized') === 'true';
   }
   if (result) {
-    const userInfo = {
-      user: {
-        userName: localStorage.getItem('lastUserName'),
-        userImage: localStorage.getItem('lastUserImage'),
-        userBio: localStorage.getItem('lastUserBio'),
-      },
-    };
-    store.dispatch(userLoginSuccess(userInfo));
+    store.dispatch(userLoginSuccess());
+    store.dispatch(loadProfile());
   }
   // eslint-disable-next-line no-nested-ternary
   const navMenu = isAuthorized ? <UserMenu /> : result ? <UserMenu /> : <NavMenu />;

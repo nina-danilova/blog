@@ -1,5 +1,6 @@
-import { store } from '../store';
-import { sendLogInInfo, sendRegisterInfo } from '../../services/api';
+import { sendData } from '../../services/api';
+
+import { loadProfileSuccess } from './profile';
 
 export const userLogOut = () => {
   localStorage.setItem('userAuthorized', 'false');
@@ -11,9 +12,9 @@ export const userLogOut = () => {
   };
 };
 
-export const userRegister = () => {
+export const userRegisterStart = () => {
   return {
-    type: 'USER_REGISTER',
+    type: 'USER_REGISTER_START',
   };
 };
 
@@ -28,96 +29,139 @@ export const userRegisterSuccess = (json) => {
   };
 };
 
-export const userRegisterError = (text) => {
+export const userRegisterError = (error) => {
   return {
     type: 'USER_REGISTER_ERROR',
-    error: text,
+    error: error.message,
+    response: error.response,
   };
 };
 
 export const registerNewUser = (evt, history, formData) => {
-  evt.preventDefault();
-  store.dispatch(userRegister());
-  const data = {
-    user: {
-      username: formData.username,
-      email: formData.email,
-      password: formData.password,
-    },
+  return (dispatch, getState) => {
+    evt.preventDefault();
+    const data = {
+      user: {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+      },
+    };
+    dispatch(userRegisterStart());
+    sendData('https://blog.kata.academy/api/users', data)
+      .then(
+        function (response) {
+          if (response.status === 401) {
+            history.push('/sign-in');
+          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
+            return response.json();
+          }
+          const error = new Error(`User register error, code ${response.status.toString()} - error after API answer`);
+          error.response = response;
+          throw error;
+        },
+        function (err) {
+          // handle error from promise-api
+          const error = new Error('User register error while sending data through API');
+          error.response = err;
+          throw error;
+        }
+      )
+      .then((response) => {
+        if (response.errors) {
+          const errors = Object.entries(response.errors);
+          const [errorName, errorMessage] = errors[0];
+          const error = new Error(`User register error - ${errorName} ${errorMessage}`);
+          error.response = response;
+          throw error;
+        }
+        if (response.user) {
+          localStorage.setItem(`$${response.user.email}-token`, response.user.token);
+          dispatch(userRegisterSuccess(response));
+          history.push('/');
+        }
+      })
+      .catch(function (error) {
+        dispatch(userRegisterError(error));
+      });
   };
-  sendRegisterInfo('https://blog.kata.academy/api/users', data)
-    .then((response) => {
-      if (response.user) {
-        localStorage.setItem(`${response.user.email}-token`, response.user.token);
-        store.dispatch(userRegisterSuccess(response));
-        history.push('/');
-      }
-      if (response.errors) {
-        const errors = Object.entries(response.errors);
-        const [errorName, errorMessage] = errors[0];
-        store.dispatch(userRegisterError(`User register error - ${errorName} ${errorMessage}`));
-      }
-    })
-    .catch((error) => {
-      store.dispatch(userRegisterError(error.message));
-    });
 };
 
-export const userLogin = () => {
+export const userLoginStart = () => {
   return {
-    type: 'USER_LOGIN',
+    type: 'USER_LOGIN_START',
   };
 };
 
-export const userLoginSuccess = (json) => {
+export const userLoginSuccess = () => {
   return {
     type: 'USER_LOGIN_SUCCESS',
-    userName: json.user.userName,
-    userImage: json.user.userImage,
-    userBio: json.user.userBio,
   };
 };
 
-export const userLoginError = (text) => {
+export const userLoginError = (error) => {
   return {
     type: 'USER_LOGIN_ERROR',
-    error: text,
+    error: error.message,
+    response: error.response,
   };
 };
 
-export const userLogIn = (evt, history, formData) => {
-  evt.preventDefault();
-  store.dispatch(userLogin());
-  const data = {
-    user: {
-      email: formData.email,
-      password: formData.password,
-    },
+export const userLogin = (evt, history, formData) => {
+  return (dispatch) => {
+    evt.preventDefault();
+    const data = {
+      user: {
+        email: formData.email,
+        password: formData.password,
+      },
+    };
+    const token = localStorage.getItem(`${data.user.email}-token`);
+    if (!token) {
+      const error = new Error('No token for this email');
+      error.response = data;
+      dispatch(userLoginError(error));
+      return;
+    }
+    dispatch(userLoginStart());
+    sendData('https://blog.kata.academy/api/users/login', data, token)
+      .then(
+        function (response) {
+          if (response.status === 401) {
+            history.push('/sign-in');
+          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
+            return response.json();
+          }
+          const error = new Error(`User login error, code ${response.status.toString()} - error after API answer`);
+          error.response = response;
+          throw error;
+        },
+        function (err) {
+          // handle error from promise-api
+          const error = new Error('User login error while sending data through API');
+          error.response = err;
+          throw error;
+        }
+      )
+      .then((response) => {
+        if (response.errors) {
+          const errors = Object.entries(response.errors);
+          const [errorName, errorMessage] = errors[0];
+          const error = new Error(`User login error - ${errorName} ${errorMessage}`);
+          error.response = response;
+          throw error;
+        }
+        if (response.user) {
+          localStorage.setItem(`${response.user.email}-login-token`, response.user.token);
+          localStorage.setItem('userAuthorized', 'true');
+          localStorage.setItem('lastEmail', response.user.email);
+          dispatch(userLoginSuccess());
+          dispatch(loadProfileSuccess(response));
+          history.push('/');
+        }
+      })
+      .catch(function (error) {
+        dispatch(userLoginError(error));
+      });
   };
-  const token = localStorage.getItem(`${data.user.email}-token`);
-  sendLogInInfo('https://blog.kata.academy/api/users/login', data, token)
-    .then((response) => {
-      if (response.user) {
-        localStorage.setItem(`${response.user.email}-login-token`, response.user.token);
-        localStorage.setItem('userAuthorized', 'true');
-        localStorage.setItem('lastUserName', response.user.username);
-        localStorage.setItem('lastUserImage', response.user.image);
-        localStorage.setItem('lastEmail', response.user.email);
-        localStorage.setItem('lastUserBio', response.user.bio);
-        store.dispatch(userLoginSuccess(response));
-        history.push('/');
-      }
-      if (response.errors) {
-        const errors = Object.entries(response.errors);
-        const [errorName, errorMessage] = errors[0];
-        store.dispatch(userLoginError(`User login error - ${errorName} ${errorMessage}`));
-      }
-    })
-    .catch((error) => {
-      if (error.response.status === 401) {
-        history.push('/sign-in');
-      } else {
-        store.dispatch(userLoginError(error.message));
-      }
-    });
 };

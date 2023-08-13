@@ -4,8 +4,9 @@ import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { userLogIn } from '../../../redux/action-creators/user';
+import { userLogin } from '../../../redux/action-creators/user';
 import { RootState } from '../../../redux/reducers';
+import { store } from '../../../redux/store';
 
 import styles from './log-in-form.module.scss';
 
@@ -21,7 +22,7 @@ export const LogInForm = () => {
     handleSubmit,
   } = useForm<LoginFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<LoginFormInput> = (data, event) => userLogIn(event, history, data);
+  const onSubmit: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin(event, history, data));
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
@@ -109,9 +110,6 @@ export const LogInForm = () => {
           <button
             type="submit"
             className={styles['log-in-form-button']}
-            /* onClick={(evt) => {
-              userLogIn(evt, history);
-            }} */
           >
             Login
           </button>

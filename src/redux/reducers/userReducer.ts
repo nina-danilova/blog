@@ -6,9 +6,6 @@ const initialState = {
   loggingIn: false,
   loginError: null,
   authorized: false,
-  userName: '',
-  userImage: '',
-  userBio: '',
   profile: undefined,
 };
 
@@ -19,11 +16,8 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         authorized: false,
-        userName: '',
-        userImage: '',
-        userBio: '',
       };
-    case 'USER_REGISTER':
+    case 'USER_REGISTER_START':
       return {
         ...state,
         registering: true,
@@ -39,8 +33,9 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         registering: false,
         registerError: action.error,
+        registerErrorObject: action.response,
       };
-    case 'USER_LOGIN':
+    case 'USER_LOGIN_START':
       return {
         ...state,
         loggingIn: true,
@@ -51,31 +46,17 @@ export const userReducer = (state = initialState, action) => {
         ...state,
         loggingIn: false,
         authorized: true,
-        userName: action.userName,
-        userImage: action.userImage,
-        userBio: action.userBio,
       };
     case 'USER_LOGIN_ERROR':
       return {
         ...state,
         loggingIn: false,
         loginError: action.error,
+        loginErrorObject: action.response,
       };
     case 'LOAD_PROFILE_START':
-      return {
-        ...state,
-        profile: profileReducer(state.profile, action),
-      };
     case 'LOAD_PROFILE_SUCCESS':
-      return {
-        ...state,
-        profile: profileReducer(state.profile, action),
-      };
     case 'LOAD_PROFILE_ERROR':
-      return {
-        ...state,
-        profile: profileReducer(state.profile, action),
-      };
     case 'UPDATE_PROFILE_START':
     case 'UPDATE_PROFILE_SUCCESS':
     case 'UPDATE_PROFILE_ERROR':

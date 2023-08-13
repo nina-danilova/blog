@@ -53,6 +53,7 @@ export const profileReducer = (state = initialState, action) => {
         ...state,
         updatingProfile: false,
         updateProfileError: action.error,
+        updateProfileErrorObject: action.response,
       };
     case 'UPDATE_PROFILE_FORM_USER_NAME':
       return {

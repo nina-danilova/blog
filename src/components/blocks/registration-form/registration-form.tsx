@@ -6,6 +6,7 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { registerNewUser } from '../../../redux/action-creators/user';
 import { RootState } from '../../../redux/reducers';
+import { store } from '../../../redux/store';
 
 import styles from './registration-form.module.scss';
 
@@ -24,7 +25,8 @@ export const RegistrationForm = () => {
     handleSubmit,
   } = useForm<RegistrationFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<RegistrationFormInput> = (data, event) => registerNewUser(event, history, data);
+  const onSubmit: SubmitHandler<RegistrationFormInput> = (data, event) =>
+    store.dispatch(registerNewUser(event, history, data));
   const error = useSelector((state: RootState) => state.user.registerError);
   const errorMessage = error ? (
     <Alert

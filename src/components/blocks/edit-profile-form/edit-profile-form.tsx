@@ -184,6 +184,10 @@ export const EditProfileForm = () => {
               required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('password', {
+                required: {
+                  value: true,
+                  message: 'Поле обязательно к заполнению',
+                },
                 pattern: {
                   value: /^[a-z0-9]*$/,
                   message: 'Допустимы латинские буквы в нижнем регистре и цифры',
@@ -198,6 +202,14 @@ export const EditProfileForm = () => {
                 },
               })}
             />
+            {errors?.password?.type === 'required' && (
+              <p
+                role="alert"
+                className={styles['edit-profile-form-error']}
+              >
+                {errors.password.message}
+              </p>
+            )}
             {errors?.password?.type === 'pattern' && (
               <p
                 role="alert"

@@ -1,4 +1,4 @@
-import { getData } from '../../services/api';
+import { get1Data } from '../../services/api';
 import { store } from '../store';
 
 export const loadArticles = () => {
@@ -52,7 +52,7 @@ export const getArticles = (currentPage) => {
     }
     try {
       dispatch(loadArticles());
-      const response = await getData(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`);
+      const response = await get1Data(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`);
       // const responseBody = await response.json();
       const preparedArticleList = addIdToArticles(response.articles);
       const preparedResponse = { ...response, articles: preparedArticleList };

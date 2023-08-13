@@ -3,7 +3,9 @@ import { useHistory } from 'react-router-dom';
 
 import { store } from '../store';
 import { RootState } from '../reducers';
-import { getData, sendProfileInfo } from '../../services/api';
+import { getData, updateData } from '../../services/api';
+
+import { userLoginError, userLoginSuccess } from './user';
 
 export const loadProfileStart = () => {
   return {
@@ -21,39 +23,59 @@ export const loadProfileSuccess = (json) => {
   };
 };
 
-export const loadProfileError = (text) => {
+export const loadProfileError = (error) => {
   return {
     type: 'LOAD_PROFILE_ERROR',
-    error: text,
+    error: error.message,
+    response: error.response,
   };
 };
 
 export const loadProfile = () => {
-  return (dispatch, getState) => {
-    /* const state = getState();
-    const { user } = state;
-    const { userName, loadingProfile, email } = user.profile; */
+  return (dispatch) => {
     const history = useHistory();
     const email = localStorage.getItem('lastEmail');
     const token = localStorage.getItem(`${email}-login-token`);
-    store.dispatch(loadProfileStart());
+    if (!token) {
+      const error = new Error(`No login token for this email - ${email}`);
+      error.response = null;
+      dispatch(loadProfileError(error));
+      return;
+    }
+    dispatch(loadProfileStart());
     getData('https://blog.kata.academy/api/user', token)
       .then(
-        /* function (data) {
-        // handle data
-      }, function (error) {
-        // handle error from promise-api
-      }).catch(function (err) {
-        // handle error from response.
-      } */
-        (response) => store.dispatch(loadProfileSuccess(response))
-      )
-      .catch((error) => {
-        if (error.response.status === 401) {
-          history.push('/sign-in');
-        } else {
-          store.dispatch(loadProfileError(error.message));
+        function (response) {
+          if (response.status === 401) {
+            history.push('/sign-in');
+          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
+            return response.json();
+          }
+          const error = new Error(`Load profile error, code ${response.status.toString()} - error after API answer`);
+          error.response = response;
+          throw error;
+        },
+        function (err) {
+          // handle error from promise-api
+          const error = new Error('Load profile error while sending data through API');
+          error.response = err;
+          throw error;
         }
+      )
+      .then((response) => {
+        if (response.errors) {
+          const errors = Object.entries(response.errors);
+          const [errorName, errorMessage] = errors[0];
+          const error = new Error(`Load profile error - ${errorName} ${errorMessage}`);
+          error.response = response;
+          throw error;
+        }
+        if (response.user) {
+          dispatch(loadProfileSuccess(response));
+        }
+      })
+      .catch(function (error) {
+        dispatch(loadProfileError(error));
       });
   };
 };
@@ -65,6 +87,8 @@ export const updateProfileStart = () => {
 };
 
 export const updateProfileSuccess = (json) => {
+  localStorage.setItem(`${json.user.email}-login-token`, json.user.token);
+  localStorage.setItem('lastEmail', json.user.email);
   return {
     type: 'UPDATE_PROFILE_SUCCESS',
     userName: json.user.username,
@@ -74,48 +98,64 @@ export const updateProfileSuccess = (json) => {
   };
 };
 
-export const updateProfileError = (text) => {
+export const updateProfileError = (error) => {
   return {
     type: 'UPDATE_PROFILE_ERROR',
-    error: text,
+    error: error.message,
+    response: error.response,
   };
 };
 
 export const updateProfile = (evt, history, formData) => {
   return (dispatch, getState) => {
-    /* const state = getState();
+    const state = getState();
     const { user } = state;
-    const { userName, loadingProfile, email } = user.profile; */
+    const { email } = user.profile;
     evt.preventDefault();
-    const email = localStorage.getItem('lastEmail');
     const token = localStorage.getItem(`${email}-login-token`);
     const data = {
       user: {
         email: formData.email,
         username: formData.username,
-        bio: formData.bio,
-        image: formData.image,
+        // bio: formData.bio.length,
+        image: formData.image.length ? formData.image : null,
         password: formData.password,
       },
     };
-    store.dispatch(updateProfileStart());
-    sendProfileInfo('https://blog.kata.academy/api/user', data, token)
+    dispatch(updateProfileStart());
+    updateData('https://blog.kata.academy/api/user', data, token)
       .then(
-        /* function (data) {
-        // handle data
-      }, function (error) {
-        // handle error from promise-api
-      }).catch(function (err) {
-        // handle error from response.
-      } */
-        (response) => store.dispatch(updateProfileSuccess(response))
-      )
-      .catch((error) => {
-        if (error.response.status === 401) {
-          history.push('/sign-in');
-        } else {
-          store.dispatch(updateProfileError(error.message));
+        function (response) {
+          if (response.status === 401) {
+            history.push('/sign-in');
+          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
+            return response.json();
+          }
+          const error = new Error(`Update profile error, code ${response.status.toString()} - error after API answer`);
+          error.response = response;
+          throw error;
+        },
+        function (err) {
+          // handle error from promise-api
+          const error = new Error('Update profile error while updating data through API');
+          error.response = err;
+          throw error;
         }
+      )
+      .then((response) => {
+        if (response.errors) {
+          const errors = Object.entries(response.errors);
+          const [errorName, errorMessage] = errors[0];
+          const error = new Error(`Update profile error - ${errorName} ${errorMessage}`);
+          error.response = response;
+          throw error;
+        }
+        if (response.user) {
+          dispatch(updateProfileSuccess(response));
+        }
+      })
+      .catch(function (error) {
+        dispatch(updateProfileError(error));
       });
   };
 };

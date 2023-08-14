@@ -33,6 +33,11 @@ export const loadProfileError = (error) => {
 
 export const loadProfile = () => {
   return (dispatch) => {
+    const { user } = store.getState();
+    // !loadingProfile && !userName && userName !== ''
+    if (user.profile?.loadingProfile || user.profile?.userName || user.profile?.userName === '') {
+      return;
+    }
     const history = useHistory();
     const email = localStorage.getItem('lastEmail');
     const token = localStorage.getItem(`${email}-login-token`);
@@ -108,16 +113,18 @@ export const updateProfileError = (error) => {
 
 export const updateProfile = (evt, history, formData) => {
   return (dispatch, getState) => {
+    evt.preventDefault();
     const state = getState();
     const { user } = state;
-    const { email } = user.profile;
-    evt.preventDefault();
+    const { email, updatingProfile } = user.profile;
+    if (updatingProfile) {
+      return;
+    }
     const token = localStorage.getItem(`${email}-login-token`);
     const data = {
       user: {
         email: formData.email,
         username: formData.username,
-        // bio: formData.bio.length,
         image: formData.image.length ? formData.image : null,
         password: formData.password,
       },

@@ -9,7 +9,7 @@ const initialState = {
 // eslint-disable-next-line default-param-last
 export const articlesReducer = (state = initialState, action) => {
   switch (action.type) {
-    case 'LOAD_ARTICLES':
+    case 'LOAD_ARTICLES_START':
       return {
         ...state,
         loading: true,

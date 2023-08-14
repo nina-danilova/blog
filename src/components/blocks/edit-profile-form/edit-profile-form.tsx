@@ -65,9 +65,9 @@ export const EditProfileForm = () => {
               type="text"
               id="username"
               placeholder="Username"
-              /* minLength={3}
+              minLength={3}
               maxLength={20}
-              required */
+              required
               value={name}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('username', {
@@ -135,7 +135,7 @@ export const EditProfileForm = () => {
               type="email"
               id="email"
               placeholder="Email address"
-              /* required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email', {
                 required: {
@@ -179,9 +179,9 @@ export const EditProfileForm = () => {
               type="password"
               id="password"
               placeholder="New password"
-              /* minLength={6}
+              minLength={6}
               maxLength={40}
-              required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('password', {
                 required: {
@@ -246,7 +246,6 @@ export const EditProfileForm = () => {
               id="image"
               placeholder="Avatar image"
               value={imageUrl}
-              /* required */
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('image', {
                 pattern: {
@@ -273,9 +272,6 @@ export const EditProfileForm = () => {
           <button
             type="submit"
             className={styles['edit-profile-form-button']}
-            /* onClick={(evt) => {
-              updateUser(evt, history);
-            }} */
           >
             Save
           </button>

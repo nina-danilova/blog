@@ -15,7 +15,7 @@ const ArticlePage = ({ match }) => {
   const history = useHistory();
   useEffect(() => {
     store.dispatch(loadArticle(params.id, history));
-  }, []);
+  }, [params.id]);
   const article = useSelector((state: RootState) => state.viewingArticle);
   const isLoading = useSelector((state: RootState) => state.viewingArticle.loading);
   const loadArticleError = useSelector((state: RootState) => state.viewingArticle.error);

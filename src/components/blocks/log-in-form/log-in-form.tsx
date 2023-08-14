@@ -47,7 +47,7 @@ export const LogInForm = () => {
             <p className={styles['log-in-form-label-name']}>Email address</p>
             <input
               className={styles['log-in-form-input']}
-              /* type="email" */
+              type="email"
               id="email"
               placeholder="Email address"
               aria-invalid={errors.email ? 'true' : 'false'}

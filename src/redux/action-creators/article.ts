@@ -1,4 +1,5 @@
 import { getData } from '../../services/api';
+import { store } from '../store';
 
 export const loadArticleStart = () => {
   return {
@@ -30,6 +31,10 @@ export const setSlug = (slug) => {
 
 export const loadArticle = (slug, history) => {
   return (dispatch) => {
+    const { viewingArticle } = store.getState();
+    if (viewingArticle.loading) {
+      return;
+    }
     dispatch(setSlug(slug));
     dispatch(loadArticleStart());
     getData(`https://blog.kata.academy/api/articles/${slug}`)

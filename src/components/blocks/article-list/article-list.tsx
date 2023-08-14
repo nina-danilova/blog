@@ -1,18 +1,20 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { Spin, Alert } from 'antd';
+import { useHistory } from 'react-router-dom';
 
 import { ArticleCardPreview } from '../article-card-preview';
 import { RootState } from '../../../redux/reducers';
-import { getArticles } from '../../../redux/action-creators/articles';
+import { loadArticles } from '../../../redux/action-creators/articles';
 import { store } from '../../../redux/store';
 
 import styles from './article-list.module.scss';
 
 export const ArticleList = () => {
+  const history = useHistory();
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
   useEffect(() => {
-    store.dispatch(getArticles(currentPage));
+    store.dispatch(loadArticles(currentPage, history));
   }, [currentPage]);
   const articleList = useSelector((state: RootState) => state.articles.articleList);
   const isLoading = useSelector((state: RootState) => state.articles.loading);

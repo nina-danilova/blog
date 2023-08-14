@@ -54,9 +54,9 @@ export const RegistrationForm = () => {
               type="text"
               id="username"
               placeholder="Username"
-              /* minLength={3}
+              minLength={3}
               maxLength={20}
-              required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('username', {
                 required: {
@@ -120,7 +120,7 @@ export const RegistrationForm = () => {
               type="email"
               id="email"
               placeholder="Email address"
-              /* required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email', {
                 required: {
@@ -160,9 +160,9 @@ export const RegistrationForm = () => {
               type="password"
               id="password"
               placeholder="Password"
-              /* minLength={6}
+              minLength={6}
               maxLength={40}
-              required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('password', {
                 required: {
@@ -226,7 +226,7 @@ export const RegistrationForm = () => {
               type="password"
               id="repeatPassword"
               placeholder="Password"
-              /* required */
+              required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('repeatPassword', {
                 required: {
@@ -259,7 +259,7 @@ export const RegistrationForm = () => {
             className={`${styles['registration-form-input']} ${styles['registration-form-input--agreement']} ${styles['visually-hidden']}`}
             id="personalInfoAgreement"
             type="checkbox"
-            /* required */
+            required
             /* eslint-disable-next-line react/jsx-props-no-spreading */
             {...register('personalInfoAgreement', {
               required: {
@@ -290,9 +290,6 @@ export const RegistrationForm = () => {
           <button
             type="submit"
             className={styles['registration-form-button']}
-            /* onClick={(evt) => {
-              registerNewUser(evt, history);
-            }} */
           >
             Create
           </button>

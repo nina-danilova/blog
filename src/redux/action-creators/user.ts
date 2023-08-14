@@ -4,8 +4,6 @@ import { loadProfileSuccess } from './profile';
 
 export const userLogOut = () => {
   localStorage.setItem('userAuthorized', 'false');
-  localStorage.removeItem('lastUserName');
-  localStorage.removeItem('lastUserImage');
   localStorage.removeItem('lastEmail');
   return {
     type: 'USER_LOG_OUT',
@@ -40,6 +38,10 @@ export const userRegisterError = (error) => {
 export const registerNewUser = (evt, history, formData) => {
   return (dispatch, getState) => {
     evt.preventDefault();
+    const { user } = getState();
+    if (user.registering) {
+      return;
+    }
     const data = {
       user: {
         username: formData.username,
@@ -108,8 +110,12 @@ export const userLoginError = (error) => {
 };
 
 export const userLogin = (evt, history, formData) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     evt.preventDefault();
+    const { user } = getState();
+    if (user.loggingIn) {
+      return;
+    }
     const data = {
       user: {
         email: formData.email,

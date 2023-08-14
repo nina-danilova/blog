@@ -1,8 +1,8 @@
 const initialState = {
   userName: '',
   email: '',
-  bio: '',
   image: '',
+  bio: '',
   loadingProfile: false,
   loadProfileError: null,
   updatingProfile: false,
@@ -43,9 +43,8 @@ export const profileReducer = (state = initialState, action) => {
       return {
         ...state,
         updatingProfile: false,
-        userName: action.username,
-        image: action.image,
-        bio: action.bio,
+        userName: action.userName,
+        image: action.image || '',
         email: action.email,
       };
     case 'UPDATE_PROFILE_ERROR':
@@ -69,6 +68,12 @@ export const profileReducer = (state = initialState, action) => {
       return {
         ...state,
         image: action.value,
+      };
+    case 'USER_LOG_OUT':
+      return {
+        ...state,
+        userName: '',
+        email: '',
       };
     default:
       return state;

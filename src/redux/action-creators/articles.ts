@@ -1,9 +1,9 @@
-import { get1Data } from '../../services/api';
+import { getData } from '../../services/api';
 import { store } from '../store';
 
-export const loadArticles = () => {
+export const loadArticlesStart = () => {
   return {
-    type: 'LOAD_ARTICLES',
+    type: 'LOAD_ARTICLES_START',
   };
 };
 
@@ -43,22 +43,49 @@ const getOffset = (page) => {
   return (page - 1) * 20;
 };
 
-export const getArticles = (currentPage) => {
+export const loadArticles = (currentPage, history) => {
   const offset = getOffset(currentPage);
-  return async (dispatch) => {
+  return (dispatch) => {
     const { articles } = store.getState();
     if (articles.loading) {
       return;
     }
-    try {
-      dispatch(loadArticles());
-      const response = await get1Data(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`);
-      // const responseBody = await response.json();
-      const preparedArticleList = addIdToArticles(response.articles);
-      const preparedResponse = { ...response, articles: preparedArticleList };
-      dispatch(loadArticlesSuccess(preparedResponse));
-    } catch (err) {
-      dispatch(loadArticlesError(err));
-    }
+    dispatch(loadArticlesStart());
+    getData(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`)
+      .then(
+        function (response) {
+          if (response.status === 401) {
+            history.push('/sign-in');
+          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
+            return response.json();
+          }
+          const error = new Error(`Load articles error, code ${response.status.toString()} - error after API answer`);
+          error.response = response;
+          throw error;
+        },
+        function (err) {
+          // handle error from promise-api
+          const error = new Error('Load articles error while sending data through API');
+          error.response = err;
+          throw error;
+        }
+      )
+      .then((response) => {
+        if (response.errors) {
+          const errors = Object.entries(response.errors);
+          const [errorName, errorMessage] = errors[0];
+          const error = new Error(`Load articles error - ${errorName} ${errorMessage}`);
+          error.response = response;
+          throw error;
+        }
+        if (response.articles) {
+          const preparedArticleList = addIdToArticles(response.articles);
+          const preparedResponse = { ...response, articles: preparedArticleList };
+          dispatch(loadArticlesSuccess(preparedResponse));
+        }
+      })
+      .catch(function (error) {
+        dispatch(loadArticlesError(error));
+      });
   };
 };

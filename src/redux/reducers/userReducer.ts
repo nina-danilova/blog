@@ -16,6 +16,7 @@ export const userReducer = (state = initialState, action) => {
       return {
         ...state,
         authorized: false,
+        profile: profileReducer(state.profile, action), // если экшен юзера нельзя передать в профайл-редьюсер, то переделаю на экшен CLEAR_PROFILE по очистке профайла
       };
     case 'USER_REGISTER_START':
       return {

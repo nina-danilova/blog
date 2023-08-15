@@ -1,11 +1,7 @@
-import { useSelector } from 'react-redux';
 import { useHistory } from 'react-router-dom';
 
 import { store } from '../store';
-import { RootState } from '../reducers';
 import { getData, updateData } from '../../services/api';
-
-import { userLoginError, userLoginSuccess } from './user';
 
 export const loadProfileStart = () => {
   return {

@@ -9,10 +9,9 @@
 - React Hook Form
 - React Router
 - Redux
-- Redux Thunk ?
+- Redux Thunk
 - TypeScript
 - SASS
 - CSS modules
-- Classnames ?
-- Markdown to JSX ?
+- Markdown to JSX
 - Figma

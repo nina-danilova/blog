@@ -1,6 +1,6 @@
 # blog
 
-Приложение развернуто на vercel - 
+Приложение развернуто на vercel - blog-livid-phi.vercel.app
 
 Использованы
 - Git

@@ -1,3 +1,1 @@
-import { UserInfo } from './user-info';
-
-export { UserInfo };
+export { UserInfo } from './user-info';

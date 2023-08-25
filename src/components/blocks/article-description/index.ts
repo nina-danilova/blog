@@ -1,3 +1,1 @@
-import ArticleDescription from './article-description';
-
-export { ArticleDescription };
+export { ArticleDescriptionWithRouter } from './article-description';

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ArticleDescription } from '../article-description';
-import { ArticleIssueInfo } from '../article-issue-info';
+import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
+import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
 
 import styles from './article-card-preview.module.scss';
 
@@ -10,12 +10,12 @@ export const ArticleCardPreview = ({ article }) => {
   return (
     <article className={styles['article-card-preview']}>
       <div className={styles['article-card-preview__description']}>
-        <ArticleDescription
-          articleDescription={description}
-          articleFavoritesCount={favoritesCount}
-          articleTagList={tagList}
-          articleTitle={title}
-          articleSlug={slug}
+        <ArticleDescriptionWithRouter
+          description={description}
+          favoritesCount={favoritesCount}
+          tagList={tagList}
+          title={title}
+          slug={slug}
         />
       </div>
       <ArticleIssueInfo

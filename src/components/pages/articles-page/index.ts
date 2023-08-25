@@ -1,3 +1,1 @@
-import { ArticlesPage } from './articles-page';
-
-export { ArticlesPage };
+export { ArticlesPage } from './articles-page';

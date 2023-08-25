@@ -2,9 +2,9 @@ import React from 'react';
 import { useSelector } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
 
-import { ArticleIssueInfo } from '../article-issue-info';
-import { RootState } from '../../../redux/reducers';
-import { ArticleDescription } from '../article-description';
+import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
+import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
+import { RootState } from 'redux/reducers';
 
 import styles from './article-card-full-view.module.scss';
 
@@ -15,12 +15,12 @@ export const ArticleCardFullView = () => {
   return (
     <article className={styles['article-card-full-view']}>
       <div className={styles['article-card-full-view__description']}>
-        <ArticleDescription
-          articleDescription={description}
-          articleFavoritesCount={favoritesCount}
-          articleTagList={tagList}
-          articleTitle={title}
-          articleSlug={slug}
+        <ArticleDescriptionWithRouter
+          description={description}
+          favoritesCount={favoritesCount}
+          tagList={tagList}
+          title={title}
+          slug={slug}
         />
       </div>
       <ArticleIssueInfo

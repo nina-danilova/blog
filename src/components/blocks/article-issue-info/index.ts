@@ -1,3 +1,1 @@
-import { ArticleIssueInfo } from './article-issue-info';
-
-export { ArticleIssueInfo };
+export { ArticleIssueInfo } from './article-issue-info';

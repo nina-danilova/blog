@@ -1,11 +1,12 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { ArticlesPage } from '../../pages/articles-page';
-import { ArticlePage } from '../../pages/article-page';
-import { RegistrationPage } from '../../pages/registration-page';
-import { LogInPage } from '../../pages/log-in-page';
-import { ProfilePage } from '../../pages/profile-page';
+import { ArticlesPage } from 'components/pages/articles-page';
+import { ArticlePageWithRouter } from 'components/pages/article-page';
+import { RegistrationPage } from 'components/pages/registration-page';
+import { LogInPage } from 'components/pages/log-in-page';
+import { ProfilePage } from 'components/pages/profile-page';
+import { NewArticlePage } from 'components/pages/new-article-page';
 
 import styles from './main.module.scss';
 
@@ -25,7 +26,7 @@ export const Main = () => {
         />
         <Route
           path="/articles/:id"
-          component={ArticlePage}
+          component={ArticlePageWithRouter}
         />
         <Route
           path="/sign-in"
@@ -38,6 +39,10 @@ export const Main = () => {
         <Route
           path="/profile"
           component={ProfilePage}
+        />
+        <Route
+          path="/new-article"
+          component={NewArticlePage}
         />
         <Route render={() => <h1>Page not found</h1>} />
       </Switch>

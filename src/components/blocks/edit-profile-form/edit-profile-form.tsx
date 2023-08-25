@@ -4,14 +4,14 @@ import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { store } from '../../../redux/store';
-import { RootState } from '../../../redux/reducers';
+import { store } from 'redux/store';
+import { RootState } from 'redux/reducers';
 import {
   updateProfile,
   updateProfileFormUserName,
   updateProfileFormEmail,
   updateProfileFormImageUrl,
-} from '../../../redux/action-creators/profile';
+} from 'redux/action-creators/profile';
 
 import styles from './edit-profile-form.module.scss';
 
@@ -68,7 +68,7 @@ export const EditProfileForm = () => {
               minLength={3}
               maxLength={20}
               required
-              value={name}
+              defaultValue={name}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('username', {
                 required: {
@@ -147,7 +147,7 @@ export const EditProfileForm = () => {
                   message: 'Введите корректный email',
                 },
               })}
-              value={email}
+              defaultValue={email}
               onChange={(event) => {
                 store.dispatch(updateProfileFormEmail(event.target.value));
               }}
@@ -245,7 +245,7 @@ export const EditProfileForm = () => {
               type="text"
               id="image"
               placeholder="Avatar image"
-              value={imageUrl}
+              defaultValue={imageUrl}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('image', {
                 pattern: {

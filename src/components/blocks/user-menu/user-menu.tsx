@@ -1,9 +1,9 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
 
-import { UserInfo } from '../user-info';
-import { store } from '../../../redux/store';
-import { userLogOut } from '../../../redux/action-creators/user';
+import { UserInfo } from 'components/blocks/user-info';
+import { store } from 'redux/store';
+import { userLogOut } from 'redux/action-creators/user';
 
 import styles from './user-menu.module.scss';
 

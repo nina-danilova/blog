@@ -3,10 +3,10 @@ import { useSelector } from 'react-redux';
 import { Spin, Alert } from 'antd';
 import { useHistory } from 'react-router-dom';
 
-import { ArticleCardPreview } from '../article-card-preview';
-import { RootState } from '../../../redux/reducers';
-import { loadArticles } from '../../../redux/action-creators/articles';
-import { store } from '../../../redux/store';
+import { ArticleCardPreview } from 'components/blocks/article-card-preview';
+import { RootState } from 'redux/reducers';
+import { loadArticles } from 'redux/action-creators/articles';
+import { store } from 'redux/store';
 
 import styles from './article-list.module.scss';
 

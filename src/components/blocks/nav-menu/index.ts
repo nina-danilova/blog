@@ -1,3 +1,1 @@
-import { NavMenu } from './nav-menu';
-
-export { NavMenu };
+export { NavMenu } from './nav-menu';

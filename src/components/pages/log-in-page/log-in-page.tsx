@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { LogInForm } from '../../blocks/log-in-form';
+import { LogInForm } from 'components/blocks/log-in-form';
 
 import styles from './log-in-page.module.scss';
 

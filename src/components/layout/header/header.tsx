@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Navigation } from '../../blocks/navigation';
+import { Navigation } from 'components/blocks/navigation';
 
 import styles from './header.module.scss';
 

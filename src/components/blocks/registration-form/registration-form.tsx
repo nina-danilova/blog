@@ -4,9 +4,9 @@ import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { registerNewUser } from '../../../redux/action-creators/user';
-import { RootState } from '../../../redux/reducers';
-import { store } from '../../../redux/store';
+import { registerNewUser } from 'redux/action-creators/user';
+import { RootState } from 'redux/reducers';
+import { store } from 'redux/store';
 
 import styles from './registration-form.module.scss';
 

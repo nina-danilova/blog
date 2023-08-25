@@ -1,3 +1,1 @@
-import { EditProfileForm } from './edit-profile-form';
-
-export { EditProfileForm };
+export { EditProfileForm } from './edit-profile-form';

@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ArticleList } from '../../blocks/article-list';
-import { Pagination } from '../../blocks/pagination';
+import { ArticleList } from 'components/blocks/article-list';
+import { Pagination } from 'components/blocks/pagination';
 
 import styles from './articles-page.module.scss';
 

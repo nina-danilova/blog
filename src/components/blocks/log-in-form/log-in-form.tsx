@@ -4,9 +4,9 @@ import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler } from 'react-hook-form';
 
-import { userLogin } from '../../../redux/action-creators/user';
-import { RootState } from '../../../redux/reducers';
-import { store } from '../../../redux/store';
+import { userLogin } from 'redux/action-creators/user';
+import { RootState } from 'redux/reducers';
+import { store } from 'redux/store';
 
 import styles from './log-in-form.module.scss';
 

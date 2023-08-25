@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { RootState } from '../../../redux/reducers';
+import { RootState } from 'redux/reducers';
 
 import styles from './user-info.module.scss';
 

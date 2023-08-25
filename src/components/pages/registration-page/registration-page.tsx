@@ -1,8 +1,8 @@
 import React from 'react';
 
-import './registration-page.module.scss';
-import styles from '../log-in-page/log-in-page.module.scss';
-import { RegistrationForm } from '../../blocks/registration-form';
+import { RegistrationForm } from 'components/blocks/registration-form';
+
+import styles from './registration-page.module.scss';
 
 export const RegistrationPage = () => {
   return (

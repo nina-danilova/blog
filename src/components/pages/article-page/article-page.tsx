@@ -3,10 +3,10 @@ import { withRouter, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert, Spin } from 'antd';
 
-import { ArticleCardFullView } from '../../blocks/article-card-full-view';
-import { loadArticle } from '../../../redux/action-creators/article';
-import { store } from '../../../redux/store';
-import { RootState } from '../../../redux/reducers';
+import { ArticleCardFullView } from 'components/blocks/article-card-full-view';
+import { loadArticle } from 'redux/action-creators/article';
+import { store } from 'redux/store';
+import { RootState } from 'redux/reducers';
 
 import styles from './article-page.module.scss';
 
@@ -47,4 +47,4 @@ const ArticlePage = ({ match }) => {
   );
 };
 
-export default withRouter(ArticlePage);
+export const ArticlePageWithRouter = withRouter(ArticlePage);

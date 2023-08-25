@@ -1,3 +1,1 @@
-import { ArticleCardPreview } from './article-card-preview';
-
-export { ArticleCardPreview };
+export { ArticleCardPreview } from './article-card-preview';

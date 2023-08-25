@@ -1,3 +1,1 @@
-import { RegistrationPage } from './registration-page';
-
-export { RegistrationPage };
+export { RegistrationPage } from './registration-page';

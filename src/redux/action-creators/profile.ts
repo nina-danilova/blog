@@ -1,7 +1,6 @@
 import { useHistory } from 'react-router-dom';
 
-import { store } from '../store';
-import { getData, updateData } from '../../services/api';
+import { getData, updateData } from 'services/api';
 
 export const loadProfileStart = () => {
   return {
@@ -28,8 +27,8 @@ export const loadProfileError = (error) => {
 };
 
 export const loadProfile = () => {
-  return (dispatch) => {
-    const { user } = store.getState();
+  return (dispatch, getState) => {
+    const { user } = getState();
     // !loadingProfile && !userName && userName !== ''
     if (user.profile?.loadingProfile || user.profile?.userName || user.profile?.userName === '') {
       return;

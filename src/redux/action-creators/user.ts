@@ -1,4 +1,4 @@
-import { sendData } from '../../services/api';
+import { sendData } from 'services/api';
 
 import { loadProfileSuccess } from './profile';
 

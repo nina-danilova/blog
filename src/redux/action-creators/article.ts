@@ -1,5 +1,4 @@
-import { getData } from '../../services/api';
-import { store } from '../store';
+import { getData } from 'services/api';
 
 export const loadArticleStart = () => {
   return {
@@ -30,8 +29,8 @@ export const setSlug = (slug) => {
 };
 
 export const loadArticle = (slug, history) => {
-  return (dispatch) => {
-    const { viewingArticle } = store.getState();
+  return (dispatch, getState) => {
+    const { viewingArticle } = getState();
     if (viewingArticle.loading) {
       return;
     }
@@ -71,5 +70,15 @@ export const loadArticle = (slug, history) => {
       .catch(function (error) {
         dispatch(loadArticleError(error));
       });
+  };
+};
+
+export const createArticle = (event, history, data) => {
+  console.log(event, history, data);
+  return {
+    type: 'CREATE_ARTICLE',
+    event,
+    history,
+    data,
   };
 };

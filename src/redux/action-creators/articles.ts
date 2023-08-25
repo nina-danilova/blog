@@ -1,5 +1,5 @@
-import { getData } from '../../services/api';
-import { store } from '../store';
+import { getData } from 'services/api';
+import { store } from 'redux/store';
 
 export const loadArticlesStart = () => {
   return {

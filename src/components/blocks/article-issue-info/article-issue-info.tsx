@@ -1,12 +1,12 @@
 import React from 'react';
-import { format } from 'date-fns';
 
 import styles from './article-issue-info.module.scss';
+import { getDate } from './utility';
 
 export const ArticleIssueInfo = ({ createdAt, author }) => {
   const { image, username } = author;
   const authorUrl = image || 'img/icon-author-avatar.svg';
-  const issueDate = format(new Date(createdAt), 'MMMM dd, yyyy');
+  const issueDate = getDate(createdAt);
   return (
     <div className={styles['article-issue-info']}>
       <img

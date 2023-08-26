@@ -6,14 +6,10 @@ import { useForm, SubmitHandler } from 'react-hook-form';
 
 import { store } from 'redux/store';
 import { RootState } from 'redux/reducers';
-import {
-  updateProfile,
-  updateProfileFormUserName,
-  updateProfileFormEmail,
-  updateProfileFormImageUrl,
-} from 'redux/action-creators/profile';
+import { updateProfile } from 'redux/action-creators/profile';
 
 import styles from './edit-profile-form.module.scss';
+import { onInputValueChange } from './utility';
 
 type EditProfileFormInput = {
   username: string;
@@ -26,10 +22,10 @@ export const EditProfileForm = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit: onFormSubmit,
   } = useForm<EditProfileFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<EditProfileFormInput> = (data, event) => {
+  const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
     store.dispatch(updateProfile(event, history, data));
   };
   const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
@@ -51,7 +47,7 @@ export const EditProfileForm = () => {
         className={styles['edit-profile-form']}
         method="POST"
         action="https://blog.kata.academy"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onFormSubmit(updateUserProfile)}
       >
         <p className={styles['edit-profile-form-title']}>Edit profile</p>
         <div className={styles['edit-profile-form-input-group']}>
@@ -88,9 +84,7 @@ export const EditProfileForm = () => {
                   message: 'Максимальная длина имени пользователя - 20 символов',
                 },
               })}
-              onChange={(event) => {
-                store.dispatch(updateProfileFormUserName(event.target.value));
-              }}
+              onChange={onInputValueChange}
             />
             {errors?.username?.type === 'required' && (
               <p
@@ -148,9 +142,7 @@ export const EditProfileForm = () => {
                 },
               })}
               defaultValue={email}
-              onChange={(event) => {
-                store.dispatch(updateProfileFormEmail(event.target.value));
-              }}
+              onChange={onInputValueChange}
             />
             {errors?.email?.type === 'required' && (
               <p
@@ -254,9 +246,7 @@ export const EditProfileForm = () => {
                   message: 'Введите корректный URL',
                 },
               })}
-              onChange={(event) => {
-                store.dispatch(updateProfileFormImageUrl(event.target.value));
-              }}
+              onChange={onInputValueChange}
             />
             {errors?.image?.type === 'pattern' && (
               <p

@@ -9,13 +9,14 @@ import { store } from 'redux/store';
 export const Pagination = () => {
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
   const articlesCount = useSelector((state: RootState) => state.articles.articlesCount);
+  const onPageChange = (page) => store.dispatch(changeCurrentPage(page));
   return (
     <AntdPagination
       current={currentPage}
       defaultPageSize={20}
       showSizeChanger={false}
       total={articlesCount}
-      onChange={(page) => store.dispatch(changeCurrentPage(page))}
+      onChange={onPageChange}
     />
   );
 };

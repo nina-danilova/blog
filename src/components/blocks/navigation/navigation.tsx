@@ -18,8 +18,7 @@ export const Navigation = () => {
     store.dispatch(userLoginSuccess());
     store.dispatch(loadProfile());
   }
-  // eslint-disable-next-line no-nested-ternary
-  const navMenu = isAuthorized ? <UserMenu /> : result ? <UserMenu /> : <NavMenu />;
+  const navMenu = isAuthorized || result ? <UserMenu /> : <NavMenu />;
 
   return <nav className="navigation">{navMenu}</nav>;
 };

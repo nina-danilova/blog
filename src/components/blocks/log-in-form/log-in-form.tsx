@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -19,10 +19,10 @@ export const LogInForm = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit: onFormSubmit,
   } = useForm<LoginFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin(event, history, data));
+  const logIn: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin(event, history, data));
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
@@ -36,7 +36,7 @@ export const LogInForm = () => {
         className={styles['log-in-form']}
         method="POST"
         action="https://blog.kata.academy"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onFormSubmit(logIn)}
       >
         <p className={styles['log-in-form-title']}>Sign In</p>
         <div className={styles['log-in-form-input-group']}>
@@ -115,12 +115,12 @@ export const LogInForm = () => {
           </button>
           <p className={styles['log-in-form-comment']}>
             Don&apos;t have an account?{' '}
-            <a
-              href="/"
+            <Link
+              to="/sign-up"
               className={styles['log-in-form-link']}
             >
               Sign Up
-            </a>
+            </Link>
             .
           </p>
         </div>

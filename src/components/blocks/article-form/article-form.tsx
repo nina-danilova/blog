@@ -18,10 +18,10 @@ export const ArticleForm = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit: onFormSubmit,
   } = useForm<ArticleFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<ArticleFormInput> = (data, event) =>
+  const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
     store.dispatch(createArticle(event, history, data));
   // const error = useSelector((state: RootState) => state.user.loginError);
   /* const errorMessage = error ? (
@@ -35,7 +35,7 @@ export const ArticleForm = () => {
       className={styles['article-form']}
       method="POST"
       action="https://blog.kata.academy"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={onFormSubmit(createNewArticle)}
     >
       <p className={styles['article-form-title']}>Create new article</p>
       <div className={styles['article-form-input-group']}>

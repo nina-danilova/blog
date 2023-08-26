@@ -1,10 +1,11 @@
 import React from 'react';
 import { withRouter } from 'react-router-dom';
 
+import { goToPage } from './utility';
 import styles from './article-description.module.scss';
 
 const ArticleDescription = ({ title, favoritesCount, tagList, description, slug, history }) => {
-  const path = `/articles/${slug}`;
+  const pathToArticle = `/articles/${slug}`;
   const tags = [...tagList];
   const styledTags = tags.map((tag) => (
     <span
@@ -14,6 +15,12 @@ const ArticleDescription = ({ title, favoritesCount, tagList, description, slug,
       {tag}
     </span>
   ));
+  const onTitleClick = () => {
+    goToPage(pathToArticle, history);
+  };
+  const onTitleKeyDown = () => {
+    goToPage(pathToArticle, history);
+  };
   return (
     <div className={styles['article-description']}>
       <div className={styles['article-description-header']}>
@@ -21,12 +28,8 @@ const ArticleDescription = ({ title, favoritesCount, tagList, description, slug,
           <p
             className={styles['article-title']}
             role="button"
-            onClick={() => {
-              history.push(path);
-            }}
-            onKeyDown={() => {
-              history.push(path);
-            }}
+            onClick={onTitleClick}
+            onKeyDown={onTitleKeyDown}
           >
             {title}
           </p>

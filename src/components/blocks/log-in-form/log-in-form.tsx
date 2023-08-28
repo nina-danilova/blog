@@ -34,8 +34,6 @@ export const LogInForm = () => {
     <>
       <form
         className={styles['log-in-form']}
-        method="POST"
-        action="https://blog.kata.academy"
         onSubmit={onFormSubmit(logIn)}
       >
         <p className={styles['log-in-form-title']}>Sign In</p>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
@@ -22,10 +22,10 @@ export const RegistrationForm = () => {
   const {
     register,
     formState: { errors },
-    handleSubmit,
+    handleSubmit: onFormSubmit,
   } = useForm<RegistrationFormInput>();
   const history = useHistory();
-  const onSubmit: SubmitHandler<RegistrationFormInput> = (data, event) =>
+  const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
     store.dispatch(registerNewUser(event, history, data));
   const error = useSelector((state: RootState) => state.user.registerError);
   const errorMessage = error ? (
@@ -38,9 +38,7 @@ export const RegistrationForm = () => {
     <>
       <form
         className={styles['registration-form']}
-        method="POST"
-        action="https://blog.kata.academy"
-        onSubmit={handleSubmit(onSubmit)}
+        onSubmit={onFormSubmit(registerUser)}
       >
         <p className={styles['registration-form-title']}>Create new account</p>
         <div className={styles['registration-form-input-group']}>
@@ -295,12 +293,12 @@ export const RegistrationForm = () => {
           </button>
           <p className={styles['registration-form-comment']}>
             Already have an account?{' '}
-            <a
-              href="/"
+            <Link
+              to="/"
               className={styles['registration-form-link']}
             >
               Sign In
-            </a>
+            </Link>
             .
           </p>
         </div>

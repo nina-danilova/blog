@@ -33,8 +33,6 @@ export const ArticleForm = () => {
   return (
     <form
       className={styles['article-form']}
-      method="POST"
-      action="https://blog.kata.academy"
       onSubmit={onFormSubmit(createNewArticle)}
     >
       <p className={styles['article-form-title']}>Create new article</p>

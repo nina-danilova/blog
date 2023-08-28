@@ -45,8 +45,6 @@ export const EditProfileForm = () => {
     <>
       <form
         className={styles['edit-profile-form']}
-        method="POST"
-        action="https://blog.kata.academy"
         onSubmit={onFormSubmit(updateUserProfile)}
       >
         <p className={styles['edit-profile-form-title']}>Edit profile</p>

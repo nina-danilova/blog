@@ -5,7 +5,7 @@ import { PageWrapper } from 'components/layout/page-wrapper';
 
 import './app.module.scss';
 
-export const App = () => {
+export const App: React.FC = () => {
   return (
     <Router>
       <PageWrapper />

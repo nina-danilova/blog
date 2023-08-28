@@ -6,7 +6,7 @@ import { RootState } from 'redux/reducers';
 
 import styles from './user-info.module.scss';
 
-export const UserInfo = () => {
+export const UserInfo: React.FC = () => {
   const { userName, image } = useSelector((state: RootState) => state.user.profile);
   const name = userName || '';
   const imageSrc = image || './img/icon-author-avatar.svg';

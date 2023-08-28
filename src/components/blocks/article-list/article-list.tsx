@@ -10,7 +10,7 @@ import { store } from 'redux/store';
 
 import styles from './article-list.module.scss';
 
-export const ArticleList = () => {
+export const ArticleList: React.FC = () => {
   const history = useHistory();
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
   useEffect(() => {

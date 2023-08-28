@@ -15,7 +15,7 @@ type LoginFormInput = {
   password: string;
 };
 
-export const LogInForm = () => {
+export const LogInForm: React.FC = () => {
   const {
     register,
     formState: { errors },

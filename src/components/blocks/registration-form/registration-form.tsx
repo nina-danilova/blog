@@ -18,7 +18,7 @@ type RegistrationFormInput = {
   personalInfoAgreement: boolean;
 };
 
-export const RegistrationForm = () => {
+export const RegistrationForm: React.FC = () => {
   const {
     register,
     formState: { errors },

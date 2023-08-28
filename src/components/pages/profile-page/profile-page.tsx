@@ -6,7 +6,7 @@ import { loadProfile } from 'redux/action-creators/profile';
 
 import styles from './profile-page.module.scss';
 
-export const ProfilePage = () => {
+export const ProfilePage: React.FC = () => {
   useEffect(() => {
     store.dispatch(loadProfile());
   });

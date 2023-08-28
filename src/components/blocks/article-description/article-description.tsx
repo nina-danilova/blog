@@ -1,10 +1,24 @@
 import React from 'react';
-import { withRouter } from 'react-router-dom';
+import { withRouter, useHistory } from 'react-router-dom';
 
 import { goToPage } from './utility';
 import styles from './article-description.module.scss';
 
-const ArticleDescription = ({ title, favoritesCount, tagList, description, slug, history }) => {
+type ArticleDescriptionProps = {
+  title: string;
+  favoritesCount: number;
+  tagList: string[];
+  description: string;
+  slug: string;
+};
+
+const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
+  title,
+  favoritesCount,
+  tagList,
+  description,
+  slug,
+}) => {
   const pathToArticle = `/articles/${slug}`;
   const tags = [...tagList];
   const styledTags = tags.map((tag) => (
@@ -15,6 +29,7 @@ const ArticleDescription = ({ title, favoritesCount, tagList, description, slug,
       {tag}
     </span>
   ));
+  const history = useHistory();
   const onTitleClick = () => {
     goToPage(pathToArticle, history);
   };

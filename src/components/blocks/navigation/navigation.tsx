@@ -8,7 +8,7 @@ import { store } from 'redux/store';
 import { userLoginSuccess } from 'redux/action-creators/user';
 import { loadProfile } from 'redux/action-creators/profile';
 
-export const Navigation = () => {
+export const Navigation: React.FC = () => {
   const isAuthorized = useSelector((state: RootState) => state.user.authorized);
   let result;
   if (!isAuthorized) {

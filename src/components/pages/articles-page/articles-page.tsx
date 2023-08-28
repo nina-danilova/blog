@@ -5,7 +5,7 @@ import { Pagination } from 'components/blocks/pagination';
 
 import styles from './articles-page.module.scss';
 
-export const ArticlesPage = () => {
+export const ArticlesPage: React.FC = () => {
   return (
     <>
       <h1 className={styles['visually-hidden']}>Blog - Articles</h1>

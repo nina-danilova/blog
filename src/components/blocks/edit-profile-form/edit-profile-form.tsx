@@ -18,7 +18,7 @@ type EditProfileFormInput = {
   image: string | null;
 };
 
-export const EditProfileForm = () => {
+export const EditProfileForm: React.FC = () => {
   const {
     register,
     formState: { errors },

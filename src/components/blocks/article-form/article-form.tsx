@@ -14,7 +14,7 @@ type ArticleFormInput = {
   tag1: string;
 };
 
-export const ArticleForm = () => {
+export const ArticleForm: React.FC = () => {
   const {
     register,
     formState: { errors },

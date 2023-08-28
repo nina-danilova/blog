@@ -10,7 +10,15 @@ import { RootState } from 'redux/reducers';
 
 import styles from './article-page.module.scss';
 
-const ArticlePage = ({ match }) => {
+type ArticlePageProps = {
+  match: {
+    params: {
+      id: string;
+    };
+  };
+};
+
+const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const { params } = match;
   const history = useHistory();
   useEffect(() => {

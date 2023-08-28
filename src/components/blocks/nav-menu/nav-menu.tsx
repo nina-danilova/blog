@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 import styles from './nav-menu.module.scss';
 
-export const NavMenu = () => {
+export const NavMenu: React.FC = () => {
   return (
     <ul className={styles['nav-menu']}>
       <li className={styles['nav-menu-item']}>

@@ -8,7 +8,7 @@ import { RootState } from 'redux/reducers';
 
 import styles from './article-card-full-view.module.scss';
 
-export const ArticleCardFullView = () => {
+export const ArticleCardFullView: React.FC = () => {
   const article = useSelector((state: RootState) => state.viewingArticle.article);
   if (!article) return null;
   const { author, description, favoritesCount, tagList, title, createdAt, body, slug } = article;

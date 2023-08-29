@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHistory } from 'react-router-dom';
+import { Link, useHistory } from 'react-router-dom';
 
 import { UserInfo } from 'components/blocks/user-info';
 import { store } from 'redux/store';
@@ -16,7 +16,14 @@ export const UserMenu: React.FC = () => {
   };
   return (
     <ul className={styles['user-menu']}>
-      <li className={`${styles['user-menu-item']} ${styles['user-menu-item--create-article']}`}>Create article</li>
+      <li className={styles['user-menu-item']}>
+        <Link
+          to="/new-article"
+          className={styles['create-article-button']}
+        >
+          Create article
+        </Link>
+      </li>
       <li className={styles['user-menu-item']}>
         <UserInfo />
       </li>

@@ -3,10 +3,14 @@ import { Link, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { userLogin } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
+
+import { emailRegEx, messagePattern, messageRequired } from '../../../constants';
 
 import styles from './log-in-form.module.scss';
 
@@ -16,11 +20,15 @@ type LoginFormInput = {
 };
 
 export const LogInForm: React.FC = () => {
+  const logInSchema = yup.object().shape({
+    email: yup.string().required(messageRequired).email(messagePattern).matches(emailRegEx, messagePattern),
+    password: yup.string().required(messageRequired),
+  });
   const {
     register,
     formState: { errors },
     handleSubmit: onFormSubmit,
-  } = useForm<LoginFormInput>();
+  } = useForm({ resolver: yupResolver(logInSchema) });
   const history = useHistory();
   const logIn: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin(event, history, data));
   const error = useSelector((state: RootState) => state.user.loginError);
@@ -48,35 +56,10 @@ export const LogInForm: React.FC = () => {
               type="email"
               id="email"
               placeholder="Email address"
-              aria-invalid={errors.email ? 'true' : 'false'}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('email', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
-                pattern: {
-                  value: /^(?!.*@.*@.*$)(?!.*@.*--.*\..*$)(?!.*@.*-\..*$)(?!.*@.*-$)((.*)?@.+(\..{1,11})?)$/,
-                  message: 'Введите корректный email',
-                },
-              })}
+              {...register('email')}
             />
-            {errors?.email?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['log-in-form-error']}
-              >
-                {errors.email.message}
-              </p>
-            )}
-            {errors?.email?.type === 'pattern' && (
-              <p
-                role="alert"
-                className={styles['log-in-form-error']}
-              >
-                {errors.email.message}
-              </p>
-            )}
+            {errors?.email && <p className={styles['log-in-form-error']}>{errors.email.message}</p>}
           </label>
           <label
             htmlFor="password"
@@ -88,20 +71,10 @@ export const LogInForm: React.FC = () => {
               type="password"
               id="password"
               placeholder="Password"
-              aria-invalid={errors.password ? 'true' : 'false'}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('password', {
-                required: 'Поле обязательно к заполнению',
-              })}
+              {...register('password')}
             />
-            {errors.password?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['log-in-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
+            {errors.password && <p className={styles['log-in-form-error']}>{errors.password.message}</p>}
           </label>
         </div>
         <div className={styles['log-in-form-actions']}>

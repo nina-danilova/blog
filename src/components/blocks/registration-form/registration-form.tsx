@@ -3,10 +3,25 @@ import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { registerNewUser } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
+
+import {
+  passwordRegEx,
+  emailRegEx,
+  usernameRegEx,
+  messageUsernameMinLength,
+  messageUsernameMaxLength,
+  messageRequired,
+  messagePattern,
+  messagePasswordMaxLength,
+  messagePasswordMinLength,
+  messageNotTheSame,
+} from '../../../constants';
 
 import styles from './registration-form.module.scss';
 
@@ -15,15 +30,35 @@ type RegistrationFormInput = {
   email: string;
   password: string;
   repeatPassword: string;
-  personalInfoAgreement: boolean;
+  personalInfoAgreement?: boolean;
 };
 
 export const RegistrationForm: React.FC = () => {
+  const registerSchema = yup.object().shape({
+    username: yup
+      .string()
+      .required(messageRequired)
+      .matches(usernameRegEx, messagePattern)
+      .min(3, messageUsernameMinLength)
+      .max(20, messageUsernameMaxLength),
+    email: yup.string().required(messageRequired).email(messagePattern).matches(emailRegEx, messagePattern),
+    password: yup
+      .string()
+      .required(messageRequired)
+      .matches(passwordRegEx, messagePattern)
+      .min(6, messagePasswordMinLength)
+      .max(40, messagePasswordMaxLength),
+    repeatPassword: yup
+      .string()
+      .required(messageRequired)
+      .oneOf([yup.ref('password')], messageNotTheSame),
+    personalInfoAgreement: yup.bool().oneOf([true], messageRequired),
+  });
   const {
     register,
     formState: { errors },
     handleSubmit: onFormSubmit,
-  } = useForm<RegistrationFormInput>();
+  } = useForm({ resolver: yupResolver(registerSchema) });
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
     store.dispatch(registerNewUser(event, history, data));
@@ -56,57 +91,9 @@ export const RegistrationForm: React.FC = () => {
               maxLength={20}
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('username', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
-                pattern: {
-                  value: /^[a-z0-9]*$/,
-                  message: 'Допустимы латинские буквы в нижнем регистре и цифры',
-                },
-                minLength: {
-                  value: 3,
-                  message: 'Минимальная длина имени пользователя - 3 символа',
-                },
-                maxLength: {
-                  value: 20,
-                  message: 'Максимальная длина имени пользователя - 20 символов',
-                },
-              })}
+              {...register('username')}
             />
-            {errors?.username?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.username.message}
-              </p>
-            )}
-            {errors?.username?.type === 'pattern' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.username.message}
-              </p>
-            )}
-            {errors?.username?.type === 'minLength' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.username.message}
-              </p>
-            )}
-            {errors?.username?.type === 'maxLength' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.username.message}
-              </p>
-            )}
+            {errors?.username && <p className={styles['registration-form-error']}>{errors.username.message}</p>}
           </label>
           <label
             htmlFor="email"
@@ -120,33 +107,9 @@ export const RegistrationForm: React.FC = () => {
               placeholder="Email address"
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('email', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
-                pattern: {
-                  value: /^(?!.*@.*@.*$)(?!.*@.*--.*\..*$)(?!.*@.*-\..*$)(?!.*@.*-$)((.*)?@.+(\..{1,11})?)$/,
-                  message: 'Введите корректный email',
-                },
-              })}
+              {...register('email')}
             />
-            {errors?.email?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.email.message}
-              </p>
-            )}
-            {errors?.email?.type === 'pattern' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.email.message}
-              </p>
-            )}
+            {errors?.email && <p className={styles['registration-form-error']}>{errors.email.message}</p>}
           </label>
           <label
             htmlFor="password"
@@ -162,57 +125,9 @@ export const RegistrationForm: React.FC = () => {
               maxLength={40}
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('password', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
-                pattern: {
-                  value: /^[a-z0-9]*$/,
-                  message: 'Допустимы латинские буквы в нижнем регистре и цифры',
-                },
-                minLength: {
-                  value: 6,
-                  message: 'Минимальная длина пароля - 6 символов',
-                },
-                maxLength: {
-                  value: 40,
-                  message: 'Максимальная длина пароля - 40 символов',
-                },
-              })}
+              {...register('password')}
             />
-            {errors?.password?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
-            {errors?.password?.type === 'pattern' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
-            {errors?.password?.type === 'minLength' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
-            {errors?.password?.type === 'maxLength' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.password.message}
-              </p>
-            )}
+            {errors?.password && <p className={styles['registration-form-error']}>{errors.password.message}</p>}
           </label>
           <label
             htmlFor="repeatPassword"
@@ -226,29 +141,10 @@ export const RegistrationForm: React.FC = () => {
               placeholder="Password"
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('repeatPassword', {
-                required: {
-                  value: true,
-                  message: 'Поле обязательно к заполнению',
-                },
-                validate: (value, formValues) => value === formValues.password,
-              })}
+              {...register('repeatPassword')}
             />
-            {errors?.repeatPassword?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.repeatPassword.message}
-              </p>
-            )}
-            {errors?.repeatPassword?.type === 'validate' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                Пароли должны совпадать
-              </p>
+            {errors?.repeatPassword && (
+              <p className={styles['registration-form-error']}>{errors.repeatPassword.message}</p>
             )}
           </label>
         </div>
@@ -259,14 +155,8 @@ export const RegistrationForm: React.FC = () => {
             type="checkbox"
             required
             /* eslint-disable-next-line react/jsx-props-no-spreading */
-            {...register('personalInfoAgreement', {
-              required: {
-                value: true,
-                message: 'Требуется согласие',
-              },
-            })}
+            {...register('personalInfoAgreement')}
           />
-          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control */}
           <label
             className={`registration-form-label ${styles['registration-form-label--agreement']}`}
             htmlFor="personalInfoAgreement"
@@ -274,13 +164,8 @@ export const RegistrationForm: React.FC = () => {
             <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
               I agree to the processing of my personal information
             </p>
-            {errors?.personalInfoAgreement?.type === 'required' && (
-              <p
-                role="alert"
-                className={styles['registration-form-error']}
-              >
-                {errors.personalInfoAgreement.message}
-              </p>
+            {errors?.personalInfoAgreement && (
+              <p className={styles['registration-form-error']}>{errors.personalInfoAgreement.message}</p>
             )}
           </label>
         </div>

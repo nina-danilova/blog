@@ -11,11 +11,12 @@
   gap: 27px;
 }
 
-.user-menu-item--create-article {
+.create-article-button {
   color: $success-color;
   padding: 6px 10px 5px 10px;
   border: 1px solid $success-color;
   border-radius: 5px;
+  text-decoration: none;
 }
 
 .button-log-out {

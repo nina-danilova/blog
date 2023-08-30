@@ -5,6 +5,7 @@ import { useSelector } from 'react-redux';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { clsx } from 'clsx';
 
 import { registerNewUser } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
@@ -21,7 +22,7 @@ import {
   messagePasswordMaxLength,
   messagePasswordMinLength,
   messageNotTheSame,
-} from '../../../constants';
+} from '../../../utilities/constants';
 
 import styles from './registration-form.module.scss';
 
@@ -77,15 +78,11 @@ export const RegistrationForm: React.FC = () => {
       >
         <p className={styles['registration-form-title']}>Create new account</p>
         <div className={styles['registration-form-input-group']}>
-          <label
-            htmlFor="username"
-            className="registration-form-label"
-          >
+          <label>
             <p className={styles['registration-form-label-name']}>Username</p>
             <input
               className={styles['registration-form-input']}
               type="text"
-              id="username"
               placeholder="Username"
               minLength={3}
               maxLength={20}
@@ -95,15 +92,11 @@ export const RegistrationForm: React.FC = () => {
             />
             {errors?.username && <p className={styles['registration-form-error']}>{errors.username.message}</p>}
           </label>
-          <label
-            htmlFor="email"
-            className="registration-form-label"
-          >
+          <label>
             <p className={styles['registration-form-label-name']}>Email address</p>
             <input
               className={styles['registration-form-input']}
               type="email"
-              id="email"
               placeholder="Email address"
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -111,15 +104,11 @@ export const RegistrationForm: React.FC = () => {
             />
             {errors?.email && <p className={styles['registration-form-error']}>{errors.email.message}</p>}
           </label>
-          <label
-            htmlFor="password"
-            className="registration-form-label"
-          >
+          <label>
             <p className={styles['registration-form-label-name']}>Password</p>
             <input
               className={styles['registration-form-input']}
               type="password"
-              id="password"
               placeholder="Password"
               minLength={6}
               maxLength={40}
@@ -129,15 +118,11 @@ export const RegistrationForm: React.FC = () => {
             />
             {errors?.password && <p className={styles['registration-form-error']}>{errors.password.message}</p>}
           </label>
-          <label
-            htmlFor="repeatPassword"
-            className="registration-form-label"
-          >
+          <label>
             <p className={styles['registration-form-label-name']}>Repeat Password</p>
             <input
               className={styles['registration-form-input']}
               type="password"
-              id="repeatPassword"
               placeholder="Password"
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -150,7 +135,11 @@ export const RegistrationForm: React.FC = () => {
         </div>
         <div className={styles['registration-form-agreement']}>
           <input
-            className={`${styles['registration-form-input']} ${styles['registration-form-input--agreement']} ${styles['visually-hidden']}`}
+            className={clsx(
+              styles['registration-form-input'],
+              styles['registration-form-input--agreement'],
+              styles['visually-hidden']
+            )}
             id="personalInfoAgreement"
             type="checkbox"
             required

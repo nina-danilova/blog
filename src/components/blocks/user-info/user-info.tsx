@@ -3,13 +3,14 @@ import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
 import { RootState } from 'redux/reducers';
+import imageUrl from 'assets/icons/icon-author-avatar.svg';
 
 import styles from './user-info.module.scss';
 
 export const UserInfo: React.FC = () => {
   const { userName, image } = useSelector((state: RootState) => state.user.profile);
   const name = userName || '';
-  const imageSrc = image || './img/icon-author-avatar.svg';
+  const imageSrc = image || imageUrl;
   return (
     <div className={styles['user-info']}>
       <p className={styles['user-name']}>

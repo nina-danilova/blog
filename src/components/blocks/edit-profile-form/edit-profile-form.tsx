@@ -21,7 +21,7 @@ import {
   passwordRegEx,
   urlRegEx,
   usernameRegEx,
-} from '../../../constants';
+} from '../../../utilities/constants';
 
 import styles from './edit-profile-form.module.scss';
 import { onInputValueChange } from './utility';
@@ -80,15 +80,11 @@ export const EditProfileForm: React.FC = () => {
       >
         <p className={styles['edit-profile-form-title']}>Edit profile</p>
         <div className={styles['edit-profile-form-input-group']}>
-          <label
-            htmlFor="username"
-            className="edit-profile-form-label"
-          >
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Username</p>
             <input
               className={styles['edit-profile-form-input']}
               type="text"
-              id="username"
               placeholder="Username"
               minLength={3}
               maxLength={20}
@@ -100,15 +96,11 @@ export const EditProfileForm: React.FC = () => {
             />
             {errors?.username && <p className={styles['edit-profile-form-error']}>{errors.username.message}</p>}
           </label>
-          <label
-            htmlFor="email"
-            className="edit-profile-form-label"
-          >
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Email address</p>
             <input
               className={styles['edit-profile-form-input']}
               type="email"
-              id="email"
               placeholder="Email address"
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
@@ -118,15 +110,11 @@ export const EditProfileForm: React.FC = () => {
             />
             {errors?.email && <p className={styles['edit-profile-form-error']}>{errors.email.message}</p>}
           </label>
-          <label
-            htmlFor="password"
-            className="edit-profile-form-label"
-          >
+          <label>
             <p className={styles['edit-profile-form-label-name']}>New password</p>
             <input
               className={styles['edit-profile-form-input']}
               type="password"
-              id="password"
               placeholder="New password"
               minLength={6}
               maxLength={40}
@@ -136,15 +124,11 @@ export const EditProfileForm: React.FC = () => {
             />
             {errors?.password && <p className={styles['edit-profile-form-error']}>{errors.password.message}</p>}
           </label>
-          <label
-            htmlFor="image"
-            className="edit-profile-form-label"
-          >
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Avatar image (url)</p>
             <input
               className={styles['edit-profile-form-input']}
               type="text"
-              id="image"
               placeholder="Avatar image"
               defaultValue={imageUrl}
               /* eslint-disable-next-line react/jsx-props-no-spreading */

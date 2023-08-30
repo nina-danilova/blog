@@ -17,6 +17,7 @@
     "@types/styled-components": "^5.1.26",
     "antd": "^5.5.2",
     "classnames": "^2.3.2",
+    "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "markdown-to-jsx": "^7.2.1",
     "react": "^18.2.0",

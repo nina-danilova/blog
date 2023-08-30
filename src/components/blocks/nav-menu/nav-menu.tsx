@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { clsx } from 'clsx';
 
 import styles from './nav-menu.module.scss';
 
@@ -17,7 +18,7 @@ export const NavMenu: React.FC = () => {
       <li className={styles['nav-menu-item']}>
         <Link
           to="/sign-up"
-          className={`${styles['nav-menu-link']} ${styles['nav-menu-link--register']}`}
+          className={clsx(styles['nav-menu-link'], styles['nav-menu-link--register'])}
         >
           Sign Up
         </Link>

@@ -1,7 +1,9 @@
 import React from 'react';
 
+import imageUrl from 'assets/icons/icon-author-avatar.svg';
+import { getDate } from 'utilities/dates';
+
 import styles from './article-issue-info.module.scss';
-import { getDate } from './utility';
 
 type ArticleIssueInfoProps = {
   createdAt: string;
@@ -13,7 +15,7 @@ type ArticleIssueInfoProps = {
 
 export const ArticleIssueInfo: React.FC<ArticleIssueInfoProps> = ({ createdAt, author }) => {
   const { image, username } = author;
-  const authorUrl = image || 'img/icon-author-avatar.svg';
+  const authorUrl = image || imageUrl;
   const issueDate = getDate(createdAt);
   return (
     <div className={styles['article-issue-info']}>

@@ -11,11 +11,13 @@
 - React
 - React Hooks
 - React Hook Form
+- yup
 - React Router
 - Redux
 - Redux Thunk
 - TypeScript
 - SASS
 - CSS modules
+- clsx
 - Markdown to JSX
 - Figma

@@ -20,5 +20,5 @@ export const Navigation: React.FC = () => {
   }
   const navMenu = isAuthorized || result ? <UserMenu /> : <NavMenu />;
 
-  return <nav className="navigation">{navMenu}</nav>;
+  return <nav>{navMenu}</nav>;
 };

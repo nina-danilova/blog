@@ -10,7 +10,7 @@ import { userLogin } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
 
-import { emailRegEx, messagePattern, messageRequired } from '../../../constants';
+import { emailRegEx, messagePattern, messageRequired } from '../../../utilities/constants';
 
 import styles from './log-in-form.module.scss';
 
@@ -46,30 +46,22 @@ export const LogInForm: React.FC = () => {
       >
         <p className={styles['log-in-form-title']}>Sign In</p>
         <div className={styles['log-in-form-input-group']}>
-          <label
-            htmlFor="email"
-            className="log-in-form-label"
-          >
+          <label>
             <p className={styles['log-in-form-label-name']}>Email address</p>
             <input
               className={styles['log-in-form-input']}
               type="email"
-              id="email"
               placeholder="Email address"
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email')}
             />
             {errors?.email && <p className={styles['log-in-form-error']}>{errors.email.message}</p>}
           </label>
-          <label
-            htmlFor="password"
-            className="log-in-form-label"
-          >
+          <label>
             <p className={styles['log-in-form-label-name']}>Password</p>
             <input
               className={styles['log-in-form-input']}
               type="password"
-              id="password"
               placeholder="Password"
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('password')}

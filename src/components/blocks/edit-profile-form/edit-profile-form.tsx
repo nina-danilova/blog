@@ -66,12 +66,9 @@ export const EditProfileForm: React.FC = () => {
       type="error"
     />
   ) : null;
-  const userName = useSelector((state: RootState) => state.user.profile?.userName);
-  const name = userName || '';
-  const userEmail = useSelector((state: RootState) => state.user.profile?.email);
-  const email = userEmail || '';
-  const userImage = useSelector((state: RootState) => state.user.profile?.image);
-  const imageUrl = userImage || '';
+  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
+  const userEmail = useSelector((state: RootState) => state.user.profile?.email) || '';
+  const userImage = useSelector((state: RootState) => state.user.profile?.image) || '';
   return (
     <>
       <form
@@ -89,7 +86,7 @@ export const EditProfileForm: React.FC = () => {
               minLength={3}
               maxLength={20}
               required
-              defaultValue={name}
+              defaultValue={userName}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('username')}
               onChange={onInputValueChange}
@@ -105,7 +102,7 @@ export const EditProfileForm: React.FC = () => {
               required
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('email')}
-              defaultValue={email}
+              defaultValue={userEmail}
               onChange={onInputValueChange}
             />
             {errors?.email && <p className={styles['edit-profile-form-error']}>{errors.email.message}</p>}
@@ -130,7 +127,7 @@ export const EditProfileForm: React.FC = () => {
               className={styles['edit-profile-form-input']}
               type="text"
               placeholder="Avatar image"
-              defaultValue={imageUrl}
+              defaultValue={userImage}
               /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...register('image')}
               onChange={onInputValueChange}

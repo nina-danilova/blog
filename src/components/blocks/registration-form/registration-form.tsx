@@ -10,7 +10,6 @@ import { clsx } from 'clsx';
 import { registerNewUser } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
-
 import {
   passwordRegEx,
   emailRegEx,
@@ -22,7 +21,8 @@ import {
   messagePasswordMaxLength,
   messagePasswordMinLength,
   messageNotTheSame,
-} from '../../../utilities/constants';
+  linkPaths,
+} from 'utilities/constants';
 
 import styles from './registration-form.module.scss';
 
@@ -35,6 +35,7 @@ type RegistrationFormInput = {
 };
 
 export const RegistrationForm: React.FC = () => {
+  const { pathToHome } = linkPaths;
   const registerSchema = yup.object().shape({
     username: yup
       .string()
@@ -168,7 +169,7 @@ export const RegistrationForm: React.FC = () => {
           <p className={styles['registration-form-comment']}>
             Already have an account?{' '}
             <Link
-              to="/"
+              to={pathToHome}
               className={styles['registration-form-link']}
             >
               Sign In

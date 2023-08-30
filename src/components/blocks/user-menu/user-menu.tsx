@@ -4,11 +4,13 @@ import { Link, useHistory } from 'react-router-dom';
 import { UserInfo } from 'components/blocks/user-info';
 import { store } from 'redux/store';
 import { userLogOut } from 'redux/action-creators/user';
+import { linkPaths } from 'utilities/constants';
 
 import { goToPage } from './utility';
 import styles from './user-menu.module.scss';
 
 export const UserMenu: React.FC = () => {
+  const { pathToNewArticle } = linkPaths;
   const history = useHistory();
   const onLogOutButtonClick = () => {
     store.dispatch(userLogOut());
@@ -18,7 +20,7 @@ export const UserMenu: React.FC = () => {
     <ul className={styles['user-menu']}>
       <li className={styles['user-menu-item']}>
         <Link
-          to="/new-article"
+          to={pathToNewArticle}
           className={styles['create-article-button']}
         >
           Create article

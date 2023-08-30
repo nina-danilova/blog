@@ -26,6 +26,16 @@ export enum actions {
   USER_LOGIN_ERROR = 'USER_LOGIN_ERROR',
 }
 
+export enum linkPaths {
+  pathToSignIn = '/sign-in',
+  pathToSignUp = '/sign-up',
+  pathToProfile = '/profile',
+  pathToNewArticle = '/new-article',
+  pathToHome = '/',
+  pathToArticles = '/articles/',
+  pathToArticle = '/articles/:id',
+}
+
 export const apiRootUrl = 'https://blog.kata.academy/api';
 export const usernameRegEx = /^[a-z0-9]*$/;
 export const emailRegEx = /^(?!.*@.*@.*$)(?!.*@.*--.*\..*$)(?!.*@.*-\..*$)(?!.*@.*-$)((.*)?@.+(\..{1,11})?)$/;

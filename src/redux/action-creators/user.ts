@@ -1,10 +1,11 @@
 import { sendData } from 'services/api';
+import { getFromStorage, removeFromStorage, setToStorage } from 'services/storage';
 
 import { loadProfileSuccess } from './profile';
 
 export const userLogOut = () => {
-  localStorage.setItem('userAuthorized', 'false');
-  localStorage.removeItem('lastEmail');
+  setToStorage('userAuthorized', 'false');
+  removeFromStorage('lastEmail');
   return {
     type: 'USER_LOG_OUT',
   };
@@ -78,7 +79,7 @@ export const registerNewUser = (evt, history, formData) => {
           throw error;
         }
         if (response.user) {
-          localStorage.setItem(`$${response.user.email}-token`, response.user.token);
+          setToStorage(`${response.user.email}-token`, response.user.token);
           dispatch(userRegisterSuccess(response));
           history.push('/');
         }
@@ -122,7 +123,7 @@ export const userLogin = (evt, history, formData) => {
         password: formData.password,
       },
     };
-    const token = localStorage.getItem(`${data.user.email}-token`);
+    const token = getFromStorage(`${data.user.email}-token`);
     if (!token) {
       const error = new Error('No token for this email');
       error.response = data;
@@ -158,9 +159,9 @@ export const userLogin = (evt, history, formData) => {
           throw error;
         }
         if (response.user) {
-          localStorage.setItem(`${response.user.email}-login-token`, response.user.token);
-          localStorage.setItem('userAuthorized', 'true');
-          localStorage.setItem('lastEmail', response.user.email);
+          setToStorage(`${response.user.email}-login-token`, response.user.token);
+          setToStorage('userAuthorized', 'true');
+          setToStorage('lastEmail', response.user.email);
           dispatch(userLoginSuccess());
           dispatch(loadProfileSuccess(response));
           history.push('/');

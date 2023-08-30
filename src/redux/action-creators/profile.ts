@@ -1,6 +1,7 @@
 import { useHistory } from 'react-router-dom';
 
 import { getData, updateData } from 'services/api';
+import { getFromStorage, setToStorage } from 'services/storage';
 
 export const loadProfileStart = () => {
   return {
@@ -29,13 +30,12 @@ export const loadProfileError = (error) => {
 export const loadProfile = () => {
   return (dispatch, getState) => {
     const { user } = getState();
-    // !loadingProfile && !userName && userName !== ''
     if (user.profile?.loadingProfile || user.profile?.userName || user.profile?.userName === '') {
       return;
     }
     const history = useHistory();
-    const email = localStorage.getItem('lastEmail');
-    const token = localStorage.getItem(`${email}-login-token`);
+    const email = getFromStorage('lastEmail');
+    const token = getFromStorage(`${email}-login-token`);
     if (!token) {
       const error = new Error(`No login token for this email - ${email}`);
       error.response = null;
@@ -87,8 +87,8 @@ export const updateProfileStart = () => {
 };
 
 export const updateProfileSuccess = (json) => {
-  localStorage.setItem(`${json.user.email}-login-token`, json.user.token);
-  localStorage.setItem('lastEmail', json.user.email);
+  setToStorage(`${json.user.email}-login-token`, json.user.token);
+  setToStorage('lastEmail', json.user.email);
   return {
     type: 'UPDATE_PROFILE_SUCCESS',
     userName: json.user.username,
@@ -115,7 +115,7 @@ export const updateProfile = (evt, history, formData) => {
     if (updatingProfile) {
       return;
     }
-    const token = localStorage.getItem(`${email}-login-token`);
+    const token = getFromStorage(`${email}-login-token`);
     const data = {
       user: {
         email: formData.email,

@@ -7,41 +7,44 @@ import { RegistrationPage } from 'components/pages/registration-page';
 import { LogInPage } from 'components/pages/log-in-page';
 import { ProfilePage } from 'components/pages/profile-page';
 import { NewArticlePage } from 'components/pages/new-article-page';
+import { linkPaths } from 'utilities/constants';
 
 import styles from './main.module.scss';
 
 export const Main: React.FC = () => {
+  const { pathToArticle, pathToArticles, pathToSignIn, pathToSignUp, pathToNewArticle, pathToProfile, pathToHome } =
+    linkPaths;
   return (
     <main className={styles.main}>
       <Switch>
         <Route
-          path="/"
+          path={pathToHome}
           exact
           component={ArticlesPage}
         />
         <Route
-          path="/articles/"
+          path={pathToArticles}
           exact
           component={ArticlesPage}
         />
         <Route
-          path="/articles/:id"
+          path={pathToArticle}
           component={ArticlePageWithRouter}
         />
         <Route
-          path="/sign-in"
+          path={pathToSignIn}
           component={LogInPage}
         />
         <Route
-          path="/sign-up"
+          path={pathToSignUp}
           component={RegistrationPage}
         />
         <Route
-          path="/profile"
+          path={pathToProfile}
           component={ProfilePage}
         />
         <Route
-          path="/new-article"
+          path={pathToNewArticle}
           component={NewArticlePage}
         />
         <Route render={() => <h1>Page not found</h1>} />

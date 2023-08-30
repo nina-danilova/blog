@@ -7,12 +7,13 @@ import { UserMenu } from 'components/blocks/user-menu';
 import { store } from 'redux/store';
 import { userLoginSuccess } from 'redux/action-creators/user';
 import { loadProfile } from 'redux/action-creators/profile';
+import { getFromStorage } from 'services/storage';
 
 export const Navigation: React.FC = () => {
   const isAuthorized = useSelector((state: RootState) => state.user.authorized);
   let result;
   if (!isAuthorized) {
-    result = localStorage.getItem('userAuthorized') === 'true';
+    result = getFromStorage('userAuthorized') === 'true';
   }
   if (result) {
     store.dispatch(userLoginSuccess());

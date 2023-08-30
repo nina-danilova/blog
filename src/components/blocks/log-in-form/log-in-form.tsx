@@ -9,6 +9,7 @@ import * as yup from 'yup';
 import { userLogin } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
+import { linkPaths } from 'utilities/constants';
 
 import { emailRegEx, messagePattern, messageRequired } from '../../../utilities/constants';
 
@@ -20,6 +21,7 @@ type LoginFormInput = {
 };
 
 export const LogInForm: React.FC = () => {
+  const { pathToSignUp } = linkPaths;
   const logInSchema = yup.object().shape({
     email: yup.string().required(messageRequired).email(messagePattern).matches(emailRegEx, messagePattern),
     password: yup.string().required(messageRequired),
@@ -79,7 +81,7 @@ export const LogInForm: React.FC = () => {
           <p className={styles['log-in-form-comment']}>
             Don&apos;t have an account?{' '}
             <Link
-              to="/sign-up"
+              to={pathToSignUp}
               className={styles['log-in-form-link']}
             >
               Sign Up

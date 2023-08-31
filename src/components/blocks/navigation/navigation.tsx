@@ -11,15 +11,11 @@ import { getFromStorage } from 'services/storage';
 
 export const Navigation: React.FC = () => {
   const isAuthorized = useSelector((state: RootState) => state.user.authorized);
-  let result;
-  if (!isAuthorized) {
-    result = getFromStorage('userAuthorized') === 'true';
-  }
-  if (result) {
+  if (!isAuthorized && getFromStorage('userAuthorized') === 'true') {
     store.dispatch(userLoginSuccess());
     store.dispatch(loadProfile());
   }
-  const navMenu = isAuthorized || result ? <UserMenu /> : <NavMenu />;
+  const navMenu = isAuthorized || getFromStorage('userAuthorized') === 'true' ? <UserMenu /> : <NavMenu />;
 
   return <nav>{navMenu}</nav>;
 };

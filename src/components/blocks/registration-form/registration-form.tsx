@@ -35,7 +35,7 @@ type RegistrationFormInput = {
 };
 
 export const RegistrationForm: React.FC = () => {
-  const { pathToHome } = linkPaths;
+  const { pathToSignIn } = linkPaths;
   const registerSchema = yup.object().shape({
     username: yup
       .string()
@@ -169,7 +169,7 @@ export const RegistrationForm: React.FC = () => {
           <p className={styles['registration-form-comment']}>
             Already have an account?{' '}
             <Link
-              to={pathToHome}
+              to={pathToSignIn}
               className={styles['registration-form-link']}
             >
               Sign In

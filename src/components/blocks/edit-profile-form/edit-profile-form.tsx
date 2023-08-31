@@ -2,7 +2,7 @@ import React from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
@@ -50,10 +50,12 @@ export const EditProfileForm: React.FC = () => {
       .max(40, messagePasswordMaxLength),
     image: yup.string().nullable().optional().url(messagePattern),
   });
+  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
   const {
     register,
     formState: { errors },
     handleSubmit: onFormSubmit,
+    control,
   } = useForm({ resolver: yupResolver(editProfileSchema) });
   const history = useHistory();
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
@@ -66,7 +68,7 @@ export const EditProfileForm: React.FC = () => {
       type="error"
     />
   ) : null;
-  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
+
   const userEmail = useSelector((state: RootState) => state.user.profile?.email) || '';
   const userImage = useSelector((state: RootState) => state.user.profile?.image) || '';
   return (
@@ -77,19 +79,27 @@ export const EditProfileForm: React.FC = () => {
       >
         <p className={styles['edit-profile-form-title']}>Edit profile</p>
         <div className={styles['edit-profile-form-input-group']}>
-          <label>
+          <label htmlFor="username">
             <p className={styles['edit-profile-form-label-name']}>Username</p>
-            <input
-              className={styles['edit-profile-form-input']}
-              type="text"
-              placeholder="Username"
-              minLength={3}
-              maxLength={20}
-              required
-              defaultValue={userName}
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('username')}
-              onChange={onInputValueChange}
+            <Controller
+              render={({ field: { onChange, value = userName, name }, fieldState: { invalid } }) => (
+                <input
+                  value={value}
+                  onChange={onChange} // send value to hook form
+                  className={styles['edit-profile-form-input']}
+                  type="text"
+                  placeholder="Username"
+                  id="username"
+                  name={name}
+                />
+              )}
+              name="username"
+              control={control}
+              rules={{
+                required: true,
+                minLength: 3,
+                maxLength: 20,
+              }}
             />
             {errors?.username && <p className={styles['edit-profile-form-error']}>{errors.username.message}</p>}
           </label>

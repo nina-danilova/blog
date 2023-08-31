@@ -1,7 +1,8 @@
 import React from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
 
-import { goToPage } from './utility';
+import { goToPage } from 'utilities/history';
+
 import styles from './article-description.module.scss';
 
 type ArticleDescriptionProps = {

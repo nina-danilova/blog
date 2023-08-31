@@ -5,8 +5,8 @@ import { UserInfo } from 'components/blocks/user-info';
 import { store } from 'redux/store';
 import { userLogOut } from 'redux/action-creators/user';
 import { linkPaths } from 'utilities/constants';
+import { goToPage } from 'utilities/history';
 
-import { goToPage } from './utility';
 import styles from './user-menu.module.scss';
 
 export const UserMenu: React.FC = () => {

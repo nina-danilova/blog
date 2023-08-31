@@ -45,7 +45,7 @@ export const loadProfile = () => {
     dispatch(loadProfileStart());
     getData('https://blog.kata.academy/api/user', token)
       .then(
-        function (response) {
+        (response) => {
           if (response.status === 401) {
             history.push('/sign-in');
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
@@ -55,7 +55,7 @@ export const loadProfile = () => {
           error.response = response;
           throw error;
         },
-        function (err) {
+        (err) => {
           // handle error from promise-api
           const error = new Error('Load profile error while sending data through API');
           error.response = err;
@@ -74,7 +74,7 @@ export const loadProfile = () => {
           dispatch(loadProfileSuccess(response));
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         dispatch(loadProfileError(error));
       });
   };
@@ -127,7 +127,7 @@ export const updateProfile = (evt, history, formData) => {
     dispatch(updateProfileStart());
     updateData('https://blog.kata.academy/api/user', data, token)
       .then(
-        function (response) {
+        (response) => {
           if (response.status === 401) {
             history.push('/sign-in');
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
@@ -137,7 +137,7 @@ export const updateProfile = (evt, history, formData) => {
           error.response = response;
           throw error;
         },
-        function (err) {
+        (err) => {
           // handle error from promise-api
           const error = new Error('Update profile error while updating data through API');
           error.response = err;
@@ -156,7 +156,7 @@ export const updateProfile = (evt, history, formData) => {
           dispatch(updateProfileSuccess(response));
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         dispatch(updateProfileError(error));
       });
   };

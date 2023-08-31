@@ -1,16 +1,15 @@
-export async function getData(url, token: null | string = null) {
-  const response = await fetch(url, {
+export const getData = async (url, token: null | string = null) => {
+  return fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
       Authorization: `Token ${token}`,
     },
   });
-  return response;
-}
+};
 
-export async function updateData(url, data, token: null | string = null) {
-  const response = await fetch(url, {
+export const updateData = async (url, data, token: null | string = null) => {
+  return fetch(url, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
@@ -18,11 +17,10 @@ export async function updateData(url, data, token: null | string = null) {
     },
     body: JSON.stringify(data),
   });
-  return response;
-}
+};
 
-export async function sendData(url, data, token: null | string = null) {
-  const response = await fetch(url, {
+export const sendData = async (url, data, token: null | string = null) => {
+  return fetch(url, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
@@ -30,5 +28,4 @@ export async function sendData(url, data, token: null | string = null) {
     },
     body: JSON.stringify(data),
   });
-  return response;
-}
+};

@@ -53,7 +53,7 @@ export const loadArticles = (currentPage, history) => {
     dispatch(loadArticlesStart());
     getData(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`)
       .then(
-        function (response) {
+        (response) => {
           if (response.status === 401) {
             history.push('/sign-in');
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
@@ -63,7 +63,7 @@ export const loadArticles = (currentPage, history) => {
           error.response = response;
           throw error;
         },
-        function (err) {
+        (err) => {
           // handle error from promise-api
           const error = new Error('Load articles error while sending data through API');
           error.response = err;
@@ -84,7 +84,7 @@ export const loadArticles = (currentPage, history) => {
           dispatch(loadArticlesSuccess(preparedResponse));
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         dispatch(loadArticlesError(error));
       });
   };

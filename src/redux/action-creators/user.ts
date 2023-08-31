@@ -53,7 +53,7 @@ export const registerNewUser = (evt, history, formData) => {
     dispatch(userRegisterStart());
     sendData('https://blog.kata.academy/api/users', data)
       .then(
-        function (response) {
+        (response) => {
           if (response.status === 401) {
             history.push('/sign-in');
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
@@ -63,7 +63,7 @@ export const registerNewUser = (evt, history, formData) => {
           error.response = response;
           throw error;
         },
-        function (err) {
+        (err) => {
           // handle error from promise-api
           const error = new Error('User register error while sending data through API');
           error.response = err;
@@ -84,7 +84,7 @@ export const registerNewUser = (evt, history, formData) => {
           history.push('/');
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         dispatch(userRegisterError(error));
       });
   };
@@ -133,7 +133,7 @@ export const userLogin = (evt, history, formData) => {
     dispatch(userLoginStart());
     sendData('https://blog.kata.academy/api/users/login', data, token)
       .then(
-        function (response) {
+        (response) => {
           if (response.status === 401) {
             history.push('/sign-in');
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
@@ -143,7 +143,7 @@ export const userLogin = (evt, history, formData) => {
           error.response = response;
           throw error;
         },
-        function (err) {
+        (err) => {
           // handle error from promise-api
           const error = new Error('User login error while sending data through API');
           error.response = err;
@@ -167,7 +167,7 @@ export const userLogin = (evt, history, formData) => {
           history.push('/');
         }
       })
-      .catch(function (error) {
+      .catch((error) => {
         dispatch(userLoginError(error));
       });
   };

@@ -8,6 +8,8 @@ import { LogInPage } from 'components/pages/log-in-page';
 import { ProfilePage } from 'components/pages/profile-page';
 import { NewArticlePage } from 'components/pages/new-article-page';
 import { linkPaths } from 'utilities/constants';
+import { PrivateRoute } from 'components/utilities/private-route';
+import { NotFoundPage } from 'components/pages/not-found-page';
 
 import styles from './main.module.scss';
 
@@ -39,15 +41,15 @@ export const Main: React.FC = () => {
           path={pathToSignUp}
           component={RegistrationPage}
         />
-        <Route
+        <PrivateRoute
           path={pathToProfile}
           component={ProfilePage}
         />
-        <Route
+        <PrivateRoute
           path={pathToNewArticle}
           component={NewArticlePage}
         />
-        <Route render={() => <h1>Page not found</h1>} />
+        <Route render={NotFoundPage} />
       </Switch>
     </main>
   );

@@ -30,19 +30,22 @@ type EditProfileFormInput = {
 };
 
 export const EditProfileForm: React.FC = () => {
-  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
-  const userImage = useSelector((state: RootState) => state.user.profile?.image) || '';
-  const userEmail = useSelector((state: RootState) => state.user.profile?.email) || '';
+  const userName = useSelector((state: RootState) => state.user.profile?.userName);
+  const userImage = useSelector((state: RootState) => state.user.profile?.image);
+  const userEmail = useSelector((state: RootState) => state.user.profile?.email);
   const {
     handleSubmit: onFormSubmit,
     control,
     setValue,
+    formState: { errors },
+    resetField,
   } = useForm<EditProfileFormInput>({
     mode: 'onChange',
   });
   const history = useHistory();
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
     store.dispatch(updateProfile(event, history, data));
+    resetField('password');
   };
   const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
   const errorMessage = error ? (
@@ -53,9 +56,13 @@ export const EditProfileForm: React.FC = () => {
   ) : null;
   useEffect(() => {
     setValue('username', userName);
+  }, [userName]);
+  useEffect(() => {
     setValue('email', userEmail);
+  }, [userEmail]);
+  useEffect(() => {
     setValue('image', userImage);
-  }, [userName, userEmail, userImage]);
+  }, [userImage]);
   return (
     <>
       <form
@@ -84,7 +91,7 @@ export const EditProfileForm: React.FC = () => {
                   message: messageUsernameMaxLength,
                 },
               }}
-              render={({ field: { onChange, value }, fieldState: { error: err } }) => {
+              render={({ field: { onChange, value } }) => {
                 return (
                   <>
                     <input
@@ -92,10 +99,14 @@ export const EditProfileForm: React.FC = () => {
                       type="text"
                       placeholder="Username"
                       id="username"
-                      value={value}
+                      value={value || ''}
                       onChange={onChange}
                     />
-                    {err && <p className={styles['edit-profile-form-error']}>{err.message}</p>}
+                    {errors.username && (
+                      <p className={styles['edit-profile-form-error']}>
+                        {errors.username.message || 'Validation error'}
+                      </p>
+                    )}
                   </>
                 );
               }}
@@ -113,7 +124,7 @@ export const EditProfileForm: React.FC = () => {
                   message: messagePattern,
                 },
               }}
-              render={({ field: { onChange, value }, fieldState: { error: err } }) => {
+              render={({ field: { onChange, value } }) => {
                 return (
                   <>
                     <input
@@ -121,10 +132,12 @@ export const EditProfileForm: React.FC = () => {
                       type="email"
                       placeholder="Email address"
                       id="email"
-                      value={value}
+                      value={value || ''}
                       onChange={onChange}
                     />
-                    {err && <p className={styles['edit-profile-form-error']}>{err.message}</p>}
+                    {errors.email && (
+                      <p className={styles['edit-profile-form-error']}>{errors.email.message || 'Validation error'}</p>
+                    )}
                   </>
                 );
               }}
@@ -150,7 +163,7 @@ export const EditProfileForm: React.FC = () => {
                   message: messagePasswordMaxLength,
                 },
               }}
-              render={({ field: { onChange, value }, fieldState: { error: err } }) => {
+              render={({ field: { onChange, value } }) => {
                 return (
                   <>
                     <input
@@ -158,10 +171,14 @@ export const EditProfileForm: React.FC = () => {
                       type="password"
                       placeholder="New password"
                       id="password"
-                      value={value}
+                      value={value || ''}
                       onChange={onChange}
                     />
-                    {err && <p className={styles['edit-profile-form-error']}>{err.message}</p>}
+                    {errors.password && (
+                      <p className={styles['edit-profile-form-error']}>
+                        {errors.password.message || 'Validation error'}
+                      </p>
+                    )}
                   </>
                 );
               }}
@@ -178,7 +195,7 @@ export const EditProfileForm: React.FC = () => {
                   message: messagePattern,
                 },
               }}
-              render={({ field: { onChange, value }, fieldState: { error: err } }) => {
+              render={({ field: { onChange, value } }) => {
                 return (
                   <>
                     <input
@@ -186,10 +203,12 @@ export const EditProfileForm: React.FC = () => {
                       type="text"
                       placeholder="Avatar image"
                       id="image"
-                      value={value}
+                      value={value || ''}
                       onChange={onChange}
                     />
-                    {err && <p className={styles['edit-profile-form-error']}>{err.message}</p>}
+                    {errors.image && (
+                      <p className={styles['edit-profile-form-error']}>{errors.image.message || 'Validation error'}</p>
+                    )}
                   </>
                 );
               }}
@@ -200,6 +219,7 @@ export const EditProfileForm: React.FC = () => {
           <button
             type="submit"
             className={styles['edit-profile-form-button']}
+            /* disabled={!isValid} */
           >
             Save
           </button>
@@ -209,100 +229,3 @@ export const EditProfileForm: React.FC = () => {
     </>
   );
 };
-
-/*
-<form
-        className={styles['edit-profile-form']}
-        onSubmit={onFormSubmit(updateUserProfile)}
-      >
-        <p className={styles['edit-profile-form-title']}>Edit profile</p>
-        <div className={styles['edit-profile-form-input-group']}>
-          <label htmlFor="username">
-            <p className={styles['edit-profile-form-label-name']}>Username</p>
-            <Controller
-              render={({ field: { onChange, value, name }, fieldState: { invalid } }) => (
-                <input
-                  value={value}
-                  onChange={onChange} // send value to hook form
-                  className={styles['edit-profile-form-input']}
-                  type="text"
-                  placeholder="Username"
-                  id="username"
-                  name={name}
-                />
-              )}
-              name="username"
-              control={control}
-            />
-            {errors?.username && <p className={styles['edit-profile-form-error']}>{errors.username.message}</p>}
-          </label>
-          <label htmlFor="email">
-            <p className={styles['edit-profile-form-label-name']}>Email address</p>
-            <Controller
-              render={({ field: { onChange, value, name }, fieldState: { invalid } }) => (
-                <input
-                  value={value}
-                  onChange={onChange} // send value to hook form
-                  className={styles['edit-profile-form-input']}
-                  type="email"
-                  placeholder="Email address"
-                  id="email"
-                  name={name}
-                />
-              )}
-              name="email"
-              control={control}
-              defaultValue={userEmail}
-            />
-            {errors?.email && <p className={styles['edit-profile-form-error']}>{errors.email.message}</p>}
-          </label>
-          <label htmlFor="password">
-            <p className={styles['edit-profile-form-label-name']}>New password</p>
-            <Controller
-              render={({ field: { onChange, value, name }, fieldState: { invalid } }) => (
-                <input
-                  value={value}
-                  onChange={onChange} // send value to hook form
-                  className={styles['edit-profile-form-input']}
-                  type="password"
-                  placeholder="New password"
-                  id="password"
-                  name={name}
-                />
-              )}
-              name="password"
-              control={control}
-            />
-            {errors?.password && <p className={styles['edit-profile-form-error']}>{errors.password.message}</p>}
-          </label>
-          <label htmlFor="image">
-            <p className={styles['edit-profile-form-label-name']}>Avatar image (url)</p>
-            <Controller
-              render={({ field: { onChange, value, name }, fieldState: { invalid } }) => (
-                <input
-                  value={value}
-                  onChange={onChange} // send value to hook form
-                  className={styles['edit-profile-form-input']}
-                  type="text"
-                  placeholder="Avatar image"
-                  id="image"
-                  name={name}
-                />
-              )}
-              name="image"
-              control={control}
-              defaultValue={userImage}
-            />
-            {errors?.image && <p className={styles['edit-profile-form-error']}>{errors.image.message}</p>}
-          </label>
-        </div>
-        <div className={styles['edit-profile-form-actions']}>
-          <button
-            type="submit"
-            className={styles['edit-profile-form-button']}
-          >
-            Save
-          </button>
-        </div>
-      </form>
- */

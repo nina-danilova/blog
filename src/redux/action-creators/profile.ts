@@ -2,6 +2,7 @@ import { useHistory } from 'react-router-dom';
 
 import { getData, updateData } from 'services/api';
 import { getFromStorage, setToStorage } from 'services/storage';
+import { apiBaseUrl } from 'utilities/constants';
 
 export const loadProfileStart = () => {
   return {
@@ -43,7 +44,7 @@ export const loadProfile = () => {
       return;
     }
     dispatch(loadProfileStart());
-    getData('https://blog.kata.academy/api/user', token)
+    getData(`${apiBaseUrl}/user`, token)
       .then(
         (response) => {
           if (response.status === 401) {
@@ -106,9 +107,15 @@ export const updateProfileError = (error) => {
   };
 };
 
-export const updateProfile = (evt, history, formData) => {
+type UpdateProfileProps = {
+  event;
+  history;
+  data;
+};
+
+export const updateProfile = ({ event, history, data: formData }: UpdateProfileProps) => {
   return (dispatch, getState) => {
-    evt.preventDefault();
+    event.preventDefault();
     const state = getState();
     const { user } = state;
     const { email, updatingProfile } = user.profile;
@@ -125,7 +132,7 @@ export const updateProfile = (evt, history, formData) => {
       },
     };
     dispatch(updateProfileStart());
-    updateData('https://blog.kata.academy/api/user', data, token)
+    updateData({ url: `${apiBaseUrl}/user`, data, token })
       .then(
         (response) => {
           if (response.status === 401) {
@@ -159,26 +166,5 @@ export const updateProfile = (evt, history, formData) => {
       .catch((error) => {
         dispatch(updateProfileError(error));
       });
-  };
-};
-
-export const updateProfileFormUserName = (value) => {
-  return {
-    type: 'UPDATE_PROFILE_FORM_USER_NAME',
-    value,
-  };
-};
-
-export const updateProfileFormEmail = (value) => {
-  return {
-    type: 'UPDATE_PROFILE_FORM_EMAIL',
-    value,
-  };
-};
-
-export const updateProfileFormImageUrl = (value) => {
-  return {
-    type: 'UPDATE_PROFILE_FORM_IMAGE_URL',
-    value,
   };
 };

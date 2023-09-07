@@ -1,5 +1,6 @@
 import { getData } from 'services/api';
 import { store } from 'redux/store';
+import { apiBaseUrl } from 'utilities/constants';
 
 export const loadArticlesStart = () => {
   return {
@@ -51,7 +52,7 @@ export const loadArticles = (currentPage, history) => {
       return;
     }
     dispatch(loadArticlesStart());
-    getData(`https://blog.kata.academy/api/articles?limit=20&offset=${offset}`)
+    getData(`${apiBaseUrl}/articles?limit=20&offset=${offset}`)
       .then(
         (response) => {
           if (response.status === 401) {

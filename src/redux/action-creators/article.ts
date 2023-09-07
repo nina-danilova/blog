@@ -1,4 +1,5 @@
 import { getData } from 'services/api';
+import { apiBaseUrl } from 'utilities/constants';
 
 export const loadArticleStart = () => {
   return {
@@ -36,7 +37,7 @@ export const loadArticle = (slug, history) => {
     }
     dispatch(setSlug(slug));
     dispatch(loadArticleStart());
-    getData(`https://blog.kata.academy/api/articles/${slug}`)
+    getData(`${apiBaseUrl}/articles/${slug}`)
       .then(
         (response) => {
           if (response.status === 401) {
@@ -73,7 +74,13 @@ export const loadArticle = (slug, history) => {
   };
 };
 
-export const createArticle = (event, history, data) => {
+type CreateArticleProps = {
+  event;
+  history;
+  data;
+};
+
+export const createArticle = ({ event, history, data }: CreateArticleProps) => {
   console.log(event, history, data);
   return {
     type: 'CREATE_ARTICLE',

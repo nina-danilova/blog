@@ -2,9 +2,7 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useSelector } from 'react-redux';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { clsx } from 'clsx';
 
 import { registerNewUser } from 'redux/action-creators/user';
@@ -31,39 +29,21 @@ type RegistrationFormInput = {
   email: string;
   password: string;
   repeatPassword: string;
-  personalInfoAgreement?: boolean;
+  personalInfoAgreement: boolean;
 };
 
 export const RegistrationForm: React.FC = () => {
   const { pathToSignIn } = linkPaths;
-  const registerSchema = yup.object().shape({
-    username: yup
-      .string()
-      .required(messageRequired)
-      .matches(usernameRegEx, messagePattern)
-      .min(3, messageUsernameMinLength)
-      .max(20, messageUsernameMaxLength),
-    email: yup.string().required(messageRequired).email(messagePattern).matches(emailRegEx, messagePattern),
-    password: yup
-      .string()
-      .required(messageRequired)
-      .matches(passwordRegEx, messagePattern)
-      .min(6, messagePasswordMinLength)
-      .max(40, messagePasswordMaxLength),
-    repeatPassword: yup
-      .string()
-      .required(messageRequired)
-      .oneOf([yup.ref('password')], messageNotTheSame),
-    personalInfoAgreement: yup.bool().oneOf([true], messageRequired),
-  });
   const {
-    register,
+    control,
     formState: { errors },
     handleSubmit: onFormSubmit,
-  } = useForm({ resolver: yupResolver(registerSchema) });
+  } = useForm<RegistrationFormInput>({
+    mode: 'onChange',
+  });
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
-    store.dispatch(registerNewUser(event, history, data));
+    store.dispatch(registerNewUser({ event, history, data }));
   const error = useSelector((state: RootState) => state.user.registerError);
   const errorMessage = error ? (
     <Alert
@@ -81,71 +61,154 @@ export const RegistrationForm: React.FC = () => {
         <div className={styles['registration-form-input-group']}>
           <label>
             <p className={styles['registration-form-label-name']}>Username</p>
-            <input
-              className={styles['registration-form-input']}
-              type="text"
-              placeholder="Username"
-              minLength={3}
-              maxLength={20}
-              required
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('username')}
+            <Controller
+              name="username"
+              control={control}
+              rules={{
+                required: messageRequired,
+                pattern: {
+                  value: usernameRegEx,
+                  message: messagePattern,
+                },
+                minLength: {
+                  value: 3,
+                  message: messageUsernameMinLength,
+                },
+                maxLength: {
+                  value: 20,
+                  message: messageUsernameMaxLength,
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['registration-form-input']}
+                      type="text"
+                      placeholder="Username"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.username && <p className={styles['registration-form-error']}>{errors.username.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors?.username && <p className={styles['registration-form-error']}>{errors.username.message}</p>}
           </label>
           <label>
             <p className={styles['registration-form-label-name']}>Email address</p>
-            <input
-              className={styles['registration-form-input']}
-              type="email"
-              placeholder="Email address"
-              required
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('email')}
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: messageRequired,
+                pattern: {
+                  value: emailRegEx,
+                  message: messagePattern,
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['registration-form-input']}
+                      type="email"
+                      placeholder="Email address"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.email && <p className={styles['registration-form-error']}>{errors.email.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors?.email && <p className={styles['registration-form-error']}>{errors.email.message}</p>}
           </label>
           <label>
             <p className={styles['registration-form-label-name']}>Password</p>
-            <input
-              className={styles['registration-form-input']}
-              type="password"
-              placeholder="Password"
-              minLength={6}
-              maxLength={40}
-              required
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('password')}
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: messageRequired,
+                pattern: {
+                  value: passwordRegEx,
+                  message: messagePattern,
+                },
+                minLength: {
+                  value: 6,
+                  message: messagePasswordMinLength,
+                },
+                maxLength: {
+                  value: 40,
+                  message: messagePasswordMaxLength,
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['registration-form-input']}
+                      type="password"
+                      placeholder="Password"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.password && <p className={styles['registration-form-error']}>{errors.password.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors?.password && <p className={styles['registration-form-error']}>{errors.password.message}</p>}
           </label>
           <label>
             <p className={styles['registration-form-label-name']}>Repeat Password</p>
-            <input
-              className={styles['registration-form-input']}
-              type="password"
-              placeholder="Password"
-              required
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('repeatPassword')}
+            <Controller
+              name="repeatPassword"
+              control={control}
+              rules={{
+                required: messageRequired,
+                validate: (value, formValues) => {
+                  return value === formValues.password;
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['registration-form-input']}
+                      type="password"
+                      placeholder="Password"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.repeatPassword && <p className={styles['registration-form-error']}>{messageNotTheSame}</p>}
+                  </>
+                );
+              }}
             />
-            {errors?.repeatPassword && (
-              <p className={styles['registration-form-error']}>{errors.repeatPassword.message}</p>
-            )}
           </label>
         </div>
         <div className={styles['registration-form-agreement']}>
-          <input
-            className={clsx(
-              styles['registration-form-input'],
-              styles['registration-form-input--agreement'],
-              styles['visually-hidden']
-            )}
-            id="personalInfoAgreement"
-            type="checkbox"
-            required
-            /* eslint-disable-next-line react/jsx-props-no-spreading */
-            {...register('personalInfoAgreement')}
+          <Controller
+            name="personalInfoAgreement"
+            control={control}
+            rules={{
+              required: messageRequired,
+            }}
+            render={({ field: { onChange, value } }) => {
+              return (
+                <input
+                  className={clsx(
+                    styles['registration-form-input'],
+                    styles['registration-form-input--agreement'],
+                    styles['visually-hidden']
+                  )}
+                  id="personalInfoAgreement"
+                  type="checkbox"
+                  value={value}
+                  onChange={onChange}
+                />
+              );
+            }}
           />
           <label
             className={`registration-form-label ${styles['registration-form-label--agreement']}`}
@@ -154,9 +217,7 @@ export const RegistrationForm: React.FC = () => {
             <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
               I agree to the processing of my personal information
             </p>
-            {errors?.personalInfoAgreement && (
-              <p className={styles['registration-form-error']}>{errors.personalInfoAgreement.message}</p>
-            )}
+            {errors?.personalInfoAgreement && <p className={styles['registration-form-error']}>{messageRequired}</p>}
           </label>
         </div>
         <div className={styles['registration-form-actions']}>

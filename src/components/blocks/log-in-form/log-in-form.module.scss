@@ -35,6 +35,10 @@
   color: $grey-9;
 }
 
+.log-in-form-input::placeholder {
+  color: $grey-6;
+}
+
 .log-in-form-input {
   width: calc(100% - 24px);
   padding: 8px 12px 8px 12px;
@@ -42,7 +46,7 @@
   border: 1px solid $grey-5;
   background: $grey-1;
   font-family: 'Roboto', 'Arial', sans-serif;
-  color: $grey-6;
+  color: $text-color;
   font-size: $input-placeholder-size;
   line-height: $input-placeholder-line-height;
 }

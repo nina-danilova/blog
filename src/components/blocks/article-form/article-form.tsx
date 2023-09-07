@@ -1,17 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useForm, SubmitHandler } from 'react-hook-form';
+import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
 import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 import { clsx } from 'clsx';
 
 import { store } from 'redux/store';
 import { RootState } from 'redux/reducers';
 import { createArticle } from 'redux/action-creators/article';
-
-import { messageRequired } from '../../../utilities/constants';
+import { messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 
 import styles from './article-form.module.scss';
 
@@ -19,24 +16,39 @@ type ArticleFormInput = {
   title: string;
   description: string;
   text: string;
-  tag1?: string;
 };
 
 export const ArticleForm: React.FC = () => {
-  const newArticleSchema = yup.object().shape({
-    title: yup.string().required(messageRequired),
-    description: yup.string().required(messageRequired),
-    text: yup.string().required(messageRequired),
-    tag1: yup.string(),
-  });
   const history = useHistory();
   const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
-    store.dispatch(createArticle(event, history, data));
+    store.dispatch(createArticle({ event, history, data }));
   const {
-    register,
     formState: { errors },
     handleSubmit: onFormSubmit,
-  } = useForm({ resolver: yupResolver(newArticleSchema) });
+    control,
+  } = useForm<ArticleFormInput>({
+    mode: 'onChange',
+  });
+  const [tag, setTag] = useState('');
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: 'tags',
+  });
+  const addTag = () => {
+    if (tag) {
+      append(tag);
+      setTag('');
+    }
+  };
+  const clearTag = () => {
+    setTag('');
+  };
+  const removeTag = (index) => () => {
+    remove(index);
+  };
+  const onChangeTag = (event) => {
+    setTag(event.target.value);
+  };
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
@@ -54,63 +66,167 @@ export const ArticleForm: React.FC = () => {
         <div className={styles['article-form-input-group']}>
           <label>
             <p className={styles['article-form-label-name']}>Title</p>
-            <input
-              className={styles['article-form-input']}
-              type="text"
-              placeholder="Title"
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('title')}
+            <Controller
+              name="title"
+              control={control}
+              rules={{
+                required: messageRequired,
+                maxLength: {
+                  value: 300,
+                  message: messageTitleMaxLength,
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['article-form-input']}
+                      type="text"
+                      placeholder="Title"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.title && <p className={styles['article-form-error']}>{errors.title.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors.title && <p className={styles['article-form-error']}>{errors.title.message}</p>}
           </label>
           <label>
             <p className={styles['article-form-label-name']}>Short description</p>
-            <input
-              className={styles['article-form-input']}
-              type="text"
-              placeholder="Description"
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('description')}
+            <Controller
+              name="description"
+              control={control}
+              rules={{
+                required: messageRequired,
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['article-form-input']}
+                      type="text"
+                      placeholder="Description"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.description && (
+                      <p className={styles['article-form-error']}>{errors.description.message}</p>
+                    )}
+                  </>
+                );
+              }}
             />
-            {errors.description && <p className={styles['article-form-error']}>{errors.description.message}</p>}
           </label>
           <label>
             <p className={styles['article-form-label-name']}>Text</p>
-            <textarea
-              className={styles['article-form-input']}
-              placeholder="Text"
-              rows={7}
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('text')}
+            <Controller
+              name="text"
+              control={control}
+              rules={{
+                required: messageRequired,
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <textarea
+                      className={styles['article-form-input']}
+                      placeholder="Text"
+                      rows={7}
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.text && <p className={styles['article-form-error']}>{errors.text.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors.text && <p className={styles['article-form-error']}>{errors.text.message}</p>}
           </label>
           <div>
             <p className={styles['article-form-label-name']}>Tags</p>
             <div className={styles['article-form-tag-group']}>
               <ul className={styles['article-form-tag-list']}>
-                <li key="1">
+                {fields.map((item, index) => (
+                  <li key={item.id}>
+                    <label className={styles['article-form-tag']}>
+                      <p className={styles['visually-hidden']}>{`tag-${item.id}`}</p>
+                      <Controller
+                        name={`tag-${item.id}`}
+                        control={control}
+                        rules={{
+                          required: messageRequired,
+                          maxLength: {
+                            value: 100,
+                            message: messageTagMaxLength,
+                          },
+                        }}
+                        render={({ field: { onChange, value } }) => {
+                          return (
+                            <>
+                              <input
+                                className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
+                                type="text"
+                                placeholder="Tag"
+                                value={value || ''}
+                                onChange={onChange}
+                              />
+                              <button
+                                className={clsx(
+                                  styles['article-form-tag-button'],
+                                  styles['article-form-tag-button--delete']
+                                )}
+                                type="button"
+                                onClick={removeTag(index)}
+                              >
+                                Delete
+                              </button>
+                              {errors[`tag-${item.id}`] && (
+                                <span className={styles['article-form-error']}>{errors[`tag-${item.id}`].message}</span>
+                              )}
+                            </>
+                          );
+                        }}
+                      />
+                    </label>
+                  </li>
+                ))}
+                <li key="new-tag">
                   <label className={styles['article-form-tag']}>
-                    <p className={styles['visually-hidden']}>Tag 1</p>
-                    <input
-                      className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
-                      type="text"
-                      name="tag1"
-                      placeholder="Tag"
-                      maxLength={100}
+                    <p className={styles['visually-hidden']}>New tag</p>
+                    <Controller
+                      name="new-tag"
+                      control={control}
+                      render={() => {
+                        return (
+                          <>
+                            <input
+                              className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
+                              type="text"
+                              placeholder="Tag"
+                              value={tag}
+                              onChange={onChangeTag}
+                            />
+                            <button
+                              className={clsx(
+                                styles['article-form-tag-button'],
+                                styles['article-form-tag-button--delete']
+                              )}
+                              type="button"
+                              onClick={clearTag}
+                            >
+                              Delete
+                            </button>
+                          </>
+                        );
+                      }}
                     />
-                    <button
-                      className={clsx(styles['article-form-tag-button'], styles['article-form-tag-button--delete'])}
-                      type="button"
-                    >
-                      Delete
-                    </button>
                   </label>
                 </li>
               </ul>
               <button
                 className={clsx(styles['article-form-tag-button'], styles['article-form-tag-button--add'])}
                 type="button"
+                onClick={addTag}
               >
                 Add tag
               </button>

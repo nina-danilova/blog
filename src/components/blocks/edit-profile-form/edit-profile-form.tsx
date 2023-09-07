@@ -30,9 +30,9 @@ type EditProfileFormInput = {
 };
 
 export const EditProfileForm: React.FC = () => {
-  const userName = useSelector((state: RootState) => state.user.profile?.userName);
-  const userImage = useSelector((state: RootState) => state.user.profile?.image);
-  const userEmail = useSelector((state: RootState) => state.user.profile?.email);
+  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
+  const userImage = useSelector((state: RootState) => state.user.profile?.image) || '';
+  const userEmail = useSelector((state: RootState) => state.user.profile?.email) || '';
   const {
     handleSubmit: onFormSubmit,
     control,
@@ -44,7 +44,7 @@ export const EditProfileForm: React.FC = () => {
   });
   const history = useHistory();
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
-    store.dispatch(updateProfile(event, history, data));
+    store.dispatch(updateProfile({ event, history, data }));
     resetField('password');
   };
   const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
@@ -71,7 +71,7 @@ export const EditProfileForm: React.FC = () => {
       >
         <p className={styles['edit-profile-form-title']}>Edit profile</p>
         <div className={styles['edit-profile-form-input-group']}>
-          <label htmlFor="username">
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Username</p>
             <Controller
               name="username"
@@ -98,11 +98,10 @@ export const EditProfileForm: React.FC = () => {
                       className={styles['edit-profile-form-input']}
                       type="text"
                       placeholder="Username"
-                      id="username"
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors.username && (
+                    {errors?.username && (
                       <p className={styles['edit-profile-form-error']}>
                         {errors.username.message || 'Validation error'}
                       </p>
@@ -112,7 +111,7 @@ export const EditProfileForm: React.FC = () => {
               }}
             />
           </label>
-          <label htmlFor="email">
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Email address</p>
             <Controller
               name="email"
@@ -131,11 +130,10 @@ export const EditProfileForm: React.FC = () => {
                       className={styles['edit-profile-form-input']}
                       type="email"
                       placeholder="Email address"
-                      id="email"
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors.email && (
+                    {errors?.email && (
                       <p className={styles['edit-profile-form-error']}>{errors.email.message || 'Validation error'}</p>
                     )}
                   </>
@@ -143,7 +141,7 @@ export const EditProfileForm: React.FC = () => {
               }}
             />
           </label>
-          <label htmlFor="password">
+          <label>
             <p className={styles['edit-profile-form-label-name']}>New password</p>
             <Controller
               name="password"
@@ -170,11 +168,10 @@ export const EditProfileForm: React.FC = () => {
                       className={styles['edit-profile-form-input']}
                       type="password"
                       placeholder="New password"
-                      id="password"
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors.password && (
+                    {errors?.password && (
                       <p className={styles['edit-profile-form-error']}>
                         {errors.password.message || 'Validation error'}
                       </p>
@@ -184,7 +181,7 @@ export const EditProfileForm: React.FC = () => {
               }}
             />
           </label>
-          <label htmlFor="image">
+          <label>
             <p className={styles['edit-profile-form-label-name']}>Avatar image (url)</p>
             <Controller
               name="image"
@@ -202,11 +199,10 @@ export const EditProfileForm: React.FC = () => {
                       className={styles['edit-profile-form-input']}
                       type="text"
                       placeholder="Avatar image"
-                      id="image"
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors.image && (
+                    {errors?.image && (
                       <p className={styles['edit-profile-form-error']}>{errors.image.message || 'Validation error'}</p>
                     )}
                   </>
@@ -219,7 +215,6 @@ export const EditProfileForm: React.FC = () => {
           <button
             type="submit"
             className={styles['edit-profile-form-button']}
-            /* disabled={!isValid} */
           >
             Save
           </button>

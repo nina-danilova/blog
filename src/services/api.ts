@@ -8,7 +8,13 @@ export const getData = async (url, token: null | string = null) => {
   });
 };
 
-export const updateData = async (url, data, token: null | string = null) => {
+type UpdateDataProps = {
+  url: string;
+  data;
+  token: null | string;
+};
+
+export const updateData = async ({ url, data, token = null }: UpdateDataProps) => {
   return fetch(url, {
     method: 'PUT',
     headers: {
@@ -19,7 +25,13 @@ export const updateData = async (url, data, token: null | string = null) => {
   });
 };
 
-export const sendData = async (url, data, token: null | string = null) => {
+type SendDataProps = {
+  url: string;
+  data;
+  token?: null | string;
+};
+
+export const sendData = async ({ url, data, token = null }: SendDataProps) => {
   return fetch(url, {
     method: 'POST',
     headers: {

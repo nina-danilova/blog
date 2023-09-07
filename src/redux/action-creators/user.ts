@@ -1,5 +1,6 @@
 import { sendData } from 'services/api';
 import { getFromStorage, removeFromStorage, setToStorage } from 'services/storage';
+import { apiBaseUrl } from 'utilities/constants';
 
 import { loadProfileSuccess } from './profile';
 
@@ -36,9 +37,15 @@ export const userRegisterError = (error) => {
   };
 };
 
-export const registerNewUser = (evt, history, formData) => {
+type RegisterNewUserProps = {
+  event;
+  history;
+  data;
+};
+
+export const registerNewUser = ({ event, history, data: formData }: RegisterNewUserProps) => {
   return (dispatch, getState) => {
-    evt.preventDefault();
+    event.preventDefault();
     const { user } = getState();
     if (user.registering) {
       return;
@@ -51,7 +58,7 @@ export const registerNewUser = (evt, history, formData) => {
       },
     };
     dispatch(userRegisterStart());
-    sendData('https://blog.kata.academy/api/users', data)
+    sendData({ url: `${apiBaseUrl}/users`, data })
       .then(
         (response) => {
           if (response.status === 401) {
@@ -110,9 +117,15 @@ export const userLoginError = (error) => {
   };
 };
 
-export const userLogin = (evt, history, formData) => {
+type UserLoginProps = {
+  event;
+  history;
+  data;
+};
+
+export const userLogin = ({ event, history, data: formData }: UserLoginProps) => {
   return (dispatch, getState) => {
-    evt.preventDefault();
+    event.preventDefault();
     const { user } = getState();
     if (user.loggingIn) {
       return;
@@ -131,7 +144,7 @@ export const userLogin = (evt, history, formData) => {
       return;
     }
     dispatch(userLoginStart());
-    sendData('https://blog.kata.academy/api/users/login', data, token)
+    sendData({ url: `${apiBaseUrl}/users/login`, data, token })
       .then(
         (response) => {
           if (response.status === 401) {

@@ -2,16 +2,12 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { Alert } from 'antd';
-import { useForm, SubmitHandler } from 'react-hook-form';
-import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
+import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 
 import { userLogin } from 'redux/action-creators/user';
 import { RootState } from 'redux/reducers';
 import { store } from 'redux/store';
-import { linkPaths } from 'utilities/constants';
-
-import { emailRegEx, messagePattern, messageRequired } from '../../../utilities/constants';
+import { linkPaths, emailRegEx, messagePattern, messageRequired } from 'utilities/constants';
 
 import styles from './log-in-form.module.scss';
 
@@ -22,17 +18,15 @@ type LoginFormInput = {
 
 export const LogInForm: React.FC = () => {
   const { pathToSignUp } = linkPaths;
-  const logInSchema = yup.object().shape({
-    email: yup.string().required(messageRequired).email(messagePattern).matches(emailRegEx, messagePattern),
-    password: yup.string().required(messageRequired),
-  });
   const {
-    register,
+    control,
     formState: { errors },
     handleSubmit: onFormSubmit,
-  } = useForm({ resolver: yupResolver(logInSchema) });
+  } = useForm<LoginFormInput>({
+    mode: 'onChange',
+  });
   const history = useHistory();
-  const logIn: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin(event, history, data));
+  const logIn: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin({ event, history, data }));
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
@@ -50,25 +44,55 @@ export const LogInForm: React.FC = () => {
         <div className={styles['log-in-form-input-group']}>
           <label>
             <p className={styles['log-in-form-label-name']}>Email address</p>
-            <input
-              className={styles['log-in-form-input']}
-              type="email"
-              placeholder="Email address"
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('email')}
+            <Controller
+              name="email"
+              control={control}
+              rules={{
+                required: messageRequired,
+                pattern: {
+                  value: emailRegEx,
+                  message: messagePattern,
+                },
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['log-in-form-input']}
+                      type="email"
+                      placeholder="Email address"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.email && <p className={styles['log-in-form-error']}>{errors.email.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors?.email && <p className={styles['log-in-form-error']}>{errors.email.message}</p>}
           </label>
           <label>
             <p className={styles['log-in-form-label-name']}>Password</p>
-            <input
-              className={styles['log-in-form-input']}
-              type="password"
-              placeholder="Password"
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
-              {...register('password')}
+            <Controller
+              name="password"
+              control={control}
+              rules={{
+                required: messageRequired,
+              }}
+              render={({ field: { onChange, value } }) => {
+                return (
+                  <>
+                    <input
+                      className={styles['log-in-form-input']}
+                      type="password"
+                      placeholder="Password"
+                      value={value || ''}
+                      onChange={onChange}
+                    />
+                    {errors?.password && <p className={styles['log-in-form-error']}>{errors.password.message}</p>}
+                  </>
+                );
+              }}
             />
-            {errors.password && <p className={styles['log-in-form-error']}>{errors.password.message}</p>}
           </label>
         </div>
         <div className={styles['log-in-form-actions']}>

@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 
-import { store } from 'redux/store';
-import { RootState } from 'redux/reducers';
-import { updateProfile } from 'redux/action-creators/profile';
+import { RootState } from 'redux-toolkit/index';
+import { updateProfile } from 'redux-toolkit/profile/profileThunks';
 import {
   emailRegEx,
   messagePasswordMaxLength,
@@ -30,9 +29,9 @@ type EditProfileFormInput = {
 };
 
 export const EditProfileForm: React.FC = () => {
-  const userName = useSelector((state: RootState) => state.user.profile?.userName) || '';
-  const userImage = useSelector((state: RootState) => state.user.profile?.image) || '';
-  const userEmail = useSelector((state: RootState) => state.user.profile?.email) || '';
+  const userName = useSelector((state: RootState) => state.profile.userName) || '';
+  const userImage = useSelector((state: RootState) => state.profile.image) || '';
+  const userEmail = useSelector((state: RootState) => state.profile.email) || '';
   const {
     handleSubmit: onFormSubmit,
     control,
@@ -42,15 +41,16 @@ export const EditProfileForm: React.FC = () => {
   } = useForm<EditProfileFormInput>({
     mode: 'onChange',
   });
+  const dispatch = useDispatch();
   const history = useHistory();
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
-    store.dispatch(updateProfile({ event, history, data }));
+    dispatch(updateProfile({ event, history, data }));
     resetField('password');
   };
-  const error = useSelector((state: RootState) => state.user.profile?.updateProfileError);
+  const error = useSelector((state: RootState) => state.profile?.updateProfileError);
   const errorMessage = error ? (
     <Alert
-      message={error}
+      message={error.message}
       type="error"
     />
   ) : null;

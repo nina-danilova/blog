@@ -1,33 +1,7 @@
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import { getData } from 'services/api';
 import { apiBaseUrl } from 'utilities/constants';
-
-export const loadArticlesStart = () => {
-  return {
-    type: 'LOAD_ARTICLES_START',
-  };
-};
-
-export const loadArticlesSuccess = (json) => {
-  return {
-    type: 'LOAD_ARTICLES_SUCCESS',
-    articles: json.articles,
-    articlesCount: json.articlesCount,
-  };
-};
-
-export const loadArticlesError = (error) => {
-  return {
-    type: 'LOAD_ARTICLES_ERROR',
-    error: error.errors.body,
-  };
-};
-
-export const changeCurrentPage = (newPage) => {
-  return {
-    type: 'CHANGE_CURRENT_PAGE',
-    page: newPage,
-  };
-};
 
 const addIdToArticles = (articleList) => {
   let id = 0;
@@ -43,15 +17,11 @@ const getOffset = (page) => {
   return (page - 1) * 20;
 };
 
-export const loadArticles = (currentPage, history) => {
-  const offset = getOffset(currentPage);
-  return (dispatch, getState) => {
-    const { articles } = getState();
-    if (articles.loading) {
-      return;
-    }
-    dispatch(loadArticlesStart());
-    getData(`${apiBaseUrl}/articles?limit=20&offset=${offset}`)
+export const loadArticles = createAsyncThunk(
+  'articles/loadArticles',
+  async ({ currentPage, history }, { rejectWithValue }) => {
+    const offset = getOffset(currentPage);
+    return getData(`${apiBaseUrl}/articles?limit=20&offset=${offset}`)
       .then(
         (response) => {
           if (response.status === 401) {
@@ -64,7 +34,6 @@ export const loadArticles = (currentPage, history) => {
           throw error;
         },
         (err) => {
-          // handle error from promise-api
           const error = new Error('Load articles error while sending data through API');
           error.response = err;
           throw error;
@@ -81,11 +50,12 @@ export const loadArticles = (currentPage, history) => {
         if (response.articles) {
           const preparedArticleList = addIdToArticles(response.articles);
           const preparedResponse = { ...response, articles: preparedArticleList };
-          dispatch(loadArticlesSuccess(preparedResponse));
+          return preparedResponse;
         }
+        return new Error('Unknown error of loading articles');
       })
       .catch((error) => {
-        dispatch(loadArticlesError(error));
+        return rejectWithValue(error);
       });
-  };
-};
+  }
+);

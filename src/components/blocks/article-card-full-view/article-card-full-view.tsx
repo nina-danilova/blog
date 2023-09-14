@@ -4,7 +4,7 @@ import ReactMarkdown from 'react-markdown';
 
 import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
 import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
-import { RootState } from 'redux/reducers';
+import { RootState } from 'redux-toolkit/index';
 
 import styles from './article-card-full-view.module.scss';
 

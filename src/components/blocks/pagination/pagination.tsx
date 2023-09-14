@@ -1,15 +1,15 @@
 import React from 'react';
 import { Pagination as AntdPagination } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { changeCurrentPage } from 'redux/action-creators/articles';
-import { RootState } from 'redux/reducers';
-import { store } from 'redux/store';
+import { changeCurrentPage } from 'redux-toolkit/articles/articlesSlice';
+import { RootState } from 'redux-toolkit/index';
 
 export const Pagination: React.FC = () => {
+  const dispatch = useDispatch();
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
   const articlesCount = useSelector((state: RootState) => state.articles.articlesCount);
-  const onPageChange = (page) => store.dispatch(changeCurrentPage(page));
+  const onPageChange = (page) => dispatch(changeCurrentPage(page));
   return (
     <AntdPagination
       current={currentPage}

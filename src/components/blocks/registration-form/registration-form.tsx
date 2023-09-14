@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { clsx } from 'clsx';
 
-import { registerNewUser } from 'redux/action-creators/user';
-import { RootState } from 'redux/reducers';
-import { store } from 'redux/store';
+import { userRegister } from 'redux-toolkit/user/userThunks';
+import { RootState } from 'redux-toolkit/index';
 import {
   passwordRegEx,
   emailRegEx,
@@ -33,6 +32,7 @@ type RegistrationFormInput = {
 };
 
 export const RegistrationForm: React.FC = () => {
+  const dispatch = useDispatch();
   const { pathToSignIn } = linkPaths;
   const {
     control,
@@ -43,11 +43,11 @@ export const RegistrationForm: React.FC = () => {
   });
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
-    store.dispatch(registerNewUser({ event, history, data }));
+    dispatch(userRegister({ event, history, data }));
   const error = useSelector((state: RootState) => state.user.registerError);
   const errorMessage = error ? (
     <Alert
-      message={error}
+      message={error.message}
       type="error"
     />
   ) : null;

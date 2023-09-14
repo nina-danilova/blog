@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Alert } from 'antd';
 import { clsx } from 'clsx';
 
-import { store } from 'redux/store';
-import { RootState } from 'redux/reducers';
-import { createArticle } from 'redux/action-creators/article';
+import { RootState } from 'redux-toolkit/index';
+import { createArticle } from 'redux-toolkit/article/articleThunks';
 import { messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 
 import styles from './article-form.module.scss';
@@ -20,12 +19,14 @@ type ArticleFormInput = {
 
 export const ArticleForm: React.FC = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
-    store.dispatch(createArticle({ event, history, data }));
+    dispatch(createArticle({ event, history, data }));
   const {
     formState: { errors },
     handleSubmit: onFormSubmit,
     control,
+    setValue,
   } = useForm<ArticleFormInput>({
     mode: 'onChange',
   });
@@ -36,7 +37,7 @@ export const ArticleForm: React.FC = () => {
   });
   const addTag = () => {
     if (tag) {
-      append(tag);
+      append({ [fields.length]: tag });
       setTag('');
     }
   };
@@ -52,7 +53,7 @@ export const ArticleForm: React.FC = () => {
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
-      message={error}
+      message={error.message}
       type="error"
     />
   ) : null;
@@ -167,7 +168,7 @@ export const ArticleForm: React.FC = () => {
                                 className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
                                 type="text"
                                 placeholder="Tag"
-                                value={value || ''}
+                                value={value || setValue(`tag-${item.id}`, item[index])}
                                 onChange={onChange}
                               />
                               <button

@@ -1,13 +1,12 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 
-import { userLogin } from 'redux/action-creators/user';
-import { RootState } from 'redux/reducers';
-import { store } from 'redux/store';
+import { RootState } from 'redux-toolkit/index';
 import { linkPaths, emailRegEx, messagePattern, messageRequired } from 'utilities/constants';
+import { userLogin } from 'redux-toolkit/user/userThunks';
 
 import styles from './log-in-form.module.scss';
 
@@ -25,12 +24,13 @@ export const LogInForm: React.FC = () => {
   } = useForm<LoginFormInput>({
     mode: 'onChange',
   });
+  const dispatch = useDispatch();
   const history = useHistory();
-  const logIn: SubmitHandler<LoginFormInput> = (data, event) => store.dispatch(userLogin({ event, history, data }));
+  const logIn: SubmitHandler<LoginFormInput> = (data, event) => dispatch(userLogin({ event, history, data }));
   const error = useSelector((state: RootState) => state.user.loginError);
   const errorMessage = error ? (
     <Alert
-      message={error}
+      message={error.message}
       type="error"
     />
   ) : null;

@@ -1,19 +1,19 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
-import { RootState } from 'redux/reducers';
+import { RootState } from 'redux-toolkit/index';
 import { NavMenu } from 'components/blocks/nav-menu';
 import { UserMenu } from 'components/blocks/user-menu';
-import { store } from 'redux/store';
-import { userLoginSuccess } from 'redux/action-creators/user';
-import { loadProfile } from 'redux/action-creators/profile';
+import { loadProfile } from 'redux-toolkit/profile/profileThunks';
 import { getFromStorage } from 'services/storage';
+import { toggleAuth } from 'redux-toolkit/user/userSlice';
 
 export const Navigation: React.FC = () => {
+  const dispatch = useDispatch();
   const isAuthorized = useSelector((state: RootState) => state.user.authorized);
   if (!isAuthorized && getFromStorage('userAuthorized') === 'true') {
-    store.dispatch(userLoginSuccess());
-    store.dispatch(loadProfile());
+    dispatch(toggleAuth());
+    dispatch(loadProfile());
   }
   const navMenu = isAuthorized || getFromStorage('userAuthorized') === 'true' ? <UserMenu /> : <NavMenu />;
 

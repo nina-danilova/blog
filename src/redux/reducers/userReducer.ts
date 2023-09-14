@@ -61,9 +61,6 @@ export const userReducer = (state = initialState, action) => {
     case 'UPDATE_PROFILE_START':
     case 'UPDATE_PROFILE_SUCCESS':
     case 'UPDATE_PROFILE_ERROR':
-    case 'UPDATE_PROFILE_FORM_USER_NAME':
-    case 'UPDATE_PROFILE_FORM_EMAIL':
-    case 'UPDATE_PROFILE_FORM_IMAGE_URL':
       return {
         ...state,
         profile: profileReducer(state.profile, action),

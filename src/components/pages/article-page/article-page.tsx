@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Alert, Spin } from 'antd';
 
 import { ArticleCardFullView } from 'components/blocks/article-card-full-view';
-import { loadArticle } from 'redux/action-creators/article';
-import { store } from 'redux/store';
-import { RootState } from 'redux/reducers';
+import { setSlug } from 'redux-toolkit/article/articleSlice';
+import { loadArticle } from 'redux-toolkit/article/articleThunks';
+import { RootState } from 'redux-toolkit/index';
 
 import styles from './article-page.module.scss';
 
@@ -20,10 +20,13 @@ type ArticlePageProps = {
 
 const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const { params } = match;
+  const { id } = params;
   const history = useHistory();
+  const dispatch = useDispatch();
   useEffect(() => {
-    store.dispatch(loadArticle(params.id, history));
-  }, [params.id]);
+    dispatch(setSlug(id));
+    dispatch(loadArticle({ id, history }));
+  }, []);
   const article = useSelector((state: RootState) => state.viewingArticle);
   const isLoading = useSelector((state: RootState) => state.viewingArticle.loading);
   const loadArticleError = useSelector((state: RootState) => state.viewingArticle.error);

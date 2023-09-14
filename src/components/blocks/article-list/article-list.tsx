@@ -1,20 +1,20 @@
 import React, { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { Spin, Alert } from 'antd';
 import { useHistory } from 'react-router-dom';
 
 import { ArticleCardPreview } from 'components/blocks/article-card-preview';
-import { RootState } from 'redux/reducers';
-import { loadArticles } from 'redux/action-creators/articles';
-import { store } from 'redux/store';
+import { RootState } from 'redux-toolkit/index';
+import { loadArticles } from 'redux-toolkit/articles/articlesThunks';
 
 import styles from './article-list.module.scss';
 
 export const ArticleList: React.FC = () => {
   const history = useHistory();
+  const dispatch = useDispatch();
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
   useEffect(() => {
-    store.dispatch(loadArticles(currentPage, history));
+    dispatch(loadArticles({ currentPage, history }));
   }, [currentPage]);
   const articleList = useSelector((state: RootState) => state.articles.articleList);
   const isLoading = useSelector((state: RootState) => state.articles.loading);
@@ -43,7 +43,7 @@ export const ArticleList: React.FC = () => {
       {noDataMessage}
       <ul className={styles['article-list']}>
         {articleList.map((article) => (
-          <li key={article.id}>
+          <li key={`${article.id}-${article.createdAt}`}>
             <ArticleCardPreview article={article} />
           </li>
         ))}

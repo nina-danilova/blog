@@ -78,6 +78,7 @@
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "no-param-reassign": "off"
   }
 }

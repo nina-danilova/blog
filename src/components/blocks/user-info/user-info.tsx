@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 
-import { RootState } from 'redux/reducers';
+import { RootState } from 'redux-toolkit/index';
 import imageUrl from 'assets/icons/icon-author-avatar.svg';
 import { linkPaths } from 'utilities/constants';
 
@@ -10,8 +10,8 @@ import styles from './user-info.module.scss';
 
 export const UserInfo: React.FC = () => {
   const { pathToProfile } = linkPaths;
-  const userName = useSelector((state: RootState) => state.user.profile.userName) || '';
-  const image = useSelector((state: RootState) => state.user.profile.image) || imageUrl;
+  const userName = useSelector((state: RootState) => state.profile.userName) || '';
+  const image = useSelector((state: RootState) => state.profile.image) || imageUrl;
   return (
     <div className={styles['user-info']}>
       <p className={styles['user-name']}>

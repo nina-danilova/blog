@@ -1,14 +1,15 @@
 import React, { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
 
-import { store } from 'redux/store';
 import { EditProfileForm } from 'components/blocks/edit-profile-form';
-import { loadProfile } from 'redux/action-creators/profile';
+import { loadProfile } from 'redux-toolkit/profile/profileThunks';
 
 import styles from './profile-page.module.scss';
 
 export const ProfilePage: React.FC = () => {
+  const dispatch = useDispatch();
   useEffect(() => {
-    store.dispatch(loadProfile());
+    dispatch(loadProfile());
   });
   return (
     <>

@@ -13,6 +13,16 @@ type ArticleDescriptionProps = {
   slug: string;
 };
 
+const addIdToTags = (list) => {
+  let id = 0;
+  const tagListWithId = list.map((tag) => {
+    const tagWithId = { name: tag, id };
+    id += 1;
+    return tagWithId;
+  });
+  return tagListWithId;
+};
+
 const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   title,
   favoritesCount,
@@ -21,13 +31,13 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   slug,
 }) => {
   const pathToArticle = `/articles/${slug}`;
-  const tags = [...tagList];
-  const styledTags = tags.map((tag) => (
+  const preparedTags = addIdToTags([...tagList]);
+  const styledTags = preparedTags.map((tag) => (
     <span
-      key={tag}
+      key={`${tag.id}-${tag.name}`}
       className={styles['article-tag-item']}
     >
-      {tag}
+      {tag.name}
     </span>
   ));
   const history = useHistory();
@@ -40,15 +50,13 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   return (
     <div className={styles['article-description']}>
       <div className={styles['article-description-header']}>
-        <p className={styles['article-title']}>
-          <p
-            className={styles['article-title']}
-            role="button"
-            onClick={onTitleClick}
-            onKeyDown={onTitleKeyDown}
-          >
-            {title}
-          </p>
+        <p
+          className={styles['article-title']}
+          role="button"
+          onClick={onTitleClick}
+          onKeyDown={onTitleKeyDown}
+        >
+          {title}
         </p>
         <button
           className={styles['article-like-button']}

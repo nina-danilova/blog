@@ -81,7 +81,6 @@ type CreateArticleProps = {
 };
 
 export const createArticle = ({ event, history, data }: CreateArticleProps) => {
-  console.log(event, history, data);
   return {
     type: 'CREATE_ARTICLE',
     event,

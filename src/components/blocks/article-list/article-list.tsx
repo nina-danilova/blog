@@ -13,9 +13,6 @@ export const ArticleList: React.FC = () => {
   const history = useHistory();
   const dispatch = useDispatch();
   const currentPage = useSelector((state: RootState) => state.articles.currentPage);
-  useEffect(() => {
-    dispatch(loadArticles({ currentPage, history }));
-  }, [currentPage]);
   const articleList = useSelector((state: RootState) => state.articles.articleList);
   const isLoading = useSelector((state: RootState) => state.articles.loading);
   const loadArticlesError = useSelector((state: RootState) => state.articles.error);
@@ -29,13 +26,16 @@ export const ArticleList: React.FC = () => {
       />
     ) : null;
   const noDataMessage =
-    !isLoading && articleList.length === 0 ? (
+    !isLoading && articleList.length === 0 && loadArticlesError === null ? (
       <Alert
         type="info"
         closable={false}
         message="There is no relevant data for you. Please update."
       />
     ) : null;
+  useEffect(() => {
+    dispatch(loadArticles({ currentPage, history }));
+  }, [currentPage]);
   return (
     <>
       {loadSpinner}

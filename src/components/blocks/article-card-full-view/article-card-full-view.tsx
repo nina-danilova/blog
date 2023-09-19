@@ -1,15 +1,14 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
 import ReactMarkdown from 'react-markdown';
 
 import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
 import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
-import { RootState } from 'redux-toolkit/index';
+import { useAppSelector } from 'hooks/hooks';
 
 import styles from './article-card-full-view.module.scss';
 
 export const ArticleCardFullView: React.FC = () => {
-  const article = useSelector((state: RootState) => state.viewingArticle.article);
+  const article = useAppSelector((state) => state.viewingArticle.article);
   if (!article) return null;
   const { author, description, favoritesCount, tagList, title, createdAt, body, slug } = article;
   return (

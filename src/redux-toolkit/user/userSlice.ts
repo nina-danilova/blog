@@ -1,17 +1,35 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
+import { ProfileSliceState } from 'redux-toolkit/profile/profileSlice';
 
 import { userRegister, userLogin, userLogOut } from './userThunks';
 
+type UserStateError = {
+  name: string;
+  message: string;
+};
+
+type UserSliceState = {
+  registering: boolean;
+  registerError: null | UserStateError;
+  loggingIn: boolean;
+  loginError: null | UserStateError;
+  authorized: boolean;
+  profile: undefined | ProfileSliceState;
+};
+
+const initialState: UserSliceState = {
+  registering: false,
+  registerError: null,
+  loggingIn: false,
+  loginError: null,
+  authorized: false,
+  profile: undefined,
+};
+
 const userSlice = createSlice({
   name: 'user',
-  initialState: {
-    registering: false,
-    registerError: null,
-    loggingIn: false,
-    loginError: null,
-    authorized: false,
-    profile: undefined,
-  },
+  initialState,
   reducers: {
     toggleAuth: (state) => {
       state.authorized = !state.authorized;
@@ -25,7 +43,7 @@ const userSlice = createSlice({
     [userRegister.fulfilled]: (state) => {
       state.registering = false;
     },
-    [userRegister.rejected]: (state, action) => {
+    [userRegister.rejected]: (state, action: PayloadAction<UserStateError>) => {
       state.registering = false;
       state.registerError = action.payload;
     },
@@ -37,7 +55,7 @@ const userSlice = createSlice({
       state.loggingIn = false;
       state.authorized = true;
     },
-    [userLogin.rejected]: (state, action) => {
+    [userLogin.rejected]: (state, action: PayloadAction<UserStateError>) => {
       state.loggingIn = false;
       state.loginError = action.payload;
     },

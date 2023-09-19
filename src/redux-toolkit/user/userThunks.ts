@@ -30,14 +30,23 @@ export const userRegister = createAsyncThunk(
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
             return response.json();
           }
-          const error = new Error(`User register error, code ${response.status.toString()} - error after API answer`);
-          error.response = response;
+          // const error = new Error(`User register error, code ${response.status.toString()} - error after API answer`);
+          // error.response = response;
+          const error = {
+            name: 'Error',
+            message: `User register error, code ${response.status.toString()} - error after API answer`,
+          };
           throw error;
         },
         (err) => {
           // handle error from promise-api
-          const error = new Error('User register error while sending data through API');
-          error.response = err;
+          // const error = new Error('User register error while sending data through API');
+          // error.response = err;
+          const error = {
+            name: 'Error',
+            message: 'User register error while sending data through API',
+            body: err,
+          };
           throw error;
         }
       )
@@ -45,14 +54,23 @@ export const userRegister = createAsyncThunk(
         if (response.errors) {
           const errors = Object.entries(response.errors);
           const [errorName, errorMessage] = errors[0];
-          const error = new Error(`User register error - ${errorName} ${errorMessage}`);
-          error.response = response;
+          // const error = new Error(`User register error - ${errorName} ${errorMessage}`);
+          // error.response = response;
+          const error = {
+            name: 'Error',
+            message: `User register error - ${errorName} ${errorMessage}`,
+          };
           throw error;
         }
         if (response.user) {
           setToStorage(`${response.user.email}-token`, response.user.token);
           history.push('/');
         }
+        const error = {
+          name: 'Error',
+          message: 'Unknown error while registering user',
+        };
+        throw error;
       })
       .catch((error) => {
         return rejectWithValue(error);
@@ -72,8 +90,12 @@ export const userLogin = createAsyncThunk(
     };
     const token = getFromStorage(`${data.user.email}-token`);
     if (!token) {
-      const error = new Error('No token for this email');
-      error.response = data;
+      // const error = new Error('No token for this email');
+      // error.response = data;
+      const error = {
+        name: 'Error',
+        message: 'No token for this email',
+      };
       return rejectWithValue(error);
     }
     return sendData({ url: `${apiBaseUrl}/users/login`, data, token })
@@ -84,13 +106,22 @@ export const userLogin = createAsyncThunk(
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
             return response.json();
           }
-          const error = new Error(`User login error, code ${response.status.toString()} - error after API answer`);
-          error.response = response;
+          // const error = new Error(`User login error, code ${response.status.toString()} - error after API answer`);
+          // error.response = response;
+          const error = {
+            name: 'Error',
+            message: `User login error, code ${response.status.toString()} - error after API answer`,
+          };
           throw error;
         },
         (err) => {
-          const error = new Error('User login error while sending data through API');
-          error.response = err;
+          // const error = new Error('User login error while sending data through API');
+          // error.response = err;
+          const error = {
+            name: 'Error',
+            message: 'User login error while sending data through API',
+            body: err,
+          };
           throw error;
         }
       )
@@ -98,8 +129,12 @@ export const userLogin = createAsyncThunk(
         if (response.errors) {
           const errors = Object.entries(response.errors);
           const [errorName, errorMessage] = errors[0];
-          const error = new Error(`User login error - ${errorName} ${errorMessage}`);
-          error.response = response;
+          // const error = new Error(`User login error - ${errorName} ${errorMessage}`);
+          // error.response = response;
+          const error = {
+            name: 'Error',
+            message: `User login error - ${errorName} ${errorMessage}`,
+          };
           throw error;
         }
         if (response.user) {
@@ -112,8 +147,13 @@ export const userLogin = createAsyncThunk(
               email: response.user.email,
             })
           );
-          history.push('/');
+          return history.push('/');
         }
+        const error = {
+          name: 'Error',
+          message: 'Unknown error while logging-in user',
+        };
+        throw error;
       })
       .catch((error) => {
         return rejectWithValue(error);

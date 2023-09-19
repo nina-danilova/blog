@@ -12,14 +12,23 @@ export const loadArticle = createAsyncThunk('articles/loadArticle', async ({ id,
         } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
           return response.json();
         }
-        const error = new Error(`Load article error, code ${response.status.toString()} - error after API answer`);
-        error.response = response;
+        // const error = new Error(`Load article error, code ${response.status.toString()} - error after API answer`);
+        // error.response = response;
+        const error = {
+          name: 'Error',
+          message: `Load article error, code ${response.status.toString()} - error after API answer`,
+        };
         throw error;
       },
       (err) => {
         // handle error from promise-api
-        const error = new Error('Load article error while sending data through API');
-        error.response = err;
+        // const error = new Error('Load article error while sending data through API');
+        // error.response = err;
+        const error = {
+          name: 'Error',
+          message: 'Load article error while sending data through API',
+          body: err,
+        };
         throw error;
       }
     )
@@ -27,14 +36,22 @@ export const loadArticle = createAsyncThunk('articles/loadArticle', async ({ id,
       if (response.errors) {
         const errors = Object.entries(response.errors);
         const [errorName, errorMessage] = errors[0];
-        const error = new Error(`Load article error - ${errorName} ${errorMessage}`);
-        error.response = response;
+        // const error = new Error(`Load article error - ${errorName} ${errorMessage}`);
+        // error.response = response;
+        const error = {
+          name: 'Error',
+          message: `Load article error - ${errorName} ${errorMessage}`,
+        };
         throw error;
       }
       if (response.article) {
-        return response;
+        return response.article;
       }
-      return new Error('Unknown error of loading article');
+      const error = {
+        name: 'Error',
+        message: 'Unknown error of loading article',
+      };
+      throw error;
     })
     .catch((error) => {
       return rejectWithValue(error);

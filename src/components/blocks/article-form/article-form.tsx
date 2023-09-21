@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
-import { useSelector, useDispatch } from 'react-redux';
 import { Alert } from 'antd';
 import { clsx } from 'clsx';
 
-import { RootState } from 'redux-toolkit/index';
+import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle } from 'redux-toolkit/article/articleThunks';
 import { messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 
@@ -19,7 +18,7 @@ type ArticleFormInput = {
 
 export const ArticleForm: React.FC = () => {
   const history = useHistory();
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
     dispatch(createArticle({ event, history, data }));
   const {
@@ -44,13 +43,13 @@ export const ArticleForm: React.FC = () => {
   const clearTag = () => {
     setTag('');
   };
-  const removeTag = (index) => () => {
+  const removeTag = (index: number) => () => {
     remove(index);
   };
   const onChangeTag = (event) => {
     setTag(event.target.value);
   };
-  const error = useSelector((state: RootState) => state.user.loginError);
+  const error = useAppSelector((state) => state.user.userError);
   const errorMessage = error ? (
     <Alert
       message={error.message}

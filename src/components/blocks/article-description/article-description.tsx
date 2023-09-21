@@ -5,22 +5,21 @@ import { goToPage } from 'utilities/history';
 
 import styles from './article-description.module.scss';
 
+const addIdToTags = (list: string[]): { name: string; id: number }[] => {
+  let id = 0;
+  return list.map((tag) => {
+    const tagWithId = { name: tag, id };
+    id += 1;
+    return tagWithId;
+  });
+};
+
 type ArticleDescriptionProps = {
   title: string;
   favoritesCount: number;
   tagList: string[];
   description: string;
   slug: string;
-};
-
-const addIdToTags = (list) => {
-  let id = 0;
-  const tagListWithId = list.map((tag) => {
-    const tagWithId = { name: tag, id };
-    id += 1;
-    return tagWithId;
-  });
-  return tagListWithId;
 };
 
 const ArticleDescription: React.FC<ArticleDescriptionProps> = ({

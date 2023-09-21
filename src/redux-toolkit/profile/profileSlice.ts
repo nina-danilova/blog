@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { isError } from 'utilities/checks';
+
 import { loadProfile, updateProfile } from './profileThunks';
 
 type ProfileStateError = {
@@ -13,9 +15,8 @@ export type ProfileSliceState = {
   image: string;
   bio: string;
   loadingProfile: boolean;
-  loadProfileError: null | ProfileStateError;
   updatingProfile: boolean;
-  updateProfileError: null | ProfileStateError;
+  profileError: null | ProfileStateError;
 };
 
 const initialState: ProfileSliceState = {
@@ -24,9 +25,8 @@ const initialState: ProfileSliceState = {
   image: '',
   bio: '',
   loadingProfile: false,
-  loadProfileError: null,
   updatingProfile: false,
-  updateProfileError: null,
+  profileError: null,
 };
 
 const profileSlice = createSlice({
@@ -42,36 +42,34 @@ const profileSlice = createSlice({
       state.email = action.payload.email;
     },
   },
-  extraReducers: {
-    [loadProfile.pending]: (state) => {
-      state.loadingProfile = true;
-      state.loadProfileError = null;
-    },
-    [loadProfile.fulfilled]: (state, action) => {
-      state.loadingProfile = false;
-      state.userName = action.payload.username;
-      state.email = action.payload.email;
-      state.bio = action.payload.bio || '';
-      state.image = action.payload.image || '';
-    },
-    [loadProfile.rejected]: (state, action: PayloadAction<ProfileStateError>) => {
-      state.loadingProfile = false;
-      state.loadProfileError = action.payload;
-    },
-    [updateProfile.pending]: (state) => {
-      state.updatingProfile = true;
-      state.updateProfileError = null;
-    },
-    [updateProfile.fulfilled]: (state, action) => {
-      state.updatingProfile = false;
-      state.userName = action.payload.username;
-      state.image = action.payload.image || '';
-      state.email = action.payload.email;
-    },
-    [updateProfile.rejected]: (state, action: PayloadAction<ProfileStateError>) => {
-      state.updatingProfile = false;
-      state.updateProfileError = action.payload;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadProfile.pending, (state) => {
+        state.loadingProfile = true;
+        state.profileError = null;
+      })
+      .addCase(loadProfile.fulfilled, (state, action) => {
+        state.loadingProfile = false;
+        state.userName = action.payload.username;
+        state.email = action.payload.email;
+        state.bio = action.payload.bio || '';
+        state.image = action.payload.image || '';
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.updatingProfile = true;
+        state.profileError = null;
+      })
+      .addCase(updateProfile.fulfilled, (state, action) => {
+        state.updatingProfile = false;
+        state.userName = action.payload.username;
+        state.image = action.payload.image || '';
+        state.email = action.payload.email;
+      })
+      .addMatcher(isError, (state, action: PayloadAction<ProfileStateError>) => {
+        state.loadingProfile = false;
+        state.updatingProfile = false;
+        state.profileError = action.payload;
+      });
   },
 });
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
+import { useAppDispatch } from 'hooks/hooks';
 import { UserInfo } from 'components/blocks/user-info';
 import { userLogOut } from 'redux-toolkit/user/userThunks';
 import { linkPaths } from 'utilities/constants';
@@ -11,7 +11,7 @@ import styles from './user-menu.module.scss';
 
 export const UserMenu: React.FC = () => {
   const { pathToNewArticle } = linkPaths;
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const onLogOutButtonClick = () => {
     dispatch(userLogOut());

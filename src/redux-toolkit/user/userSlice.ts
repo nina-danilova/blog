@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ProfileSliceState } from 'redux-toolkit/profile/profileSlice';
+import { isError } from 'utilities/checks';
 
 import { userRegister, userLogin, userLogOut } from './userThunks';
 
@@ -11,18 +12,20 @@ type UserStateError = {
 
 type UserSliceState = {
   registering: boolean;
-  registerError: null | UserStateError;
+  // registerError: null | UserStateError;
   loggingIn: boolean;
-  loginError: null | UserStateError;
+  // loginError: null | UserStateError;
+  userError: null | UserStateError;
   authorized: boolean;
   profile: undefined | ProfileSliceState;
 };
 
 const initialState: UserSliceState = {
   registering: false,
-  registerError: null,
+  // registerError: null,
   loggingIn: false,
-  loginError: null,
+  // loginError: null,
+  userError: null,
   authorized: false,
   profile: undefined,
 };
@@ -35,33 +38,33 @@ const userSlice = createSlice({
       state.authorized = !state.authorized;
     },
   },
-  extraReducers: {
-    [userRegister.pending]: (state) => {
-      state.registering = true;
-      state.registerError = null;
-    },
-    [userRegister.fulfilled]: (state) => {
-      state.registering = false;
-    },
-    [userRegister.rejected]: (state, action: PayloadAction<UserStateError>) => {
-      state.registering = false;
-      state.registerError = action.payload;
-    },
-    [userLogin.pending]: (state) => {
-      state.loggingIn = true;
-      state.loginError = null;
-    },
-    [userLogin.fulfilled]: (state) => {
-      state.loggingIn = false;
-      state.authorized = true;
-    },
-    [userLogin.rejected]: (state, action: PayloadAction<UserStateError>) => {
-      state.loggingIn = false;
-      state.loginError = action.payload;
-    },
-    [userLogOut.fulfilled]: (state) => {
-      state.authorized = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(userRegister.pending, (state) => {
+        state.registering = true;
+        // state.registerError = null;
+        state.userError = null;
+      })
+      .addCase(userRegister.fulfilled, (state) => {
+        state.registering = false;
+      })
+      .addCase(userLogin.pending, (state) => {
+        state.loggingIn = true;
+        // state.loginError = null;
+        state.userError = null;
+      })
+      .addCase(userLogin.fulfilled, (state) => {
+        state.loggingIn = false;
+        state.authorized = true;
+      })
+      .addCase(userLogOut.fulfilled, (state) => {
+        state.authorized = false;
+      })
+      .addMatcher(isError, (state, action: PayloadAction<UserStateError>) => {
+        state.registering = false;
+        state.loggingIn = false;
+        state.userError = action.payload;
+      });
   },
 });
 

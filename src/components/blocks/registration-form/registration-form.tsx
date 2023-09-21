@@ -1,12 +1,11 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { clsx } from 'clsx';
 
+import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { userRegister } from 'redux-toolkit/user/userThunks';
-import { RootState } from 'redux-toolkit/index';
 import {
   passwordRegEx,
   emailRegEx,
@@ -28,11 +27,11 @@ type RegistrationFormInput = {
   email: string;
   password: string;
   repeatPassword: string;
-  personalInfoAgreement: boolean;
+  personalInfoAgreement: string;
 };
 
 export const RegistrationForm: React.FC = () => {
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const { pathToSignIn } = linkPaths;
   const {
     control,
@@ -44,7 +43,7 @@ export const RegistrationForm: React.FC = () => {
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
     dispatch(userRegister({ event, history, data }));
-  const error = useSelector((state: RootState) => state.user.registerError);
+  const error = useAppSelector((state) => state.user.userError);
   const errorMessage = error ? (
     <Alert
       message={error.message}

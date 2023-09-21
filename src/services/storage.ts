@@ -1,4 +1,4 @@
-export const getFromStorage = (key: string) => {
+export const getFromStorage = (key: string): string | null => {
   return localStorage.getItem(key);
 };
 

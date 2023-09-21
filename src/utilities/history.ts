@@ -1,3 +1,3 @@
-export const goToPage = (path, history) => {
+export const goToPage = (path: string, history) => {
   history.push(path);
 };

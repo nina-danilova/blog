@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
-import { useSelector, useDispatch } from 'react-redux';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 
-import { RootState } from 'redux-toolkit/index';
-import { updateProfile } from 'redux-toolkit/profile/profileThunks';
+import { useAppSelector, useAppDispatch } from 'hooks/hooks';
+import { updateProfile, EditProfileFormInput } from 'redux-toolkit/profile/profileThunks';
 import {
   emailRegEx,
   messagePasswordMaxLength,
@@ -21,17 +20,10 @@ import {
 
 import styles from './edit-profile-form.module.scss';
 
-type EditProfileFormInput = {
-  username: string;
-  email: string;
-  password: string;
-  image?: string | undefined;
-};
-
 export const EditProfileForm: React.FC = () => {
-  const userName = useSelector((state: RootState) => state.profile.userName) || '';
-  const userImage = useSelector((state: RootState) => state.profile.image) || '';
-  const userEmail = useSelector((state: RootState) => state.profile.email) || '';
+  const userName = useAppSelector((state) => state.profile.userName) || '';
+  const userImage = useAppSelector((state) => state.profile.image) || '';
+  const userEmail = useAppSelector((state) => state.profile.email) || '';
   const {
     handleSubmit: onFormSubmit,
     control,
@@ -41,13 +33,13 @@ export const EditProfileForm: React.FC = () => {
   } = useForm<EditProfileFormInput>({
     mode: 'onChange',
   });
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const history = useHistory();
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
     dispatch(updateProfile({ event, history, data }));
     resetField('password');
   };
-  const error = useSelector((state: RootState) => state.profile?.updateProfileError);
+  const error = useAppSelector((state) => state.profile?.profileError);
   const errorMessage = error ? (
     <Alert
       message={error.message}

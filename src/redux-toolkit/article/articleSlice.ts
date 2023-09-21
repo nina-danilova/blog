@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { isError } from 'utilities/checks';
+
 import { loadArticle } from './articleThunks';
 
 export type Article = {
@@ -47,20 +49,21 @@ const articleSlice = createSlice({
       state.slug = action.payload;
     },
   },
-  extraReducers: {
-    [loadArticle.pending]: (state) => {
-      state.loading = true;
-      state.article = null;
-      state.error = null;
-    },
-    [loadArticle.fulfilled]: (state, action: PayloadAction<Article>) => {
-      state.loading = false;
-      state.article = action.payload;
-    },
-    [loadArticle.rejected]: (state, action: PayloadAction<ArticleStateError>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadArticle.pending, (state) => {
+        state.loading = true;
+        state.article = null;
+        state.error = null;
+      })
+      .addCase(loadArticle.fulfilled, (state, action) => {
+        state.loading = false;
+        state.article = action.payload;
+      })
+      .addMatcher(isError, (state, action: PayloadAction<ArticleStateError>) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

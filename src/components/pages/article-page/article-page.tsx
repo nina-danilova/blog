@@ -1,12 +1,11 @@
 import React, { useEffect } from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import { Alert, Spin } from 'antd';
 
+import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { ArticleCardFullView } from 'components/blocks/article-card-full-view';
 import { setSlug } from 'redux-toolkit/article/articleSlice';
 import { loadArticle } from 'redux-toolkit/article/articleThunks';
-import { RootState } from 'redux-toolkit/index';
 
 import styles from './article-page.module.scss';
 
@@ -22,14 +21,10 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const { params } = match;
   const { id } = params;
   const history = useHistory();
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(setSlug(id));
-    dispatch(loadArticle({ id, history }));
-  }, []);
-  const article = useSelector((state: RootState) => state.viewingArticle);
-  const isLoading = useSelector((state: RootState) => state.viewingArticle.loading);
-  const loadArticleError = useSelector((state: RootState) => state.viewingArticle.error);
+  const dispatch = useAppDispatch();
+  const article = useAppSelector((state) => state.viewingArticle);
+  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
+  const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
   const loadSpinner = isLoading ? <Spin /> : null;
   const errorMessage =
     loadArticleError !== null ? (
@@ -47,6 +42,12 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
         message="There is no relevant data for you. Please update."
       />
     ) : null;
+  useEffect(() => {
+    dispatch(setSlug(id));
+    if (!isLoading) {
+      dispatch(loadArticle({ id, history }));
+    }
+  }, [id]);
   return (
     <>
       {loadSpinner}

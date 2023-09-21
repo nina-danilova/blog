@@ -1,4 +1,4 @@
-export const getData = async (url, token: null | string = null) => {
+export const getData = async (url: string, token: null | string = null) => {
   return fetch(url, {
     method: 'GET',
     headers: {
@@ -10,7 +10,14 @@ export const getData = async (url, token: null | string = null) => {
 
 type UpdateDataProps = {
   url: string;
-  data;
+  data: {
+    user: {
+      email: string;
+      username: string;
+      image: string | null;
+      password: string;
+    };
+  };
   token: null | string;
 };
 
@@ -27,7 +34,13 @@ export const updateData = async ({ url, data, token = null }: UpdateDataProps) =
 
 type SendDataProps = {
   url: string;
-  data;
+  data: {
+    user: {
+      username?: string;
+      email: string;
+      password: string;
+    };
+  };
   token?: null | string;
 };
 

@@ -1,12 +1,14 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Article } from 'redux-toolkit/article/articleSlice';
+import { isError } from 'utilities/checks';
 
 import { loadArticles } from './articlesThunks';
 
-type ArticlesStateError = {
+export type ArticlesStateError = {
   name: string;
   message: string;
+  body?: any;
 };
 
 type ArticleList = Article[];
@@ -35,21 +37,22 @@ const articlesSlice = createSlice({
       state.currentPage = action.payload;
     },
   },
-  extraReducers: {
-    [loadArticles.pending]: (state) => {
-      state.loading = true;
-      state.articleList = [];
-      state.error = null;
-    },
-    [loadArticles.fulfilled]: (state, action: PayloadAction<{ articles: ArticleList; articlesCount: number }>) => {
-      state.loading = false;
-      state.articleList = action.payload.articles;
-      state.articlesCount = action.payload.articlesCount;
-    },
-    [loadArticles.rejected]: (state, action: PayloadAction<ArticlesStateError>) => {
-      state.loading = false;
-      state.error = action.payload;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase(loadArticles.pending, (state) => {
+        state.loading = true;
+        state.articleList = [];
+        state.error = null;
+      })
+      .addCase(loadArticles.fulfilled, (state, action) => {
+        state.loading = false;
+        state.articleList = action.payload.articles;
+        state.articlesCount = action.payload.articlesCount;
+      })
+      .addMatcher(isError, (state, action: PayloadAction<ArticlesStateError>) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
 });
 

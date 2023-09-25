@@ -1,8 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { getData } from 'services/api';
-import { apiBaseUrl } from 'utilities/constants';
+import { apiBaseUrl, linkPaths } from 'utilities/constants';
 import { Article } from 'redux-toolkit/article/articleSlice';
+import { createError } from 'utilities/errors';
 
 const addIdToArticles = (articleList: Article[]): (Article & { id: number })[] => {
   let id = 0;
@@ -19,13 +20,13 @@ const getOffset = (page: number): number => {
 
 type LoadArticlesPayloadProps = {
   currentPage: number;
-  history: any;
+  history;
 };
 
 type LoadArticlesRejectValue = {
   name: string;
   message: string;
-  body?: any;
+  body?: Error;
 };
 
 export const loadArticles = createAsyncThunk<
@@ -37,57 +38,38 @@ export const loadArticles = createAsyncThunk<
   { rejectValue: LoadArticlesRejectValue }
 >('articles/loadArticles', async ({ currentPage, history }, { rejectWithValue }) => {
   const offset = getOffset(currentPage);
+  const { pathToSignIn } = linkPaths;
   return getData(`${apiBaseUrl}/articles?limit=20&offset=${offset}`)
     .then(
       (response) => {
         if (response.status === 401) {
-          history.push('/sign-in');
+          history.push(pathToSignIn);
         } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
           return response.json();
         }
-        // const error = new Error(`Load articles error, code ${response.status.toString()} - error after API answer`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `Load articles error, code ${response.status.toString()} - error after API answer`,
-        };
-        // throw new Error(error);
-        throw error;
+        throw createError(`Load articles error, code ${response.status.toString()} - error after API answer`);
       },
       (err) => {
-        // const error = new Error('Load articles error while sending data through API');
-        // error.response = err;
-        const error = {
-          name: 'Error',
-          message: 'Load articles error while sending data through API',
-          body: err,
-        };
-        throw error;
+        throw createError('Load articles error while sending data through API', err);
       }
     )
     .then((response) => {
       if (response.errors) {
         const errors = Object.entries(response.errors);
         const [errorName, errorMessage] = errors[0];
-        // const error = new Error(`Load articles error - ${errorName} ${errorMessage}`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `Load articles error - ${errorName} ${errorMessage}`,
-        };
-        throw error;
+        throw createError(`Load articles error - ${errorName} ${errorMessage}`);
       }
       if (response.articles) {
         const preparedArticleList = addIdToArticles(response.articles);
         return { ...response, articles: preparedArticleList };
       }
-      const error = {
-        name: 'Error',
-        message: 'Unknown error of loading articles',
-      };
-      throw error;
+      throw createError('Unknown error of loading articles');
     })
     .catch((error) => {
-      return rejectWithValue(error);
+      if (error.message) {
+        return rejectWithValue(error);
+      }
+      const err = createError(error);
+      return rejectWithValue(err);
     });
 });

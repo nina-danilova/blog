@@ -1,21 +1,18 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { Article } from 'redux-toolkit/article/articleSlice';
-import { isError } from 'utilities/checks';
 
 import { loadArticles } from './articlesThunks';
 
-export type ArticlesStateError = {
-  name: string;
-  message: string;
-  body?: any;
+const isError = (action: AnyAction) => {
+  return action.type.endsWith('loadArticles/rejected');
 };
 
 type ArticleList = Article[];
 
 type ArticlesSliceState = {
   loading: boolean;
-  error: null | ArticlesStateError;
+  error: null | Error;
   articleList: ArticleList;
   articlesCount: number;
   currentPage: number;
@@ -49,7 +46,7 @@ const articlesSlice = createSlice({
         state.articleList = action.payload.articles;
         state.articlesCount = action.payload.articlesCount;
       })
-      .addMatcher(isError, (state, action: PayloadAction<ArticlesStateError>) => {
+      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
         state.loading = false;
         state.error = action.payload;
       });

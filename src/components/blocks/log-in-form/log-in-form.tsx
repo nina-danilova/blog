@@ -2,21 +2,28 @@ import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
-import { linkPaths, emailRegEx, messagePattern, messageRequired } from 'utilities/constants';
+import { linkPaths, emailRegEx, messagePattern, messageRequired, passwordRegEx } from 'utilities/constants';
 import { userLogin, LoginFormInput } from 'redux-toolkit/user/userThunks';
 
 import styles from './log-in-form.module.scss';
 
 export const LogInForm: React.FC = () => {
   const { pathToSignUp } = linkPaths;
+  const schema = yup.object().shape({
+    email: yup.string().matches(emailRegEx, { message: messagePattern }).required(messageRequired),
+    password: yup.string().matches(passwordRegEx, { message: messagePattern }).required(messageRequired),
+  });
   const {
     control,
     formState: { errors },
     handleSubmit: onFormSubmit,
   } = useForm<LoginFormInput>({
     mode: 'onChange',
+    resolver: yupResolver<LoginFormInput>(schema),
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -41,13 +48,6 @@ export const LogInForm: React.FC = () => {
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: emailRegEx,
-                  message: messagePattern,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -69,9 +69,6 @@ export const LogInForm: React.FC = () => {
             <Controller
               name="password"
               control={control}
-              rules={{
-                required: messageRequired,
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>

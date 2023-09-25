@@ -1,30 +1,28 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ProfileSliceState } from 'redux-toolkit/profile/profileSlice';
-import { isError } from 'utilities/checks';
 
 import { userRegister, userLogin, userLogOut } from './userThunks';
 
-type UserStateError = {
-  name: string;
-  message: string;
+const isError = (action: AnyAction) => {
+  return (
+    action.type.endsWith('userRegister/rejected') ||
+    action.type.endsWith('userLogin/rejected') ||
+    action.type.endsWith('userLogOut/rejected')
+  );
 };
 
 type UserSliceState = {
   registering: boolean;
-  // registerError: null | UserStateError;
   loggingIn: boolean;
-  // loginError: null | UserStateError;
-  userError: null | UserStateError;
+  userError: null | Error;
   authorized: boolean;
   profile: undefined | ProfileSliceState;
 };
 
 const initialState: UserSliceState = {
   registering: false,
-  // registerError: null,
   loggingIn: false,
-  // loginError: null,
   userError: null,
   authorized: false,
   profile: undefined,
@@ -60,7 +58,7 @@ const userSlice = createSlice({
       .addCase(userLogOut.fulfilled, (state) => {
         state.authorized = false;
       })
-      .addMatcher(isError, (state, action: PayloadAction<UserStateError>) => {
+      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
         state.registering = false;
         state.loggingIn = false;
         state.userError = action.payload;

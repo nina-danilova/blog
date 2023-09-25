@@ -1,7 +1,7 @@
 import React from 'react';
 
-import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
-import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
+import { ArticleDescriptionWithRouter } from 'components/shared/article-description';
+import { ArticleIssueInfo } from 'components/shared/article-issue-info';
 
 import styles from './article-card-preview.module.scss';
 

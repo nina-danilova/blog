@@ -3,6 +3,8 @@ import { Link, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { clsx } from 'clsx';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { userRegister } from 'redux-toolkit/user/userThunks';
@@ -33,12 +35,38 @@ type RegistrationFormInput = {
 export const RegistrationForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const { pathToSignIn } = linkPaths;
+  const schema = yup.object().shape({
+    username: yup
+      .string()
+      .matches(usernameRegEx, { message: messagePattern })
+      .min(3, messageUsernameMinLength)
+      .max(20, messageUsernameMaxLength)
+      .required(messageRequired),
+    email: yup.string().matches(emailRegEx, { message: messagePattern }).required(messageRequired),
+    password: yup
+      .string()
+      .matches(passwordRegEx, { message: messagePattern })
+      .min(6, messagePasswordMinLength)
+      .max(40, messagePasswordMaxLength)
+      .required(messageRequired),
+    repeatPassword: yup
+      .string()
+      .test('passwords-the-same', messageNotTheSame, (value, context) => {
+        if (context.from) {
+          return value === context.from[0].value.password;
+        }
+        return false;
+      })
+      .required(messageRequired),
+    personalInfoAgreement: yup.string().required(messageRequired),
+  });
   const {
     control,
     formState: { errors },
     handleSubmit: onFormSubmit,
   } = useForm<RegistrationFormInput>({
     mode: 'onChange',
+    resolver: yupResolver<RegistrationFormInput>(schema),
   });
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
@@ -63,21 +91,6 @@ export const RegistrationForm: React.FC = () => {
             <Controller
               name="username"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: usernameRegEx,
-                  message: messagePattern,
-                },
-                minLength: {
-                  value: 3,
-                  message: messageUsernameMinLength,
-                },
-                maxLength: {
-                  value: 20,
-                  message: messageUsernameMaxLength,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -99,13 +112,6 @@ export const RegistrationForm: React.FC = () => {
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: emailRegEx,
-                  message: messagePattern,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -127,21 +133,6 @@ export const RegistrationForm: React.FC = () => {
             <Controller
               name="password"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: passwordRegEx,
-                  message: messagePattern,
-                },
-                minLength: {
-                  value: 6,
-                  message: messagePasswordMinLength,
-                },
-                maxLength: {
-                  value: 40,
-                  message: messagePasswordMaxLength,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -163,12 +154,6 @@ export const RegistrationForm: React.FC = () => {
             <Controller
               name="repeatPassword"
               control={control}
-              rules={{
-                required: messageRequired,
-                validate: (value, formValues) => {
-                  return value === formValues.password;
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -179,7 +164,9 @@ export const RegistrationForm: React.FC = () => {
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors?.repeatPassword && <p className={styles['registration-form-error']}>{messageNotTheSame}</p>}
+                    {errors?.repeatPassword && (
+                      <p className={styles['registration-form-error']}>{errors.repeatPassword.message}</p>
+                    )}
                   </>
                 );
               }}
@@ -190,9 +177,6 @@ export const RegistrationForm: React.FC = () => {
           <Controller
             name="personalInfoAgreement"
             control={control}
-            rules={{
-              required: messageRequired,
-            }}
             render={({ field: { onChange, value } }) => {
               return (
                 <input
@@ -216,7 +200,9 @@ export const RegistrationForm: React.FC = () => {
             <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
               I agree to the processing of my personal information
             </p>
-            {errors?.personalInfoAgreement && <p className={styles['registration-form-error']}>{messageRequired}</p>}
+            {errors?.personalInfoAgreement && (
+              <p className={styles['registration-form-error']}>{errors.personalInfoAgreement.message}</p>
+            )}
           </label>
         </div>
         <div className={styles['registration-form-actions']}>

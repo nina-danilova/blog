@@ -8,7 +8,7 @@ import { LogInPage } from 'components/pages/log-in-page';
 import { ProfilePage } from 'components/pages/profile-page';
 import { NewArticlePage } from 'components/pages/new-article-page';
 import { linkPaths } from 'utilities/constants';
-import { PrivateRoute } from 'components/utilities/private-route';
+import { PrivateRoute } from 'components/shared/private-route';
 import { NotFoundPage } from 'components/pages/not-found-page';
 
 import styles from './main.module.scss';

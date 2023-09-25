@@ -1,8 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-import { isError } from 'utilities/checks';
+import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { loadArticle } from './articleThunks';
+
+const isError = (action: AnyAction) => {
+  return action.type.endsWith('loadArticle/rejected');
+};
 
 export type Article = {
   slug: string;
@@ -22,23 +24,18 @@ export type Article = {
   id: number;
 };
 
-type ArticleStateError = {
-  name: string;
-  message: string;
-};
-
 type ArticleSliceState = {
   loading: boolean;
-  error: null | ArticleStateError;
+  error: null | Error;
   article: null | Article;
-  slug: string;
+  slug: null | string;
 };
 
 const initialState: ArticleSliceState = {
   loading: false,
   error: null,
   article: null,
-  slug: 'If-we-quantify-the-alarm-we-can-get-to-the-FTP-pixel-through-the-online-SSL-interface!-120863',
+  slug: null,
 };
 
 const articleSlice = createSlice({
@@ -60,7 +57,7 @@ const articleSlice = createSlice({
         state.loading = false;
         state.article = action.payload;
       })
-      .addMatcher(isError, (state, action: PayloadAction<ArticleStateError>) => {
+      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
         state.loading = false;
         state.error = action.payload;
       });

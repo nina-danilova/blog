@@ -2,6 +2,8 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { updateProfile, EditProfileFormInput } from 'redux-toolkit/profile/profileThunks';
@@ -24,6 +26,22 @@ export const EditProfileForm: React.FC = () => {
   const userName = useAppSelector((state) => state.profile.userName) || '';
   const userImage = useAppSelector((state) => state.profile.image) || '';
   const userEmail = useAppSelector((state) => state.profile.email) || '';
+  const schema = yup.object().shape({
+    username: yup
+      .string()
+      .matches(usernameRegEx, { message: messagePattern })
+      .min(3, messageUsernameMinLength)
+      .max(20, messageUsernameMaxLength)
+      .required(messageRequired),
+    email: yup.string().matches(emailRegEx, { message: messagePattern }).required(messageRequired),
+    password: yup
+      .string()
+      .matches(passwordRegEx, { message: messagePattern })
+      .min(6, messagePasswordMinLength)
+      .max(40, messagePasswordMaxLength)
+      .required(messageRequired),
+    image: yup.string().matches(urlRegEx, { excludeEmptyString: true, message: messagePattern }),
+  });
   const {
     handleSubmit: onFormSubmit,
     control,
@@ -32,6 +50,7 @@ export const EditProfileForm: React.FC = () => {
     resetField,
   } = useForm<EditProfileFormInput>({
     mode: 'onChange',
+    resolver: yupResolver<EditProfileFormInput>(schema),
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
@@ -68,21 +87,6 @@ export const EditProfileForm: React.FC = () => {
             <Controller
               name="username"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: usernameRegEx,
-                  message: messagePattern,
-                },
-                minLength: {
-                  value: 3,
-                  message: messageUsernameMinLength,
-                },
-                maxLength: {
-                  value: 20,
-                  message: messageUsernameMaxLength,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -108,13 +112,6 @@ export const EditProfileForm: React.FC = () => {
             <Controller
               name="email"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: emailRegEx,
-                  message: messagePattern,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -138,21 +135,6 @@ export const EditProfileForm: React.FC = () => {
             <Controller
               name="password"
               control={control}
-              rules={{
-                required: messageRequired,
-                pattern: {
-                  value: passwordRegEx,
-                  message: messagePattern,
-                },
-                minLength: {
-                  value: 6,
-                  message: messagePasswordMinLength,
-                },
-                maxLength: {
-                  value: 40,
-                  message: messagePasswordMaxLength,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -178,12 +160,6 @@ export const EditProfileForm: React.FC = () => {
             <Controller
               name="image"
               control={control}
-              rules={{
-                pattern: {
-                  value: '' || urlRegEx,
-                  message: messagePattern,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>

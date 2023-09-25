@@ -1,8 +1,6 @@
 import React from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
 
-import { goToPage } from 'utilities/history';
-
 import styles from './article-description.module.scss';
 
 const addIdToTags = (list: string[]): { name: string; id: number }[] => {
@@ -41,10 +39,10 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   ));
   const history = useHistory();
   const onTitleClick = () => {
-    goToPage(pathToArticle, history);
+    history.push(pathToArticle);
   };
   const onTitleKeyDown = () => {
-    goToPage(pathToArticle, history);
+    history.push(pathToArticle);
   };
   return (
     <div className={styles['article-description']}>

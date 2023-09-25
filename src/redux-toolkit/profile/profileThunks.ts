@@ -3,96 +3,75 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { getFromStorage, setToStorage } from 'services/storage';
 import { getData, updateData } from 'services/api';
-import { apiBaseUrl } from 'utilities/constants';
+import { apiBaseUrl, linkPaths } from 'utilities/constants';
 import { RootState } from 'redux-toolkit';
+import { createError } from 'utilities/errors';
 
 export type EditProfileFormInput = {
   username: string;
   email: string;
   password: string;
-  image?: string | undefined;
+  image?: string;
 };
 
 type Profile = {
   username: string;
   email: string;
-  bio: string | undefined;
-  image: string | undefined;
+  bio?: string;
+  image?: string;
 };
 
 type LoadProfilePayloadProps = {
-  history: any;
+  history;
 };
 
 type LoadProfileRejectValue = {
   name: string;
   message: string;
-  body?: any;
+  body?: Error;
 };
 
 export const loadProfile = createAsyncThunk<Profile, LoadProfilePayloadProps, { rejectValue: LoadProfileRejectValue }>(
   'profile/loadProfile',
   async ({ history }, { rejectWithValue }) => {
-    // const history = useHistory();
+    const { pathToSignIn } = linkPaths;
     const email = getFromStorage('lastEmail');
     const token = getFromStorage(`${email}-login-token`);
     if (!token) {
-      const error = {
-        name: 'Error',
-        message: `No login token for this email - ${email}`,
-      };
+      const error = createError(`No login token for this email - ${email}`);
       return rejectWithValue(error);
     }
     return getData(`${apiBaseUrl}/user`, token)
       .then(
         (response) => {
           if (response.status === 401) {
-            history.push('/sign-in');
+            history.push(pathToSignIn);
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
             return response.json();
           }
-          // const error = new Error(`Load profile error, code ${response.status.toString()} - error after API answer`);
-          // error.response = response;
-          const error = {
-            name: 'Error',
-            message: `Load profile error, code ${response.status.toString()} - error after API answer`,
-          };
-          throw error;
+          throw createError(`Load profile error, code ${response.status.toString()} - error after API answer`);
         },
         (err) => {
-          // const error = new Error('Load profile error while sending data through API');
-          // error.response = err;
-          const error = {
-            name: 'Error',
-            message: 'Load profile error while sending data through API',
-            body: err,
-          };
-          throw error;
+          throw createError('Load profile error while sending data through API', err);
         }
       )
       .then((response) => {
         if (response.errors) {
           const errors = Object.entries(response.errors);
           const [errorName, errorMessage] = errors[0];
-          // const error = new Error(`Load profile error - ${errorName} ${errorMessage}`);
-          // error.response = response;
-          const error = {
-            name: 'Error',
-            message: `Load profile error - ${errorName} ${errorMessage}`,
-          };
-          throw error;
+          throw createError(`Load profile error - ${errorName} ${errorMessage}`);
         }
         if (response.user) {
           return response.user;
         }
-        const error = {
-          name: 'Error',
-          message: 'Unknown error while loading profile',
-        };
-        throw error;
+        throw createError('Unknown error while loading profile');
       })
       .catch((error) => {
-        return rejectWithValue(error);
+        if (error.message) {
+          return rejectWithValue(error);
+        }
+        const err = createError(error);
+        return rejectWithValue(err);
       });
   }
 );
@@ -137,58 +116,39 @@ export const updateProfile = createAsyncThunk<
       password: formData.password,
     },
   };
+  const { pathToSignIn } = linkPaths;
   return updateData({ url: `${apiBaseUrl}/user`, data, token })
     .then(
       (response) => {
         if (response.status === 401) {
-          history.push('/sign-in');
+          history.push(pathToSignIn);
         } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
           return response.json();
         }
-        // const error = new Error(`Update profile error, code ${response.status.toString()} - error after API answer`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `Update profile error, code ${response.status.toString()} - error after API answer`,
-        };
-        throw error;
+        throw createError(`Update profile error, code ${response.status.toString()} - error after API answer`);
       },
       (err) => {
-        // handle error from promise-api
-        // const error = new Error('Update profile error while updating data through API');
-        // error.response = err;
-        const error = {
-          name: 'Error',
-          message: 'Update profile error while updating data through API',
-          body: err,
-        };
-        throw error;
+        throw createError('Update profile error while updating data through API', err);
       }
     )
     .then((response) => {
       if (response.errors) {
         const errors = Object.entries(response.errors);
         const [errorName, errorMessage] = errors[0];
-        // const error = new Error(`Update profile error - ${errorName} ${errorMessage}`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `Update profile error - ${errorName} ${errorMessage}`,
-        };
-        throw error;
+        throw createError(`Update profile error - ${errorName} ${errorMessage}`);
       }
       if (response.user) {
         setToStorage(`${response.user.email}-login-token`, response.user.token);
         setToStorage('lastEmail', response.user.email);
         return response.user;
       }
-      const error = {
-        name: 'Error',
-        message: 'Unknown error while updating profile',
-      };
-      throw error;
+      throw createError('Unknown error while updating profile');
     })
     .catch((error) => {
-      return rejectWithValue(error);
+      if (error.message) {
+        return rejectWithValue(error);
+      }
+      const err = createError(error);
+      return rejectWithValue(err);
     });
 });

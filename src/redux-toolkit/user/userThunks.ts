@@ -2,10 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FormEvent } from 'react';
 
 import { sendData } from 'services/api';
-import { apiBaseUrl } from 'utilities/constants';
+import { apiBaseUrl, linkPaths } from 'utilities/constants';
 import { getFromStorage, removeFromStorage, setToStorage } from 'services/storage';
 import { clearProfile, addInfoToProfile } from 'redux-toolkit/profile/profileSlice';
 import { AppDispatch } from 'redux-toolkit';
+import { createError } from 'utilities/errors';
 
 export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispatch }>(
   'user/userLogOut',
@@ -43,58 +44,39 @@ export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { r
         password: formData.password,
       },
     };
+    const { pathToSignIn, pathToHome } = linkPaths;
     return sendData({ url: `${apiBaseUrl}/users`, data })
       .then(
         (response) => {
           if (response.status === 401) {
-            history.push('/sign-in');
+            history.push(pathToSignIn);
           } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
             return response.json();
           }
-          // const error = new Error(`User register error, code ${response.status.toString()} - error after API answer`);
-          // error.response = response;
-          const error = {
-            name: 'Error',
-            message: `User register error, code ${response.status.toString()} - error after API answer`,
-          };
-          throw error;
+          throw createError(`User register error, code ${response.status.toString()} - error after API answer`);
         },
         (err) => {
-          // handle error from promise-api
-          // const error = new Error('User register error while sending data through API');
-          // error.response = err;
-          const error = {
-            name: 'Error',
-            message: 'User register error while sending data through API',
-            body: err,
-          };
-          throw error;
+          throw createError('User register error while sending data through API', err);
         }
       )
       .then((response) => {
         if (response.errors) {
           const errors = Object.entries(response.errors);
           const [errorName, errorMessage] = errors[0];
-          // const error = new Error(`User register error - ${errorName} ${errorMessage}`);
-          // error.response = response;
-          const error = {
-            name: 'Error',
-            message: `User register error - ${errorName} ${errorMessage}`,
-          };
-          throw error;
+          throw createError(`User register error - ${errorName} ${errorMessage}`);
         }
         if (response.user) {
           setToStorage(`${response.user.email}-token`, response.user.token);
-          return history.push('/');
+          return history.push(pathToHome);
         }
-        const error = {
-          name: 'Error',
-          message: 'Unknown error while registering user',
-        };
-        throw error;
+        throw createError('Unknown error while registering user');
       })
       .catch((error) => {
-        return rejectWithValue(error);
+        if (error.message) {
+          return rejectWithValue(error);
+        }
+        const err = createError(error);
+        return rejectWithValue(err);
       });
   }
 );
@@ -135,50 +117,29 @@ export const userLogin = createAsyncThunk<
   if (!token) {
     // const error = new Error('No token for this email');
     // error.response = data;
-    const error = {
-      name: 'Error',
-      message: 'No token for this email',
-    };
+    const error = createError('No token for this email');
     return rejectWithValue(error);
   }
+  const { pathToSignIn, pathToHome } = linkPaths;
   return sendData({ url: `${apiBaseUrl}/users/login`, data, token })
     .then(
       (response) => {
         if (response.status === 401) {
-          history.push('/sign-in');
+          history.push(pathToSignIn);
         } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
           return response.json();
         }
-        // const error = new Error(`User login error, code ${response.status.toString()} - error after API answer`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `User login error, code ${response.status.toString()} - error after API answer`,
-        };
-        throw error;
+        throw createError(`User login error, code ${response.status.toString()} - error after API answer`);
       },
       (err) => {
-        // const error = new Error('User login error while sending data through API');
-        // error.response = err;
-        const error = {
-          name: 'Error',
-          message: 'User login error while sending data through API',
-          body: err,
-        };
-        throw error;
+        throw createError('User login error while sending data through API', err);
       }
     )
     .then((response) => {
       if (response.errors) {
         const errors = Object.entries(response.errors);
         const [errorName, errorMessage] = errors[0];
-        // const error = new Error(`User login error - ${errorName} ${errorMessage}`);
-        // error.response = response;
-        const error = {
-          name: 'Error',
-          message: `User login error - ${errorName} ${errorMessage}`,
-        };
-        throw error;
+        throw createError(`User login error - ${errorName} ${errorMessage}`);
       }
       if (response.user) {
         setToStorage(`${response.user.email}-login-token`, response.user.token);
@@ -190,15 +151,15 @@ export const userLogin = createAsyncThunk<
             email: response.user.email,
           })
         );
-        return history.push('/');
+        return history.push(pathToHome);
       }
-      const error = {
-        name: 'Error',
-        message: 'Unknown error while logging-in user',
-      };
-      throw error;
+      throw createError('Unknown error while logging-in user');
     })
     .catch((error) => {
-      return rejectWithValue(error);
+      if (error.message) {
+        return rejectWithValue(error);
+      }
+      const err = createError(error);
+      return rejectWithValue(err);
     });
 });

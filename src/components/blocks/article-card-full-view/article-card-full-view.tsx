@@ -1,8 +1,8 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 
-import { ArticleDescriptionWithRouter } from 'components/blocks/article-description';
-import { ArticleIssueInfo } from 'components/blocks/article-issue-info';
+import { ArticleDescriptionWithRouter } from 'components/shared/article-description';
+import { ArticleIssueInfo } from 'components/shared/article-issue-info';
 import { useAppSelector } from 'hooks/hooks';
 
 import styles from './article-card-full-view.module.scss';

@@ -3,6 +3,8 @@ import { useHistory } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
 import { Alert } from 'antd';
 import { clsx } from 'clsx';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle } from 'redux-toolkit/article/articleThunks';
@@ -14,6 +16,7 @@ type ArticleFormInput = {
   title: string;
   description: string;
   text: string;
+  tags?: string[];
 };
 
 export const ArticleForm: React.FC = () => {
@@ -21,13 +24,19 @@ export const ArticleForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
     dispatch(createArticle({ event, history, data }));
+  const schema = yup.object().shape({
+    title: yup.string().max(200, messageTitleMaxLength).required(messageRequired),
+    description: yup.string().required(messageRequired),
+    text: yup.string().required(messageRequired),
+    tags: yup.array(yup.string().max(20, messageTagMaxLength).required(messageRequired)),
+  });
   const {
     formState: { errors },
     handleSubmit: onFormSubmit,
     control,
-    setValue,
   } = useForm<ArticleFormInput>({
     mode: 'onChange',
+    resolver: yupResolver<ArticleFormInput>(schema),
   });
   const [tag, setTag] = useState('');
   const { fields, append, remove } = useFieldArray({
@@ -69,13 +78,6 @@ export const ArticleForm: React.FC = () => {
             <Controller
               name="title"
               control={control}
-              rules={{
-                required: messageRequired,
-                maxLength: {
-                  value: 300,
-                  message: messageTitleMaxLength,
-                },
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -97,9 +99,6 @@ export const ArticleForm: React.FC = () => {
             <Controller
               name="description"
               control={control}
-              rules={{
-                required: messageRequired,
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -123,9 +122,6 @@ export const ArticleForm: React.FC = () => {
             <Controller
               name="text"
               control={control}
-              rules={{
-                required: messageRequired,
-              }}
               render={({ field: { onChange, value } }) => {
                 return (
                   <>
@@ -149,17 +145,10 @@ export const ArticleForm: React.FC = () => {
                 {fields.map((item, index) => (
                   <li key={item.id}>
                     <label className={styles['article-form-tag']}>
-                      <p className={styles['visually-hidden']}>{`tag-${item.id}`}</p>
+                      <p className={styles['visually-hidden']}>{`tags.${index}`}</p>
                       <Controller
-                        name={`tag-${item.id}`}
+                        name={`tags.${index}`}
                         control={control}
-                        rules={{
-                          required: messageRequired,
-                          maxLength: {
-                            value: 100,
-                            message: messageTagMaxLength,
-                          },
-                        }}
                         render={({ field: { onChange, value } }) => {
                           return (
                             <>
@@ -167,7 +156,7 @@ export const ArticleForm: React.FC = () => {
                                 className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
                                 type="text"
                                 placeholder="Tag"
-                                value={value || setValue(`tag-${item.id}`, item[index])}
+                                value={value || ''}
                                 onChange={onChange}
                               />
                               <button
@@ -180,8 +169,8 @@ export const ArticleForm: React.FC = () => {
                               >
                                 Delete
                               </button>
-                              {errors[`tag-${item.id}`] && (
-                                <span className={styles['article-form-error']}>{errors[`tag-${item.id}`].message}</span>
+                              {errors[`tags.${index}`] && (
+                                <span className={styles['article-form-error']}>{errors[`tags.${index}`].message}</span>
                               )}
                             </>
                           );

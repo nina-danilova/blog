@@ -1,9 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { FormEvent } from 'react';
 
-import { sendData } from 'services/api';
+import { sendData } from 'services/blog-service';
 import { apiBaseUrl, linkPaths } from 'utilities/constants';
-import { getFromStorage, removeFromStorage, setToStorage } from 'services/storage';
+import { getRegisterToken, setAuthStatus, setLoginInfo, setRegisterInfo } from 'services/storage-service';
 import { clearProfile, addInfoToProfile } from 'redux-toolkit/profile/profileSlice';
 import { AppDispatch } from 'redux-toolkit';
 import { createError } from 'utilities/errors';
@@ -11,8 +11,7 @@ import { createError } from 'utilities/errors';
 export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispatch }>(
   'user/userLogOut',
   async (_, { dispatch }) => {
-    setToStorage('userAuthorized', 'false');
-    removeFromStorage('lastEmail');
+    setAuthStatus(false);
     dispatch(clearProfile());
   }
 );
@@ -66,7 +65,7 @@ export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { r
           throw createError(`User register error - ${errorName} ${errorMessage}`);
         }
         if (response.user) {
-          setToStorage(`${response.user.email}-token`, response.user.token);
+          setRegisterInfo(response.user);
           return history.push(pathToHome);
         }
         throw createError('Unknown error while registering user');
@@ -113,11 +112,9 @@ export const userLogin = createAsyncThunk<
       password: formData.password,
     },
   };
-  const token = getFromStorage(`${data.user.email}-token`);
+  const token = getRegisterToken(data.user.email);
   if (!token) {
-    // const error = new Error('No token for this email');
-    // error.response = data;
-    const error = createError('No token for this email');
+    const error = createError('No register token for this email');
     return rejectWithValue(error);
   }
   const { pathToSignIn, pathToHome } = linkPaths;
@@ -142,9 +139,8 @@ export const userLogin = createAsyncThunk<
         throw createError(`User login error - ${errorName} ${errorMessage}`);
       }
       if (response.user) {
-        setToStorage(`${response.user.email}-login-token`, response.user.token);
-        setToStorage('userAuthorized', 'true');
-        setToStorage('lastEmail', response.user.email);
+        setAuthStatus(true);
+        setLoginInfo(response.user);
         dispatch(
           addInfoToProfile({
             username: response.user.username,

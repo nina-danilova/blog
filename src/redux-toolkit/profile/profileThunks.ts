@@ -1,10 +1,9 @@
 import { FormEvent } from 'react';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { getFromStorage, setToStorage } from 'services/storage';
-import { getData, updateData } from 'services/api';
+import { getLoginToken, setLoginInfo } from 'services/storage-service';
+import { getData, updateData } from 'services/blog-service';
 import { apiBaseUrl, linkPaths } from 'utilities/constants';
-import { RootState } from 'redux-toolkit';
 import { createError } from 'utilities/errors';
 
 export type EditProfileFormInput = {
@@ -35,10 +34,9 @@ export const loadProfile = createAsyncThunk<Profile, LoadProfilePayloadProps, { 
   'profile/loadProfile',
   async ({ history }, { rejectWithValue }) => {
     const { pathToSignIn } = linkPaths;
-    const email = getFromStorage('lastEmail');
-    const token = getFromStorage(`${email}-login-token`);
+    const token = getLoginToken();
     if (!token) {
-      const error = createError(`No login token for this email - ${email}`);
+      const error = createError('No login token for this email');
       return rejectWithValue(error);
     }
     return getData(`${apiBaseUrl}/user`, token)
@@ -101,13 +99,10 @@ export const updateProfile = createAsyncThunk<
   UpdateProfilePayloadProps,
   {
     rejectValue: UpdateProfileRejectValue;
-    state: RootState;
   }
->('profile/updateProfile', async ({ event, history, data: formData }, { rejectWithValue, getState }) => {
+>('profile/updateProfile', async ({ event, history, data: formData }, { rejectWithValue }) => {
   event.preventDefault();
-  const state = getState();
-  const { email } = state.profile;
-  const token = getFromStorage(`${email}-login-token`);
+  const token = getLoginToken();
   const data = {
     user: {
       email: formData.email,
@@ -138,8 +133,7 @@ export const updateProfile = createAsyncThunk<
         throw createError(`Update profile error - ${errorName} ${errorMessage}`);
       }
       if (response.user) {
-        setToStorage(`${response.user.email}-login-token`, response.user.token);
-        setToStorage('lastEmail', response.user.email);
+        setLoginInfo(response.user);
         return response.user;
       }
       throw createError('Unknown error while updating profile');

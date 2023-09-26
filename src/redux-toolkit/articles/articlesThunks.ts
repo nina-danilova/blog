@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { getData } from 'services/api';
+import { getData } from 'services/blog-service';
 import { apiBaseUrl, linkPaths } from 'utilities/constants';
 import { Article } from 'redux-toolkit/article/articleSlice';
 import { createError } from 'utilities/errors';

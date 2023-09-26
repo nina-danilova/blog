@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { ArticleCardFullView } from 'components/blocks/article-card-full-view';
 import { setSlug } from 'redux-toolkit/article/articleSlice';
 import { loadArticle } from 'redux-toolkit/article/articleThunks';
+import { linkPaths } from 'utilities/constants';
 
 import styles from './article-page.module.scss';
 
@@ -20,11 +21,13 @@ type ArticlePageProps = {
 const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const { params } = match;
   const { id } = params;
+  const { pathToSignIn } = linkPaths;
   const history = useHistory();
   const dispatch = useAppDispatch();
   const article = useAppSelector((state) => state.viewingArticle);
   const isLoading = useAppSelector((state) => state.viewingArticle.loading);
   const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
+  // const noAuthError = useAppSelector((state) => state.viewingArticle.error?.cause?.errors.error.status);
   const loadSpinner = isLoading ? <Spin /> : null;
   const errorMessage =
     loadArticleError !== null ? (
@@ -45,8 +48,11 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   useEffect(() => {
     dispatch(setSlug(id));
     if (!isLoading) {
-      dispatch(loadArticle({ id, history }));
+      dispatch(loadArticle({ id }));
     }
+    /* if (noAuthError) {
+      history.push(pathToSignIn);
+    } */
   }, [id]);
   return (
     <>

@@ -1,16 +1,7 @@
-import { apiBaseUrl } from '../utilities/constants';
-import { createError } from '../utilities/errors';
-import { Article } from '../redux-toolkit/article/articleSlice';
-
-export const getData = async (url: string, token: null | string = null) => {
-  return fetch(url, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json;charset=utf-8',
-      Authorization: `Token ${token}`,
-    },
-  });
-};
+import { apiBaseUrl } from 'utilities/constants';
+import { createError } from 'utilities/errors';
+import { Article } from 'redux-toolkit/article/articleSlice';
+import { Profile } from 'redux-toolkit/profile/profileSlice';
 
 type UpdateDataProps = {
   url: string;
@@ -61,8 +52,9 @@ export const sendData = async ({ url, data, token = null }: SendDataProps) => {
 
 // ----------------------------------------------------------------------------
 
-export const getArticle = (id: string, token: null | string = null): Promise<Article | Error> => {
-  return fetch(`${apiBaseUrl}/articles/${id}`, {
+export const getArticle = (id: string, token: null | string = null): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles/${id}`;
+  return fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
@@ -91,14 +83,106 @@ export const getArticle = (id: string, token: null | string = null): Promise<Art
       throw createError('Unknown error of loading article');
     })
     .catch((error) => {
-      /* if (error.cause.errors) {
-        const errors = Object.entries(error.cause.errors);
-        const [errorName, errorMessage] = errors[0];
-        return error; // { ...error, message: `Load article error - ${errorName} ${errorMessage}` };
-      } */
       if (error.message) {
-        return error;
+        throw error;
       }
-      return createError(error);
+      throw createError(error);
+    });
+};
+
+export const getProfile = (token: string): Promise<Profile> => {
+  const url = `${apiBaseUrl}/user`;
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Load profile error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Load profile error while getting data through API', err);
+      }
+    )
+    .then((response) => {
+      if (response.user) {
+        return response.user;
+      }
+      throw createError('Unknown error of loading profile');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+const getOffset = (page: number): number => {
+  return (page - 1) * 20;
+};
+
+type ArticleWithIdList = (Article & { id: number })[];
+
+const addIdToArticles = (articleList: Article[]): ArticleWithIdList => {
+  let id = 0;
+  return articleList.map((article) => {
+    const articleWithId = { ...article, id };
+    id += 1;
+    return articleWithId;
+  });
+};
+
+export type ArticlesWithId = {
+  articles: ArticleWithIdList;
+  articlesCount: number;
+};
+
+export const getArticles = (currentPage: number): Promise<ArticlesWithId> => {
+  const offset = getOffset(currentPage);
+  const url = `${apiBaseUrl}/articles?limit=20&offset=${offset}`;
+  return fetch(url, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Load articles error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Load articles error while getting data through API', err);
+      }
+    )
+    .then((response) => {
+      if (response.articles) {
+        const preparedArticleList = addIdToArticles(response.articles);
+        return { ...response, articles: preparedArticleList };
+      }
+      throw createError('Unknown error of loading articles');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
     });
 };

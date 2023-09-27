@@ -1,6 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { getArticle } from 'services/blog-service';
+import { ServiceError } from 'utilities/errors';
 
 import { Article } from './articleSlice';
 
@@ -8,24 +9,14 @@ type LoadArticlePayloadProps = {
   id: string;
 };
 
-type LoadArticleRejectValue = {
-  name: string;
-  message: string;
-  body?: Error | Response;
-};
-
-const isResError = (res: Article | Error): res is Error => {
-  return !!res.cause;
-};
-
-export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { rejectValue: LoadArticleRejectValue }>(
+export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { rejectValue: ServiceError | unknown }>(
   'articles/loadArticle',
   async ({ id }, { rejectWithValue }) => {
-    const result = await getArticle(id);
-    if (isResError(result)) {
-      return rejectWithValue(result);
+    try {
+      return await getArticle(id);
+    } catch (error) {
+      return rejectWithValue(error);
     }
-    return result;
   }
 );
 

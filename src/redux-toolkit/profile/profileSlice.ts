@@ -1,9 +1,18 @@
 import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { ServiceError } from 'utilities/errors';
+
 import { loadProfile, updateProfile } from './profileThunks';
 
 const isError = (action: AnyAction) => {
   return action.type.endsWith('loadProfile/rejected') || action.type.endsWith('updateProfile/rejected');
+};
+
+export type Profile = {
+  username: string;
+  email: string;
+  bio?: string;
+  image?: string;
 };
 
 export type ProfileSliceState = {
@@ -13,7 +22,7 @@ export type ProfileSliceState = {
   bio: string;
   loadingProfile: boolean;
   updatingProfile: boolean;
-  profileError: null | Error;
+  profileError: null | ServiceError;
 };
 
 const initialState: ProfileSliceState = {
@@ -62,7 +71,7 @@ const profileSlice = createSlice({
         state.image = action.payload.image || '';
         state.email = action.payload.email;
       })
-      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
+      .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loadingProfile = false;
         state.updatingProfile = false;
         state.profileError = action.payload;

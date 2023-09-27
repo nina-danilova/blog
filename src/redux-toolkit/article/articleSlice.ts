@@ -1,5 +1,7 @@
 import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
+import { ServiceError } from 'utilities/errors';
+
 import { loadArticle } from './articleThunks';
 
 const isError = (action: AnyAction) => {
@@ -26,7 +28,7 @@ export type Article = {
 
 type ArticleSliceState = {
   loading: boolean;
-  error: null | Error;
+  error: null | ServiceError;
   article: null | Article;
   slug: null | string;
 };
@@ -57,7 +59,7 @@ const articleSlice = createSlice({
         state.loading = false;
         state.article = action.payload;
       })
-      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
+      .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loading = false;
         state.error = action.payload;
       });

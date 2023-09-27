@@ -27,7 +27,6 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const article = useAppSelector((state) => state.viewingArticle);
   const isLoading = useAppSelector((state) => state.viewingArticle.loading);
   const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
-  // const noAuthError = useAppSelector((state) => state.viewingArticle.error?.cause?.errors.error.status);
   const loadSpinner = isLoading ? <Spin /> : null;
   const errorMessage =
     loadArticleError !== null ? (
@@ -50,10 +49,19 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
     if (!isLoading) {
       dispatch(loadArticle({ id }));
     }
-    /* if (noAuthError) {
-      history.push(pathToSignIn);
-    } */
   }, [id]);
+  useEffect(() => {
+    if (
+      loadArticleError &&
+      loadArticleError.cause &&
+      loadArticleError.cause.errors &&
+      loadArticleError.cause.errors.error &&
+      loadArticleError.cause.errors.error.status &&
+      loadArticleError.cause.errors.error.status === 401
+    ) {
+      history.push(pathToSignIn);
+    }
+  }, [loadArticleError]);
   return (
     <>
       {loadSpinner}

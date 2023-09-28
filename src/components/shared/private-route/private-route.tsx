@@ -5,7 +5,7 @@ import { useAppSelector } from 'hooks/hooks';
 import { linkPaths } from 'utilities/constants';
 
 type PrivateRouteProps = {
-  component: Element;
+  component;
   path: string;
 };
 

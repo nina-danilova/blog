@@ -12,11 +12,16 @@ import { messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'uti
 
 import styles from './article-form.module.scss';
 
+type Tag = {
+  name: string;
+};
+
 type ArticleFormInput = {
   title: string;
   description: string;
   text: string;
-  tags?: string[];
+  tags?: Tag[];
+  'new-tag'?: string;
 };
 
 export const ArticleForm: React.FC = () => {
@@ -28,7 +33,12 @@ export const ArticleForm: React.FC = () => {
     title: yup.string().max(200, messageTitleMaxLength).required(messageRequired),
     description: yup.string().required(messageRequired),
     text: yup.string().required(messageRequired),
-    tags: yup.array(yup.string().max(20, messageTagMaxLength).required(messageRequired)),
+    tags: yup.array(
+      yup.object().shape({
+        name: yup.string().max(20, messageTagMaxLength).required(messageRequired),
+      })
+    ),
+    'new-tag': yup.string(),
   });
   const {
     formState: { errors },
@@ -39,13 +49,13 @@ export const ArticleForm: React.FC = () => {
     resolver: yupResolver<ArticleFormInput>(schema),
   });
   const [tag, setTag] = useState('');
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append, remove } = useFieldArray<ArticleFormInput, 'tags', 'id'>({
     control,
     name: 'tags',
   });
   const addTag = () => {
     if (tag) {
-      append({ [fields.length]: tag });
+      append({ name: tag });
       setTag('');
     }
   };
@@ -55,7 +65,7 @@ export const ArticleForm: React.FC = () => {
   const removeTag = (index: number) => () => {
     remove(index);
   };
-  const onChangeTag = (event) => {
+  const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
   const error = useAppSelector((state) => state.user.userError);
@@ -147,7 +157,7 @@ export const ArticleForm: React.FC = () => {
                     <label className={styles['article-form-tag']}>
                       <p className={styles['visually-hidden']}>{`tags.${index}`}</p>
                       <Controller
-                        name={`tags.${index}`}
+                        name={`tags.${index}.name` as const}
                         control={control}
                         render={({ field: { onChange, value } }) => {
                           return (
@@ -169,8 +179,10 @@ export const ArticleForm: React.FC = () => {
                               >
                                 Delete
                               </button>
-                              {errors[`tags.${index}`] && (
-                                <span className={styles['article-form-error']}>{errors[`tags.${index}`].message}</span>
+                              {errors.tags?.[index] && (
+                                <span className={styles['article-form-error']}>
+                                  {errors.tags?.[index]?.name?.message}
+                                </span>
                               )}
                             </>
                           );
@@ -179,7 +191,7 @@ export const ArticleForm: React.FC = () => {
                     </label>
                   </li>
                 ))}
-                <li key="new-tag">
+                <li>
                   <label className={styles['article-form-tag']}>
                     <p className={styles['visually-hidden']}>New tag</p>
                     <Controller

@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { ArticleList } from 'components/blocks/article-list';
-import { Pagination } from 'components/blocks/pagination';
-
 import styles from './articles-page.module.scss';
+import { ArticleList } from './article-list';
+import { Pagination } from './pagination';
 
 export const ArticlesPage: React.FC = () => {
   return (

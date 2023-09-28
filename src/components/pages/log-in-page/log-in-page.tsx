@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { LogInForm } from 'components/blocks/log-in-form';
-
 import styles from './log-in-page.module.scss';
+import { LogInForm } from './log-in-form';
 
 export const LogInPage: React.FC = () => {
   return (

@@ -3,12 +3,12 @@ import { withRouter, useHistory } from 'react-router-dom';
 import { Alert, Spin } from 'antd';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
-import { ArticleCardFullView } from 'components/blocks/article-card-full-view';
 import { setSlug } from 'redux-toolkit/article/articleSlice';
 import { loadArticle } from 'redux-toolkit/article/articleThunks';
 import { linkPaths } from 'utilities/constants';
 
 import styles from './article-page.module.scss';
+import { ArticleCardFullView } from './article-card-full-view';
 
 type ArticlePageProps = {
   match: {

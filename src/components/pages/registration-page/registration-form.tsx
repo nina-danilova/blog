@@ -34,7 +34,7 @@ type RegistrationFormInput = {
 
 export const RegistrationForm: React.FC = () => {
   const dispatch = useAppDispatch();
-  const { pathToSignIn } = linkPaths;
+  const { pathToSignIn, pathToHome } = linkPaths;
   const schema = yup.object().shape({
     username: yup
       .string()
@@ -68,16 +68,20 @@ export const RegistrationForm: React.FC = () => {
     mode: 'onChange',
     resolver: yupResolver<RegistrationFormInput>(schema),
   });
-  const history = useHistory();
-  const registerUser: SubmitHandler<RegistrationFormInput> = (data, event) =>
-    dispatch(userRegister({ event, history, data }));
-  const error = useAppSelector((state) => state.user.userError);
-  const errorMessage = error ? (
+  const userError = useAppSelector((state) => state.user.userError);
+  const errorMessage = userError ? (
     <Alert
-      message={error.message}
+      message={`${userError.message}`}
       type="error"
     />
   ) : null;
+  const history = useHistory();
+  const registerUser: SubmitHandler<RegistrationFormInput> = async (data, event) => {
+    const result = await dispatch(userRegister({ event, data }));
+    if (!result.payload) {
+      history.push(pathToHome);
+    }
+  };
   return (
     <>
       <form

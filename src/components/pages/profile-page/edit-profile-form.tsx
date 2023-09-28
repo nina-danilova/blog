@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { updateProfile, EditProfileFormInput } from 'redux-toolkit/profile/profileThunks';
 import {
   emailRegEx,
+  linkPaths,
   messagePasswordMaxLength,
   messagePasswordMinLength,
   messagePattern,
@@ -54,14 +55,15 @@ export const EditProfileForm: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const { pathToSignIn } = linkPaths;
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
-    dispatch(updateProfile({ event, history, data }));
+    dispatch(updateProfile({ event, data }));
     resetField('password');
   };
-  const error = useAppSelector((state) => state.profile?.profileError);
-  const errorMessage = error ? (
+  const profileError = useAppSelector((state) => state.profile.profileError);
+  const errorMessage = profileError ? (
     <Alert
-      message={error.message}
+      message={profileError.message}
       type="error"
     />
   ) : null;
@@ -74,6 +76,18 @@ export const EditProfileForm: React.FC = () => {
   useEffect(() => {
     setValue('image', userImage);
   }, [userImage]);
+  useEffect(() => {
+    if (
+      profileError &&
+      profileError.cause &&
+      profileError.cause.errors &&
+      profileError.cause.errors.error &&
+      profileError.cause.errors.error.status &&
+      profileError.cause.errors.error.status === 401
+    ) {
+      history.push(pathToSignIn);
+    }
+  }, [profileError]);
   return (
     <>
       <form

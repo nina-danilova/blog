@@ -2,12 +2,13 @@ import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
-import { NavMenu } from 'components/blocks/nav-menu';
-import { UserMenu } from 'components/blocks/user-menu';
 import { loadProfile } from 'redux-toolkit/profile/profileThunks';
 import { getAuthStatus } from 'services/storage-service';
 import { toggleAuth } from 'redux-toolkit/user/userSlice';
 import { linkPaths } from 'utilities/constants';
+
+import { NavMenu } from './nav-menu';
+import { UserMenu } from './user-menu';
 
 export const Navigation: React.FC = () => {
   const history = useHistory();

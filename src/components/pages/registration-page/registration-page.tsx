@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { RegistrationForm } from 'components/blocks/registration-form';
-
 import styles from './registration-page.module.scss';
+import { RegistrationForm } from './registration-form';
 
 export const RegistrationPage: React.FC = () => {
   return (

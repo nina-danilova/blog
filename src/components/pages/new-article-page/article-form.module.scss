@@ -1,7 +1,8 @@
-@import 'components/app/variables.module.scss';
+@import 'src/components/app/visually-hidden.module';
+@import 'src/components/app/variables.module';
 
-.log-in-form {
-  margin-top: 40px;
+.article-form {
+  margin-top: 8px;
   padding: 48px 32px 48px 32px;
   display: grid;
   gap: 21px;
@@ -9,11 +10,11 @@
   border: 1px solid $normal-color;
   background-color: $background-color-base;
   filter: drop-shadow($shadow-2-box-shadow);
-  width: 384px;
+  width: 938px;
   box-sizing: border-box;
 }
 
-.log-in-form-title {
+.article-form-title {
   margin: 0;
   text-align: center;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
@@ -22,12 +23,12 @@
   color: $grey-9;
 }
 
-.log-in-form-input-group {
+.article-form-input-group {
   display: grid;
   gap: 12px;
 }
 
-.log-in-form-label-name {
+.article-form-label-name {
   margin: 0;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
   font-size: $font-size-base;
@@ -35,11 +36,11 @@
   color: $grey-9;
 }
 
-.log-in-form-input::placeholder {
+.article-form-input::placeholder {
   color: $grey-6;
 }
 
-.log-in-form-input {
+.article-form-input {
   width: calc(100% - 24px);
   padding: 8px 12px 8px 12px;
   border-radius: 4px;
@@ -51,15 +52,38 @@
   line-height: $input-placeholder-line-height;
 }
 
-.log-in-form-actions {
+.article-form-input--tag {
+  max-width: 276px;
+}
+
+.article-form-tag-list {
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 5px;
+  list-style-type: none;
+}
+
+.article-form-tag-group {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+}
+
+.article-form-tag {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 18px;
+}
+
+.article-form-actions {
+  display: flex;
   gap: 8px;
 }
 
-.log-in-form-button {
-  padding: 8px 12px 8px 12px;
+.article-form-button {
+  padding: 8px 16px 8px 16px;
   background-color: $primary-color;
   color: $grey-1;
   font-family: 'Roboto', 'Arial', sans-serif;
@@ -67,22 +91,34 @@
   line-height: $button-text-line-height;
   border: none;
   border-radius: 4px;
+  min-width: 319px;
 }
 
-.log-in-form-comment {
-  color: $grey-7;
-  font-size: $font-size-sm;
-  line-height: $form-comment-line-height;
-  margin: 0;
-  text-align: center;
+.article-form-tag-button {
+  font-size: $tag-button-font-size;
+  line-height: $tag-button-line-height;
+  padding: 8px 16px 8px 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  background-color: transparent;
 }
 
-.log-in-form-link {
-  text-decoration: none;
-  color: $primary-color;
+.article-form-tag-button--add {
+  color: $info-color;
+  border: 1px solid $info-color;
+  max-width: 136px;
+  max-height: 42px;
+  margin-top: auto;
+  margin-bottom: 0;
 }
 
-.log-in-form-error {
+.article-form-tag-button--delete {
+  color: $highlight-color;
+  border: 1px solid $highlight-color;
+  flex-grow: 1;
+}
+
+.article-form-error {
   margin: 0;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
   font-size: $font-size-base;

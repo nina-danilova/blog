@@ -1,8 +1,7 @@
 import React from 'react';
 
-import { Navigation } from 'components/blocks/navigation';
-
 import styles from './header.module.scss';
+import { Navigation } from './navigation';
 
 export const Header: React.FC = () => {
   return (

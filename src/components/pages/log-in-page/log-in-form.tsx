@@ -8,11 +8,12 @@ import * as yup from 'yup';
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { linkPaths, emailRegEx, messagePattern, messageRequired, passwordRegEx } from 'utilities/constants';
 import { userLogin, LoginFormInput } from 'redux-toolkit/user/userThunks';
+import { setAuthStatus } from 'services/storage-service';
 
 import styles from './log-in-form.module.scss';
 
 export const LogInForm: React.FC = () => {
-  const { pathToSignUp } = linkPaths;
+  const { pathToSignUp, pathToHome } = linkPaths;
   const schema = yup.object().shape({
     email: yup.string().matches(emailRegEx, { message: messagePattern }).required(messageRequired),
     password: yup.string().matches(passwordRegEx, { message: messagePattern }).required(messageRequired),
@@ -27,7 +28,13 @@ export const LogInForm: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const logIn: SubmitHandler<LoginFormInput> = (data, event) => dispatch(userLogin({ event, history, data }));
+  const logIn: SubmitHandler<LoginFormInput> = async (data, event) => {
+    const result = await dispatch(userLogin({ event, data }));
+    if (!result.payload) {
+      setAuthStatus(true);
+      history.push(pathToHome);
+    }
+  };
   const error = useAppSelector((state) => state.user.userError);
   const errorMessage = error ? (
     <Alert

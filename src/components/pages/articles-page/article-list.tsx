@@ -3,11 +3,11 @@ import { Spin, Alert } from 'antd';
 import { useHistory } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
-import { ArticleCardPreview } from 'components/blocks/article-card-preview';
 import { loadArticles } from 'redux-toolkit/articles/articlesThunks';
 import { linkPaths } from 'utilities/constants';
 
 import styles from './article-list.module.scss';
+import { ArticleCardPreview } from './article-card-preview';
 
 export const ArticleList: React.FC = () => {
   const history = useHistory();

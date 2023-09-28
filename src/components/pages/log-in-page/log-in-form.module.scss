@@ -1,7 +1,6 @@
-@import 'components/app/variables.module.scss';
-@import 'components/app/visually-hidden.module.scss';
+@import 'src/components/app/variables.module';
 
-.registration-form {
+.log-in-form {
   margin-top: 40px;
   padding: 48px 32px 48px 32px;
   display: grid;
@@ -14,7 +13,7 @@
   box-sizing: border-box;
 }
 
-.registration-form-title {
+.log-in-form-title {
   margin: 0;
   text-align: center;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
@@ -23,12 +22,12 @@
   color: $grey-9;
 }
 
-.registration-form-input-group {
+.log-in-form-input-group {
   display: grid;
   gap: 12px;
 }
 
-.registration-form-label-name {
+.log-in-form-label-name {
   margin: 0;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
   font-size: $font-size-base;
@@ -36,11 +35,11 @@
   color: $grey-9;
 }
 
-.registration-form-input::placeholder {
+.log-in-form-input::placeholder {
   color: $grey-6;
 }
 
-.registration-form-input {
+.log-in-form-input {
   width: calc(100% - 24px);
   padding: 8px 12px 8px 12px;
   border-radius: 4px;
@@ -52,63 +51,14 @@
   line-height: $input-placeholder-line-height;
 }
 
-.registration-form-agreement {
-  border-top: 1px solid $grey-4;
-  padding-top: 8px;
-}
-
-.registration-form-label--agreement {
-  position: relative;
-  cursor: pointer;
-}
-
-.registration-form-label--agreement::before {
-  position: absolute;
-  content: '';
-  width: 16px;
-  height: 16px;
-  top: 2px;
-  padding: 0;
-  background-color: $grey-1;
-  border-radius: 4px;
-  border: 1px solid $grey-5;
-  cursor: pointer;
-}
-
-.registration-form-label-name--agreement {
-  background-color: transparent;
-  padding-left: 25px;
-  margin: 0;
-  font-family: 'Roboto', sans-serif;
-  color: $grey-8;
-}
-
-.registration-form-label-name--agreement:hover {
-  background-color: transparent;
-}
-
-.registration-form-input--agreement:checked + .registration-form-label--agreement::after {
-  content: '';
-  position: absolute;
-  top: 3px;
-  left: 1px;
-  width: 16px;
-  height: 16px;
-  padding: 0;
-  background-color: transparent;
-  background-image: url('../../../assets/icons/icon-check-pressed.svg');
-  background-repeat: no-repeat;
-  background-position: 0 50%;
-}
-
-.registration-form-actions {
+.log-in-form-actions {
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 8px;
 }
 
-.registration-form-button {
+.log-in-form-button {
   padding: 8px 12px 8px 12px;
   background-color: $primary-color;
   color: $grey-1;
@@ -119,7 +69,7 @@
   border-radius: 4px;
 }
 
-.registration-form-comment {
+.log-in-form-comment {
   color: $grey-7;
   font-size: $font-size-sm;
   line-height: $form-comment-line-height;
@@ -127,12 +77,12 @@
   text-align: center;
 }
 
-.registration-form-link {
+.log-in-form-link {
   text-decoration: none;
   color: $primary-color;
 }
 
-.registration-form-error {
+.log-in-form-error {
   margin: 0;
   font-family: 'Roboto Semi Bold', 'Arial', sans-serif;
   font-size: $font-size-base;

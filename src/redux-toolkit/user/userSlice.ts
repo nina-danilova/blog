@@ -1,6 +1,7 @@
 import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ProfileSliceState } from 'redux-toolkit/profile/profileSlice';
+import { ServiceError } from 'utilities/errors';
 
 import { userRegister, userLogin, userLogOut } from './userThunks';
 
@@ -15,7 +16,7 @@ const isError = (action: AnyAction) => {
 type UserSliceState = {
   registering: boolean;
   loggingIn: boolean;
-  userError: null | Error;
+  userError: null | ServiceError;
   authorized: boolean;
   profile: undefined | ProfileSliceState;
 };
@@ -40,7 +41,6 @@ const userSlice = createSlice({
     builder
       .addCase(userRegister.pending, (state) => {
         state.registering = true;
-        // state.registerError = null;
         state.userError = null;
       })
       .addCase(userRegister.fulfilled, (state) => {
@@ -48,7 +48,6 @@ const userSlice = createSlice({
       })
       .addCase(userLogin.pending, (state) => {
         state.loggingIn = true;
-        // state.loginError = null;
         state.userError = null;
       })
       .addCase(userLogin.fulfilled, (state) => {
@@ -58,7 +57,7 @@ const userSlice = createSlice({
       .addCase(userLogOut.fulfilled, (state) => {
         state.authorized = false;
       })
-      .addMatcher(isError, (state, action: PayloadAction<Error>) => {
+      .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.registering = false;
         state.loggingIn = false;
         state.userError = action.payload;

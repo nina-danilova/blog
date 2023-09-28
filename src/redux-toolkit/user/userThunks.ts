@@ -1,12 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import { FormEvent } from 'react';
 
-import { sendData } from 'services/blog-service';
-import { apiBaseUrl, linkPaths } from 'utilities/constants';
-import { getRegisterToken, setAuthStatus, setLoginInfo, setRegisterInfo } from 'services/storage-service';
+import { sendLoginInfo, sendRegisterInfo } from 'services/blog-service';
+import { getRegisterToken, setAuthStatus } from 'services/storage-service';
 import { clearProfile, addInfoToProfile } from 'redux-toolkit/profile/profileSlice';
 import { AppDispatch } from 'redux-toolkit';
-import { createError } from 'utilities/errors';
+import { createError, ServiceError } from 'utilities/errors';
 
 export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispatch }>(
   'user/userLogOut',
@@ -17,8 +15,7 @@ export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispa
 );
 
 type UserRegisterPayloadProps = {
-  event: FormEvent<HTMLFormElement>;
-  history: any;
+  event;
   data: {
     username: string;
     email: string;
@@ -26,15 +23,9 @@ type UserRegisterPayloadProps = {
   };
 };
 
-type UserRegisterRejectValue = {
-  name: string;
-  message: string;
-  body?: any;
-};
-
-export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { rejectValue: UserRegisterRejectValue }>(
+export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { rejectValue: ServiceError | unknown }>(
   'user/userRegister',
-  async ({ event, history, data: formData }, { rejectWithValue }) => {
+  async ({ event, data: formData }, { rejectWithValue }) => {
     event.preventDefault();
     const data = {
       user: {
@@ -43,40 +34,11 @@ export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { r
         password: formData.password,
       },
     };
-    const { pathToSignIn, pathToHome } = linkPaths;
-    return sendData({ url: `${apiBaseUrl}/users`, data })
-      .then(
-        (response) => {
-          if (response.status === 401) {
-            history.push(pathToSignIn);
-          } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
-            return response.json();
-          }
-          throw createError(`User register error, code ${response.status.toString()} - error after API answer`);
-        },
-        (err) => {
-          throw createError('User register error while sending data through API', err);
-        }
-      )
-      .then((response) => {
-        if (response.errors) {
-          const errors = Object.entries(response.errors);
-          const [errorName, errorMessage] = errors[0];
-          throw createError(`User register error - ${errorName} ${errorMessage}`);
-        }
-        if (response.user) {
-          setRegisterInfo(response.user);
-          return history.push(pathToHome);
-        }
-        throw createError('Unknown error while registering user');
-      })
-      .catch((error) => {
-        if (error.message) {
-          return rejectWithValue(error);
-        }
-        const err = createError(error);
-        return rejectWithValue(err);
-      });
+    try {
+      return await sendRegisterInfo({ data });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
   }
 );
 
@@ -86,15 +48,8 @@ export type LoginFormInput = {
 };
 
 type UserLoginPayloadProps = {
-  event: FormEvent<HTMLFormElement>;
-  history: any;
+  event;
   data: LoginFormInput;
-};
-
-type UserLoginRejectValue = {
-  name: string;
-  message: string;
-  body?: any;
 };
 
 export const userLogin = createAsyncThunk<
@@ -102,9 +57,9 @@ export const userLogin = createAsyncThunk<
   UserLoginPayloadProps,
   {
     dispatch: AppDispatch;
-    rejectValue: UserLoginRejectValue;
+    rejectValue: ServiceError | unknown;
   }
->('user/userLogin', async ({ event, history, data: formData }, { dispatch, rejectWithValue }) => {
+>('user/userLogin', async ({ event, data: formData }, { dispatch, rejectWithValue }) => {
   event.preventDefault();
   const data = {
     user: {
@@ -117,45 +72,16 @@ export const userLogin = createAsyncThunk<
     const error = createError('No register token for this email');
     return rejectWithValue(error);
   }
-  const { pathToSignIn, pathToHome } = linkPaths;
-  return sendData({ url: `${apiBaseUrl}/users/login`, data, token })
-    .then(
-      (response) => {
-        if (response.status === 401) {
-          history.push(pathToSignIn);
-        } else if ((response.status >= 200 && response.status < 300) || response.status === 422) {
-          return response.json();
-        }
-        throw createError(`User login error, code ${response.status.toString()} - error after API answer`);
-      },
-      (err) => {
-        throw createError('User login error while sending data through API', err);
-      }
-    )
-    .then((response) => {
-      if (response.errors) {
-        const errors = Object.entries(response.errors);
-        const [errorName, errorMessage] = errors[0];
-        throw createError(`User login error - ${errorName} ${errorMessage}`);
-      }
-      if (response.user) {
-        setAuthStatus(true);
-        setLoginInfo(response.user);
-        dispatch(
-          addInfoToProfile({
-            username: response.user.username,
-            email: response.user.email,
-          })
-        );
-        return history.push(pathToHome);
-      }
-      throw createError('Unknown error while logging-in user');
-    })
-    .catch((error) => {
-      if (error.message) {
-        return rejectWithValue(error);
-      }
-      const err = createError(error);
-      return rejectWithValue(err);
-    });
+  try {
+    const result = await sendLoginInfo({ data, token });
+    dispatch(
+      addInfoToProfile({
+        username: result.username,
+        email: result.email,
+      })
+    );
+    return Promise.resolve();
+  } catch (error) {
+    return rejectWithValue(error);
+  }
 });

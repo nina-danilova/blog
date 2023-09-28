@@ -43,7 +43,7 @@ const profileSlice = createSlice({
       state.userName = '';
       state.email = '';
     },
-    addInfoToProfile: (state, action: PayloadAction<{ username: string; email: string }>) => {
+    addInfoToProfile: (state, action: PayloadAction<Profile>) => {
       state.userName = action.payload.username;
       state.email = action.payload.email;
     },

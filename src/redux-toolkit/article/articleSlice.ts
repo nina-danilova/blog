@@ -5,7 +5,7 @@ import { ServiceError } from 'utilities/errors';
 import { loadArticle } from './articleThunks';
 
 const isError = (action: AnyAction) => {
-  return action.type.endsWith('loadArticle/rejected');
+  return action.type.endsWith('Article/rejected');
 };
 
 export type Article = {
@@ -23,7 +23,6 @@ export type Article = {
     image: string;
     following: boolean;
   };
-  id: number;
 };
 
 type ArticleSliceState = {

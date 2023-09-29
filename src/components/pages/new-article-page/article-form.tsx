@@ -8,31 +8,36 @@ import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle } from 'redux-toolkit/article/articleThunks';
-import { messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
+import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 
 import styles from './article-form.module.scss';
 
-type Tag = {
+export type Tag = {
   name: string;
 };
 
-type ArticleFormInput = {
+export type ArticleFormInput = {
   title: string;
   description: string;
-  text: string;
+  body: string;
   tags?: Tag[];
   'new-tag'?: string;
 };
 
 export const ArticleForm: React.FC = () => {
   const history = useHistory();
+  const { pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
-  const createNewArticle: SubmitHandler<ArticleFormInput> = (data, event) =>
-    dispatch(createArticle({ event, history, data }));
+  const createNewArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
+    const result = await dispatch(createArticle({ event, data }));
+    if (result.type.endsWith('fulfilled')) {
+      history.push(pathToHome);
+    }
+  };
   const schema = yup.object().shape({
     title: yup.string().max(200, messageTitleMaxLength).required(messageRequired),
     description: yup.string().required(messageRequired),
-    text: yup.string().required(messageRequired),
+    body: yup.string().required(messageRequired),
     tags: yup.array(
       yup.object().shape({
         name: yup.string().max(20, messageTagMaxLength).required(messageRequired),
@@ -68,7 +73,7 @@ export const ArticleForm: React.FC = () => {
   const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
-  const error = useAppSelector((state) => state.user.userError);
+  const error = useAppSelector((state) => state.viewingArticle.error);
   const errorMessage = error ? (
     <Alert
       message={error.message}
@@ -130,7 +135,7 @@ export const ArticleForm: React.FC = () => {
           <label>
             <p className={styles['article-form-label-name']}>Text</p>
             <Controller
-              name="text"
+              name="body"
               control={control}
               render={({ field: { onChange, value } }) => {
                 return (
@@ -142,7 +147,7 @@ export const ArticleForm: React.FC = () => {
                       value={value || ''}
                       onChange={onChange}
                     />
-                    {errors?.text && <p className={styles['article-form-error']}>{errors.text.message}</p>}
+                    {errors?.body && <p className={styles['article-form-error']}>{errors.body.message}</p>}
                   </>
                 );
               }}

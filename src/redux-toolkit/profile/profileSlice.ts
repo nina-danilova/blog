@@ -5,7 +5,7 @@ import { ServiceError } from 'utilities/errors';
 import { loadProfile, updateProfile } from './profileThunks';
 
 const isError = (action: AnyAction) => {
-  return action.type.endsWith('loadProfile/rejected') || action.type.endsWith('updateProfile/rejected');
+  return action.type.endsWith('Profile/rejected');
 };
 
 export type Profile = {

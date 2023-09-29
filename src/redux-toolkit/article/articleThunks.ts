@@ -1,7 +1,9 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { getArticle } from 'services/blog-service';
-import { ServiceError } from 'utilities/errors';
+import { getArticle, sendArticle } from 'services/blog-service';
+import { createError, ServiceError } from 'utilities/errors';
+import { ArticleFormInput, Tag } from 'components/pages/new-article-page/article-form';
+import { getLoginToken } from 'services/storage-service';
 
 import { Article } from './articleSlice';
 
@@ -20,12 +22,41 @@ export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { 
   }
 );
 
-export const createArticle = ({ event, history, data }) => {
-  console.log(event, history, data);
-  return {
-    type: 'CREATE_ARTICLE',
-    event,
-    history,
-    data,
-  };
+const prepareTags = (tags: Tag[] | undefined): string[] => {
+  if (!tags) {
+    return [];
+  }
+  return tags.map((tag) => tag.name);
 };
+
+type SendArticlePayloadProps = {
+  event;
+  data: ArticleFormInput;
+};
+
+export const createArticle = createAsyncThunk<
+  Article,
+  SendArticlePayloadProps,
+  { rejectValue: ServiceError | unknown }
+>('articles/sendArticle', async ({ event, data: formData }, { rejectWithValue }) => {
+  event.preventDefault();
+  const token = getLoginToken();
+  if (!token) {
+    const error = createError('No login token for this email');
+    return rejectWithValue(error);
+  }
+  const preparedTags = prepareTags(formData.tags);
+  const data = {
+    article: {
+      title: formData.title,
+      description: formData.description,
+      body: formData.body,
+      tagList: preparedTags,
+    },
+  };
+  try {
+    return await sendArticle({ data, token });
+  } catch (error) {
+    return rejectWithValue(error);
+  }
+});

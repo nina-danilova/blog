@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { getArticle, sendArticle } from 'services/blog-service';
+import { deleteArticleFromServer, getArticle, sendArticle } from 'services/blog-service';
 import { createError, ServiceError } from 'utilities/errors';
 import { ArticleFormInput, Tag } from 'components/pages/new-article-page/article-form';
 import { getLoginToken } from 'services/storage-service';
@@ -60,3 +60,19 @@ export const createArticle = createAsyncThunk<
     return rejectWithValue(error);
   }
 });
+
+export const deleteArticle = createAsyncThunk<void, string, { rejectValue: ServiceError | unknown }>(
+  'articles/deleteArticle',
+  async (slug, { rejectWithValue }) => {
+    const token = getLoginToken();
+    if (!token) {
+      const error = createError('No login token for this email');
+      return rejectWithValue(error);
+    }
+    try {
+      return await deleteArticleFromServer({ slug, token });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);

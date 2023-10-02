@@ -2,7 +2,7 @@ import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ServiceError } from 'utilities/errors';
 
-import { loadArticle } from './articleThunks';
+import { createArticle, loadArticle } from './articleThunks';
 
 const isError = (action: AnyAction) => {
   return action.type.endsWith('Article/rejected');
@@ -27,6 +27,8 @@ export type Article = {
 
 type ArticleSliceState = {
   loading: boolean;
+  sending: boolean;
+  editing: boolean;
   error: null | ServiceError;
   article: null | Article;
   slug: null | string;
@@ -34,6 +36,8 @@ type ArticleSliceState = {
 
 const initialState: ArticleSliceState = {
   loading: false,
+  sending: false,
+  editing: false,
   error: null,
   article: null,
   slug: null,
@@ -45,6 +49,9 @@ const articleSlice = createSlice({
   reducers: {
     setSlug: (state, action: PayloadAction<string>) => {
       state.slug = action.payload;
+    },
+    setEditStatus: (state, action: PayloadAction<boolean>) => {
+      state.editing = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -58,6 +65,13 @@ const articleSlice = createSlice({
         state.loading = false;
         state.article = action.payload;
       })
+      .addCase(createArticle.pending, (state) => {
+        state.sending = true;
+        state.error = null;
+      })
+      .addCase(createArticle.fulfilled, (state) => {
+        state.sending = false;
+      })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loading = false;
         state.error = action.payload;
@@ -66,4 +80,4 @@ const articleSlice = createSlice({
 });
 
 export const articleSLiceReducer = articleSlice.reducer;
-export const { setSlug } = articleSlice.actions;
+export const { setSlug, setEditStatus } = articleSlice.actions;

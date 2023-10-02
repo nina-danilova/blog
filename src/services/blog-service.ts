@@ -342,3 +342,40 @@ export const sendArticle = ({ data, token }: SendArticleProps): Promise<Article>
       throw createError(error);
     });
 };
+
+type DeleteArticleFromServerProps = {
+  slug: string;
+  token: string;
+};
+
+export const deleteArticleFromServer = ({ slug, token }: DeleteArticleFromServerProps): Promise<void> => {
+  const url = `${apiBaseUrl}/articles/${slug}`;
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return;
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Delete article error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Delete article error while deleting data through API', err);
+      }
+    )
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};

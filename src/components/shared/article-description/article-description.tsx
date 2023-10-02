@@ -1,16 +1,9 @@
 import React from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
 
-import styles from './article-description.module.scss';
+import { addIdToTags } from 'utilities/tags';
 
-const addIdToTags = (list: string[]): { name: string; id: number }[] => {
-  let id = 0;
-  return list.map((tag) => {
-    const tagWithId = { name: tag, id };
-    id += 1;
-    return tagWithId;
-  });
-};
+import styles from './article-description.module.scss';
 
 type ArticleDescriptionProps = {
   title: string;

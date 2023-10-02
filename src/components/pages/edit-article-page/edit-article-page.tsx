@@ -6,7 +6,7 @@ import { setEditStatus, setSlug } from '../../../redux-toolkit/article/articleSl
 import { loadArticle } from '../../../redux-toolkit/article/articleThunks';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import styles from '../article-page/article-page.module.scss';
-import { ArticleForm } from '../new-article-page/article-form';
+import { ArticleForm } from '../../shared/article-form';
 
 type EditArticlePageProps = {
   match: {
@@ -40,10 +40,10 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
       />
     ) : null;
   useEffect(() => {
-    dispatch(setEditStatus(true));
     dispatch(setSlug(id));
     if (!isLoading) {
       dispatch(loadArticle({ id }));
+      dispatch(setEditStatus(true));
     }
   }, [id]);
   return (

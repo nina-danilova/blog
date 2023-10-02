@@ -2,7 +2,7 @@ import { AnyAction, createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 import { ServiceError } from 'utilities/errors';
 
-import { createArticle, loadArticle } from './articleThunks';
+import { createArticle, deleteArticle, loadArticle, updateArticle } from './articleThunks';
 
 const isError = (action: AnyAction) => {
   return action.type.endsWith('Article/rejected');
@@ -29,6 +29,8 @@ type ArticleSliceState = {
   loading: boolean;
   sending: boolean;
   editing: boolean;
+  deleting: boolean;
+  updating: boolean;
   error: null | ServiceError;
   article: null | Article;
   slug: null | string;
@@ -38,6 +40,8 @@ const initialState: ArticleSliceState = {
   loading: false,
   sending: false,
   editing: false,
+  updating: false,
+  deleting: false,
   error: null,
   article: null,
   slug: null,
@@ -71,6 +75,20 @@ const articleSlice = createSlice({
       })
       .addCase(createArticle.fulfilled, (state) => {
         state.sending = false;
+      })
+      .addCase(updateArticle.pending, (state) => {
+        state.updating = true;
+        state.error = null;
+      })
+      .addCase(updateArticle.fulfilled, (state) => {
+        state.updating = false;
+      })
+      .addCase(deleteArticle.pending, (state) => {
+        state.deleting = true;
+        state.error = null;
+      })
+      .addCase(deleteArticle.fulfilled, (state) => {
+        state.deleting = false;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loading = false;

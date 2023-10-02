@@ -343,6 +343,57 @@ export const sendArticle = ({ data, token }: SendArticleProps): Promise<Article>
     });
 };
 
+type UpdateArticleProps = {
+  slug: string;
+  data: {
+    article: {
+      title: string;
+      description: string;
+      body: string;
+      tagList: string[];
+    };
+  };
+  token: string;
+};
+export const updateArticleOnServer = ({ slug, data, token }: UpdateArticleProps): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles/${slug}`;
+  return fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Update article error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Update article error while sending data through API', err);
+      }
+    )
+    .then((response) => {
+      if (response.article) {
+        return response.article;
+      }
+      throw createError('Unknown error of updating article');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
 type DeleteArticleFromServerProps = {
   slug: string;
   token: string;

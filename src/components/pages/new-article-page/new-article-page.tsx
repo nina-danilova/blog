@@ -1,7 +1,8 @@
 import React from 'react';
 
+import { ArticleForm } from 'components/shared/article-form';
+
 import styles from './new-article-page.module.scss';
-import { ArticleForm } from './article-form';
 
 export const NewArticlePage: React.FC = () => {
   return (

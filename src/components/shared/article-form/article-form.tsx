@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
 import { Alert } from 'antd';
@@ -7,8 +7,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
-import { createArticle } from 'redux-toolkit/article/articleThunks';
+import { createArticle, updateArticle } from 'redux-toolkit/article/articleThunks';
 import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
+import { addIdToTags } from 'utilities/tags';
 
 import styles from './article-form.module.scss';
 
@@ -28,10 +29,21 @@ export const ArticleForm: React.FC = () => {
   const history = useHistory();
   const { pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
-  const createNewArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
-    const result = await dispatch(createArticle({ event, data }));
-    if (result.type.endsWith('fulfilled')) {
-      history.push(pathToHome);
+  const isEditing = useAppSelector((state) => state.viewingArticle.editing);
+  const formTitle = isEditing ? 'Edit article' : 'Create new article';
+  const article = useAppSelector((state) => state.viewingArticle.article);
+  const slug = useAppSelector((state) => state.viewingArticle.slug);
+  const handleArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
+    if (isEditing && slug) {
+      const result = await dispatch(updateArticle({ slug, event, data }));
+      if (result.type.endsWith('fulfilled')) {
+        history.push(pathToHome);
+      }
+    } else {
+      const result = await dispatch(createArticle({ event, data }));
+      if (result.type.endsWith('fulfilled')) {
+        history.push(pathToHome);
+      }
     }
   };
   const schema = yup.object().shape({
@@ -48,6 +60,7 @@ export const ArticleForm: React.FC = () => {
   const {
     formState: { errors },
     handleSubmit: onFormSubmit,
+    setValue,
     control,
   } = useForm<ArticleFormInput>({
     mode: 'onChange',
@@ -80,13 +93,22 @@ export const ArticleForm: React.FC = () => {
       type="error"
     />
   ) : null;
+  useEffect(() => {
+    if (article) {
+      const tags = addIdToTags(article.tagList);
+      setValue('title', article.title);
+      setValue('description', article.description);
+      setValue('body', article.body);
+      setValue('tags', tags);
+    }
+  }, [article]);
   return (
     <>
       <form
         className={styles['article-form']}
-        onSubmit={onFormSubmit(createNewArticle)}
+        onSubmit={onFormSubmit(handleArticle)}
       >
-        <p className={styles['article-form-title']}>Create new article</p>
+        <p className={styles['article-form-title']}>{formTitle}</p>
         <div className={styles['article-form-input-group']}>
           <label>
             <p className={styles['article-form-label-name']}>Title</p>

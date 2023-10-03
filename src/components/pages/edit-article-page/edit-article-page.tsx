@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { withRouter } from 'react-router-dom';
-import { Alert, Spin } from 'antd';
+import { withRouter, useHistory } from 'react-router-dom';
+import { Alert } from 'antd';
 
 import { setEditStatus, setSlug } from '../../../redux-toolkit/article/articleSlice';
 import { loadArticle } from '../../../redux-toolkit/article/articleThunks';
@@ -18,11 +18,13 @@ type EditArticlePageProps = {
 const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
   const { params } = match;
   const { id } = params;
+  const history = useHistory();
   const dispatch = useAppDispatch();
-  const article = useAppSelector((state) => state.viewingArticle);
+  const userName = useAppSelector((state) => state.profile.userName);
+  const viewingArticle = useAppSelector((state) => state.viewingArticle);
+  const article = useAppSelector((state) => state.viewingArticle.article);
   const isLoading = useAppSelector((state) => state.viewingArticle.loading);
   const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
-  const loadSpinner = isLoading ? <Spin /> : null;
   const errorMessage =
     loadArticleError !== null ? (
       <Alert
@@ -32,7 +34,7 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
       />
     ) : null;
   const noDataMessage =
-    !isLoading && article === null ? (
+    !isLoading && viewingArticle === null ? (
       <Alert
         type="info"
         closable={false}
@@ -41,14 +43,17 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
     ) : null;
   useEffect(() => {
     dispatch(setSlug(id));
-    if (!isLoading) {
-      dispatch(loadArticle({ id }));
+    dispatch(loadArticle({ id }));
+  }, []);
+  useEffect(() => {
+    if (article && article.author.username !== userName) {
+      history.push(`/articles/${article.slug}`);
+    } else {
       dispatch(setEditStatus(true));
     }
-  }, [id]);
+  }, [article]);
   return (
     <>
-      {loadSpinner}
       {errorMessage}
       {noDataMessage}
       <h1 className={styles['visually-hidden']}>Blog - Editing article</h1>

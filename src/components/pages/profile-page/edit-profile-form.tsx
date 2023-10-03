@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -60,13 +60,16 @@ export const EditProfileForm: React.FC = () => {
     dispatch(updateProfile({ event, data }));
     resetField('password');
   };
-  const profileError = useAppSelector((state) => state.profile.profileError);
+  const profileError = useAppSelector((state) => state.profile.error);
   const errorMessage = profileError ? (
     <Alert
       message={profileError.message}
       type="error"
     />
   ) : null;
+  const isLoading = useAppSelector((state) => state.profile.loadingProfile);
+  const isUpdating = useAppSelector((state) => state.profile.updatingProfile);
+  const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
   useEffect(() => {
     setValue('username', userName);
   }, [userName]);
@@ -202,6 +205,7 @@ export const EditProfileForm: React.FC = () => {
           </button>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
     </>
   );

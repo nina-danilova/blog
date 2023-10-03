@@ -9,7 +9,7 @@ export enum linkPaths {
   pathToEditArticle = '/articles/:id/edit',
 }
 
-export const apiBaseUrl = 'https://blog.kata.academy/api'; /* 'https://api.realworld.io/api'; */
+export const apiBaseUrl = 'https://blog.kata.academy/api';
 export const usernameRegEx = /^[a-z0-9]*$/;
 export const emailRegEx = /^(?!.*@.*@.*$)(?!.*@.*--.*\..*$)(?!.*@.*-\..*$)(?!.*@.*-$)((.*)?@.+(\..{1,11})?)$/;
 export const passwordRegEx = /^[a-z0-9]*$/;

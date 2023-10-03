@@ -68,6 +68,7 @@ const articleSlice = createSlice({
       .addCase(loadArticle.fulfilled, (state, action) => {
         state.loading = false;
         state.article = action.payload;
+        state.error = null;
       })
       .addCase(createArticle.pending, (state) => {
         state.sending = true;
@@ -75,6 +76,7 @@ const articleSlice = createSlice({
       })
       .addCase(createArticle.fulfilled, (state) => {
         state.sending = false;
+        state.error = null;
       })
       .addCase(updateArticle.pending, (state) => {
         state.updating = true;
@@ -82,6 +84,7 @@ const articleSlice = createSlice({
       })
       .addCase(updateArticle.fulfilled, (state) => {
         state.updating = false;
+        state.error = null;
       })
       .addCase(deleteArticle.pending, (state) => {
         state.deleting = true;
@@ -89,6 +92,7 @@ const articleSlice = createSlice({
       })
       .addCase(deleteArticle.fulfilled, (state) => {
         state.deleting = false;
+        state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loading = false;

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-form';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { clsx } from 'clsx';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -86,10 +86,13 @@ export const ArticleForm: React.FC = () => {
   const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
-  const error = useAppSelector((state) => state.viewingArticle.error);
-  const errorMessage = error ? (
+  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
+  const isUpdating = useAppSelector((state) => state.viewingArticle.updating);
+  const articleError = useAppSelector((state) => state.viewingArticle.error);
+  const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
+  const errorMessage = articleError ? (
     <Alert
-      message={error.message}
+      message={articleError.message}
       type="error"
     />
   ) : null;
@@ -104,6 +107,7 @@ export const ArticleForm: React.FC = () => {
   }, [article]);
   return (
     <>
+      {loadSpinner}
       <form
         className={styles['article-form']}
         onSubmit={onFormSubmit(handleArticle)}

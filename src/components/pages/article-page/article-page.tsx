@@ -26,8 +26,9 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const dispatch = useAppDispatch();
   const article = useAppSelector((state) => state.viewingArticle);
   const isLoading = useAppSelector((state) => state.viewingArticle.loading);
+  const isDeleting = useAppSelector((state) => state.viewingArticle.deleting);
   const articleError = useAppSelector((state) => state.viewingArticle.error);
-  const loadSpinner = isLoading ? <Spin /> : null;
+  const loadSpinner = isLoading || isDeleting ? <Spin /> : null;
   const errorMessage =
     articleError !== null ? (
       <Alert

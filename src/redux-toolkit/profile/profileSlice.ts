@@ -22,7 +22,7 @@ export type ProfileSliceState = {
   bio: string;
   loadingProfile: boolean;
   updatingProfile: boolean;
-  profileError: null | ServiceError;
+  error: null | ServiceError;
 };
 
 const initialState: ProfileSliceState = {
@@ -32,7 +32,7 @@ const initialState: ProfileSliceState = {
   bio: '',
   loadingProfile: false,
   updatingProfile: false,
-  profileError: null,
+  error: null,
 };
 
 const profileSlice = createSlice({
@@ -52,7 +52,7 @@ const profileSlice = createSlice({
     builder
       .addCase(loadProfile.pending, (state) => {
         state.loadingProfile = true;
-        state.profileError = null;
+        state.error = null;
       })
       .addCase(loadProfile.fulfilled, (state, action) => {
         state.loadingProfile = false;
@@ -60,21 +60,23 @@ const profileSlice = createSlice({
         state.email = action.payload.email;
         state.bio = action.payload.bio || '';
         state.image = action.payload.image || '';
+        state.error = null;
       })
       .addCase(updateProfile.pending, (state) => {
         state.updatingProfile = true;
-        state.profileError = null;
+        state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.updatingProfile = false;
         state.userName = action.payload.username;
         state.image = action.payload.image || '';
         state.email = action.payload.email;
+        state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loadingProfile = false;
         state.updatingProfile = false;
-        state.profileError = action.payload;
+        state.error = action.payload;
       });
   },
 });

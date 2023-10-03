@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { clsx } from 'clsx';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -68,13 +68,15 @@ export const RegistrationForm: React.FC = () => {
     mode: 'onChange',
     resolver: yupResolver<RegistrationFormInput>(schema),
   });
-  const userError = useAppSelector((state) => state.user.userError);
+  const userError = useAppSelector((state) => state.user.error);
   const errorMessage = userError ? (
     <Alert
       message={`${userError.message}`}
       type="error"
     />
   ) : null;
+  const isRegistering = useAppSelector((state) => state.user.registering);
+  const loadSpinner = isRegistering ? <Spin /> : null;
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = async (data, event) => {
     const result = await dispatch(userRegister({ event, data }));
@@ -228,6 +230,7 @@ export const RegistrationForm: React.FC = () => {
           </p>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
     </>
   );

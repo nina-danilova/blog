@@ -13,7 +13,7 @@ export const ArticleCardFullView: React.FC = () => {
   const isAuthorized = useAppSelector((state) => state.user.authorized);
   const userName = useAppSelector((state) => state.profile.userName);
   if (!article) return null;
-  const { author, description, favoritesCount, tagList, title, createdAt, body, slug } = article;
+  const { author, description, favoritesCount, favorited, tagList, title, createdAt, body, slug } = article;
   const actionGroup = isAuthorized && article.author.username === userName ? <ArticleActions /> : null;
   return (
     <article className={styles['article-card-full-view']}>
@@ -21,6 +21,7 @@ export const ArticleCardFullView: React.FC = () => {
         <ArticleDescriptionWithRouter
           description={description}
           favoritesCount={favoritesCount}
+          favorited={favorited}
           tagList={tagList}
           title={title}
           slug={slug}

@@ -16,7 +16,7 @@ const isError = (action: AnyAction) => {
 type UserSliceState = {
   registering: boolean;
   loggingIn: boolean;
-  userError: null | ServiceError;
+  error: null | ServiceError;
   authorized: boolean;
   profile: undefined | ProfileSliceState;
 };
@@ -24,7 +24,7 @@ type UserSliceState = {
 const initialState: UserSliceState = {
   registering: false,
   loggingIn: false,
-  userError: null,
+  error: null,
   authorized: false,
   profile: undefined,
 };
@@ -41,26 +41,29 @@ const userSlice = createSlice({
     builder
       .addCase(userRegister.pending, (state) => {
         state.registering = true;
-        state.userError = null;
+        state.error = null;
       })
       .addCase(userRegister.fulfilled, (state) => {
         state.registering = false;
+        state.error = null;
       })
       .addCase(userLogin.pending, (state) => {
         state.loggingIn = true;
-        state.userError = null;
+        state.error = null;
       })
       .addCase(userLogin.fulfilled, (state) => {
         state.loggingIn = false;
         state.authorized = true;
+        state.error = null;
       })
       .addCase(userLogOut.fulfilled, (state) => {
         state.authorized = false;
+        state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.registering = false;
         state.loggingIn = false;
-        state.userError = action.payload;
+        state.error = action.payload;
       });
   },
 });

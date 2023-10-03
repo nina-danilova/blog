@@ -46,6 +46,7 @@ const articlesSlice = createSlice({
         state.loading = false;
         state.articleList = action.payload.articles;
         state.articlesCount = action.payload.articlesCount;
+        state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
         state.loading = false;

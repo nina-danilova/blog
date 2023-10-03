@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
@@ -35,13 +35,15 @@ export const LogInForm: React.FC = () => {
       history.push(pathToHome);
     }
   };
-  const error = useAppSelector((state) => state.user.userError);
+  const error = useAppSelector((state) => state.user.error);
   const errorMessage = error ? (
     <Alert
       message={error.message}
       type="error"
     />
   ) : null;
+  const isLoggingIn = useAppSelector((state) => state.user.loggingIn);
+  const loadSpinner = isLoggingIn ? <Spin /> : null;
   return (
     <>
       <form
@@ -112,6 +114,7 @@ export const LogInForm: React.FC = () => {
           </p>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
     </>
   );

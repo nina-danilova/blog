@@ -1,6 +1,13 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-import { deleteArticleFromServer, getArticle, sendArticle, updateArticleOnServer } from 'services/blog-service';
+import {
+  deleteArticleFromServer,
+  getArticle,
+  sendArticle,
+  sendFavoritedSlug,
+  sendUnfavoritedSlug,
+  updateArticleOnServer,
+} from 'services/blog-service';
 import { createError, ServiceError } from 'utilities/errors';
 import { ArticleFormInput } from 'components/shared/article-form/article-form';
 import { getLoginToken } from 'services/storage-service';
@@ -98,6 +105,38 @@ export const deleteArticle = createAsyncThunk<void, string, { rejectValue: Servi
     }
     try {
       return await deleteArticleFromServer({ slug, token });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const favoriteArticle = createAsyncThunk<Article, string, { rejectValue: ServiceError | unknown }>(
+  'articles/favoriteArticle',
+  async (slug, { rejectWithValue }) => {
+    const token = getLoginToken();
+    if (!token) {
+      const error = createError('No login token for this email');
+      return rejectWithValue(error);
+    }
+    try {
+      return await sendFavoritedSlug({ slug, token });
+    } catch (error) {
+      return rejectWithValue(error);
+    }
+  }
+);
+
+export const unfavoriteArticle = createAsyncThunk<Article, string, { rejectValue: ServiceError | unknown }>(
+  'articles/unfavoriteArticle',
+  async (slug, { rejectWithValue }) => {
+    const token = getLoginToken();
+    if (!token) {
+      const error = createError('No login token for this email');
+      return rejectWithValue(error);
+    }
+    try {
+      return await sendUnfavoritedSlug({ slug, token });
     } catch (error) {
       return rejectWithValue(error);
     }

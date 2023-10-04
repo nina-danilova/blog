@@ -1,11 +1,10 @@
 import React from 'react';
 
-import { ArticleList } from '../../blocks/article-list';
-import { Pagination } from '../../blocks/pagination';
-
 import styles from './articles-page.module.scss';
+import { ArticleList } from './article-list';
+import { Pagination } from './pagination';
 
-export const ArticlesPage = () => {
+export const ArticlesPage: React.FC = () => {
   return (
     <>
       <h1 className={styles['visually-hidden']}>Blog - Articles</h1>

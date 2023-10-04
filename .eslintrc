@@ -16,8 +16,9 @@
   "settings": {
     "import/resolver": {
       "node": {
+        "paths": ["src"],
         "extensions": [".js", ".jsx", ".ts", ".tsx"],
-        "moduleDirectory": ["node_modules", "src/"]
+        "moduleDirectory": ["node_modules" /* "src/" */]
       }
     },
     "react": {
@@ -58,6 +59,8 @@
     "import/prefer-default-export": "off",
     "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx", ".ts", ".tsx"] }],
     "jsx-a11y/no-noninteractive-element-to-interactive-role": "off",
+    "jsx-a11y/label-has-associated-control": "off",
+    "jsx-a11y/label-has-for": "off",
     "import/order": [
       2,
       {
@@ -75,6 +78,7 @@
     "no-shadow": "off",
     "@typescript-eslint/no-shadow": ["error"],
     "@typescript-eslint/no-explicit-any": "off",
-    "no-useless-escape": "off"
+    "no-useless-escape": "off",
+    "no-param-reassign": "off"
   }
 }

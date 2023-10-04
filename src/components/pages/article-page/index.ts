@@ -1,3 +1,1 @@
-import ArticlePage from './article-page';
-
-export { ArticlePage };
+export { ArticlePageWithRouter } from './article-page';

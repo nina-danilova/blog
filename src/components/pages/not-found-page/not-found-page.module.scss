@@ -1,0 +1,8 @@
+@import 'components/app/visually-hidden.module.scss';
+@import 'components/app/variables.module';
+
+.description {
+  font-size: $h6-font-size;
+  line-height: $h6-line-height;
+  color: $heading-color;
+}

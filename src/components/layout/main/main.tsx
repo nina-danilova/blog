@@ -1,45 +1,55 @@
 import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 
-import { ArticlesPage } from '../../pages/articles-page';
-import { ArticlePage } from '../../pages/article-page';
-import { RegistrationPage } from '../../pages/registration-page';
-import { LogInPage } from '../../pages/log-in-page';
-import { ProfilePage } from '../../pages/profile-page';
+import { ArticlesPage } from 'components/pages/articles-page';
+import { ArticlePageWithRouter } from 'components/pages/article-page';
+import { RegistrationPage } from 'components/pages/registration-page';
+import { LogInPage } from 'components/pages/log-in-page';
+import { ProfilePage } from 'components/pages/profile-page';
+import { NewArticlePage } from 'components/pages/new-article-page';
+import { linkPaths } from 'utilities/constants';
+import { PrivateRoute } from 'components/shared/private-route';
+import { NotFoundPage } from 'components/pages/not-found-page';
 
 import styles from './main.module.scss';
 
-export const Main = () => {
+export const Main: React.FC = () => {
+  const { pathToArticle, pathToArticles, pathToSignIn, pathToSignUp, pathToNewArticle, pathToProfile, pathToHome } =
+    linkPaths;
   return (
     <main className={styles.main}>
       <Switch>
         <Route
-          path="/"
+          path={pathToHome}
           exact
           component={ArticlesPage}
         />
         <Route
-          path="/articles/"
+          path={pathToArticles}
           exact
           component={ArticlesPage}
         />
         <Route
-          path="/articles/:id"
-          component={ArticlePage}
+          path={pathToArticle}
+          component={ArticlePageWithRouter}
         />
         <Route
-          path="/sign-in"
+          path={pathToSignIn}
           component={LogInPage}
         />
         <Route
-          path="/sign-up"
+          path={pathToSignUp}
           component={RegistrationPage}
         />
-        <Route
-          path="/profile"
+        <PrivateRoute
+          path={pathToProfile}
           component={ProfilePage}
         />
-        <Route render={() => <h1>Page not found</h1>} />
+        <PrivateRoute
+          path={pathToNewArticle}
+          component={NewArticlePage}
+        />
+        <Route render={NotFoundPage} />
       </Switch>
     </main>
   );

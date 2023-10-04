@@ -24,8 +24,8 @@
     "noImplicitAny": false,
     "noEmitOnError": true,
     "sourceMap": false,
-    "rootDir": "./src",
-    "plugins": [{ "name": "typescript-plugin-css-modules" }],
+    "rootDir": "src",
+    "baseUrl": "src",
   },
   "include": [
     "src",

@@ -1,0 +1,71 @@
+@import 'components/app/variables.module.scss';
+
+.article-description {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.article-description-header {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  column-gap: 13px;
+  align-items: center;
+  cursor: pointer;
+}
+
+.article-title {
+  color: $info-color;
+  font-size: $h5-font-size;
+  line-height: $h5-line-height;
+  margin: 0;
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.article-like-button {
+  padding: 5px 5px 5px 20px;
+  color: $text-color;
+  cursor: pointer;
+  background-color: transparent;
+  border: none;
+  font-size: $font-size-sm;
+}
+
+.article-like-button-name {
+  position: relative;
+}
+
+.article-like-button-name::before {
+  content: '';
+  position: absolute;
+  left: -20px;
+  top: -1px;
+  width: 16px;
+  height: 15px;
+  background-image: url('../../../assets/icons/icon-like.svg');
+  background-repeat: no-repeat;
+}
+
+.article-tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 8px;
+  margin: 0;
+}
+
+.article-tag-item {
+  padding: 3px 5px 2px 5px;
+  border: 1px solid $text-color;
+  border-radius: 2px;
+  overflow-wrap: anywhere;
+}
+
+.article-tag-lead {
+  margin: 0;
+  font-size: $font-size-sm;
+  overflow-wrap: anywhere;
+}

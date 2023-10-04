@@ -1,12 +1,10 @@
 import React from 'react';
 
-import { Header } from '../header';
-import { Main } from '../main';
-import { Footer } from '../footer';
+import { Header } from 'components/layout/header';
+import { Main } from 'components/layout/main';
+import { Footer } from 'components/layout/footer';
 
-import './page-wrapper.module.scss';
-
-export const PageWrapper = () => {
+export const PageWrapper: React.FC = () => {
   return (
     <>
       <Header />

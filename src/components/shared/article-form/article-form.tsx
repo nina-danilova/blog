@@ -10,6 +10,7 @@ import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle, updateArticle } from 'redux-toolkit/article/articleThunks';
 import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 import { addIdToTags } from 'utilities/tags';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './article-form.module.scss';
 
@@ -34,13 +35,14 @@ export const ArticleForm: React.FC = () => {
   const article = useAppSelector((state) => state.viewingArticle.article);
   const slug = useAppSelector((state) => state.viewingArticle.slug);
   const handleArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
+    event?.preventDefault();
     if (isEditing && slug) {
-      const result = await dispatch(updateArticle({ slug, event, data }));
+      const result = await dispatch(updateArticle({ slug, data }));
       if (result.type.endsWith('fulfilled')) {
         history.push(pathToHome);
       }
     } else {
-      const result = await dispatch(createArticle({ event, data }));
+      const result = await dispatch(createArticle({ data }));
       if (result.type.endsWith('fulfilled')) {
         history.push(pathToHome);
       }
@@ -96,6 +98,10 @@ export const ArticleForm: React.FC = () => {
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    articleError && getValidationResultErrorMessage(articleError) ? (
+      <Alert message={getValidationResultErrorMessage(articleError)} />
+    ) : null;
   useEffect(() => {
     if (article) {
       const tags = addIdToTags(article.tagList);
@@ -275,6 +281,7 @@ export const ArticleForm: React.FC = () => {
         </div>
       </form>
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

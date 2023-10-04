@@ -20,6 +20,7 @@ import {
   urlRegEx,
   usernameRegEx,
 } from 'utilities/constants';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './edit-profile-form.module.scss';
 
@@ -57,7 +58,8 @@ export const EditProfileForm: React.FC = () => {
   const history = useHistory();
   const { pathToSignIn } = linkPaths;
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
-    dispatch(updateProfile({ event, data }));
+    event?.preventDefault();
+    dispatch(updateProfile({ data }));
     resetField('password');
   };
   const profileError = useAppSelector((state) => state.profile.error);
@@ -67,6 +69,10 @@ export const EditProfileForm: React.FC = () => {
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    profileError && getValidationResultErrorMessage(profileError) ? (
+      <Alert message={getValidationResultErrorMessage(profileError)} />
+    ) : null;
   const isLoading = useAppSelector((state) => state.profile.loadingProfile);
   const isUpdating = useAppSelector((state) => state.profile.updatingProfile);
   const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
@@ -207,6 +213,7 @@ export const EditProfileForm: React.FC = () => {
       </form>
       {loadSpinner}
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

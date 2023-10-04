@@ -9,6 +9,7 @@ import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { linkPaths, emailRegEx, messagePattern, messageRequired, passwordRegEx } from 'utilities/constants';
 import { userLogin, LoginFormInput } from 'redux-toolkit/user/userThunks';
 import { setAuthStatus } from 'services/storage-service';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './log-in-form.module.scss';
 
@@ -28,8 +29,9 @@ export const LogInForm: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const logIn: SubmitHandler<LoginFormInput> = async (data, event) => {
-    const result = await dispatch(userLogin({ event, data }));
+  const logIn: SubmitHandler<LoginFormInput> = async (data: LoginFormInput, event) => {
+    event?.preventDefault();
+    const result = await dispatch(userLogin({ data }));
     if (!result.payload) {
       setAuthStatus(true);
       history.push(pathToHome);
@@ -42,6 +44,8 @@ export const LogInForm: React.FC = () => {
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    error && getValidationResultErrorMessage(error) ? <Alert message={getValidationResultErrorMessage(error)} /> : null;
   const isLoggingIn = useAppSelector((state) => state.user.loggingIn);
   const loadSpinner = isLoggingIn ? <Spin /> : null;
   return (
@@ -116,6 +120,7 @@ export const LogInForm: React.FC = () => {
       </form>
       {loadSpinner}
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

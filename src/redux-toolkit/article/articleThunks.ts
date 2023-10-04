@@ -31,7 +31,6 @@ export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { 
 );
 
 type SendArticlePayloadProps = {
-  event;
   data: ArticleFormInput;
 };
 
@@ -39,8 +38,7 @@ export const createArticle = createAsyncThunk<
   Article,
   SendArticlePayloadProps,
   { rejectValue: ServiceError | unknown }
->('articles/createArticle', async ({ event, data: formData }, { rejectWithValue }) => {
-  event.preventDefault();
+>('articles/createArticle', async ({ data: formData }, { rejectWithValue }) => {
   const token = getLoginToken();
   if (!token) {
     const error = createError('No login token for this email');
@@ -64,7 +62,6 @@ export const createArticle = createAsyncThunk<
 
 type UpdateArticlePayloadProps = {
   slug: string;
-  event;
   data: ArticleFormInput;
 };
 
@@ -72,8 +69,7 @@ export const updateArticle = createAsyncThunk<
   Article,
   UpdateArticlePayloadProps,
   { rejectValue: ServiceError | unknown }
->('articles/updateArticle', async ({ slug, event, data: formData }, { rejectWithValue }) => {
-  event.preventDefault();
+>('articles/updateArticle', async ({ slug, data: formData }, { rejectWithValue }) => {
   const token = getLoginToken();
   if (!token) {
     const error = createError('No login token for this email');

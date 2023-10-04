@@ -21,6 +21,7 @@ import {
   messageNotTheSame,
   linkPaths,
 } from 'utilities/constants';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './registration-form.module.scss';
 
@@ -75,11 +76,16 @@ export const RegistrationForm: React.FC = () => {
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    userError && getValidationResultErrorMessage(userError) ? (
+      <Alert message={getValidationResultErrorMessage(userError)} />
+    ) : null;
   const isRegistering = useAppSelector((state) => state.user.registering);
   const loadSpinner = isRegistering ? <Spin /> : null;
   const history = useHistory();
-  const registerUser: SubmitHandler<RegistrationFormInput> = async (data, event) => {
-    const result = await dispatch(userRegister({ event, data }));
+  const registerUser: SubmitHandler<RegistrationFormInput> = async (data: RegistrationFormInput, event) => {
+    event?.preventDefault();
+    const result = await dispatch(userRegister({ data }));
     if (!result.payload) {
       history.push(pathToHome);
     }
@@ -232,6 +238,7 @@ export const RegistrationForm: React.FC = () => {
       </form>
       {loadSpinner}
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

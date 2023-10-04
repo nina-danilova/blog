@@ -32,7 +32,6 @@ export type EditProfileFormInput = {
 };
 
 type UpdateProfilePayloadProps = {
-  event;
   data: EditProfileFormInput;
 };
 
@@ -42,8 +41,7 @@ export const updateProfile = createAsyncThunk<
   {
     rejectValue: ServiceError | unknown;
   }
->('profile/updateProfile', async ({ event, data: formData }, { rejectWithValue }) => {
-  event.preventDefault();
+>('profile/updateProfile', async ({ data: formData }, { rejectWithValue }) => {
   const token = getLoginToken();
   const data = {
     user: {

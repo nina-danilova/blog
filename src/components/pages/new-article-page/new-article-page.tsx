@@ -8,7 +8,7 @@ export const NewArticlePage: React.FC = () => {
   return (
     <>
       <h1 className={styles['visually-hidden']}>Blog - New article</h1>
-      <ArticleForm />
+      <ArticleForm blanc />
     </>
   );
 };

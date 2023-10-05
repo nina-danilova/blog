@@ -57,7 +57,7 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
       {errorMessage}
       {noDataMessage}
       <h1 className={styles['visually-hidden']}>Blog - Editing article</h1>
-      <ArticleForm />
+      <ArticleForm blanc={false} />
     </>
   );
 };

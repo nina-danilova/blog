@@ -105,4 +105,4 @@ const articleSlice = createSlice({
 });
 
 export const articleSLiceReducer = articleSlice.reducer;
-export const { setSlug, setEditStatus } = articleSlice.actions;
+export const { setSlug, setEditStatus, clearArticle } = articleSlice.actions;

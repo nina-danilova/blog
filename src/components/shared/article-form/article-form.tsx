@@ -11,6 +11,7 @@ import { createArticle, updateArticle } from 'redux-toolkit/article/articleThunk
 import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
 import { addIdToTags } from 'utilities/tags';
 import { getValidationResultErrorMessage } from 'utilities/errors';
+import { clearArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-form.module.scss';
 
@@ -26,7 +27,11 @@ export type ArticleFormInput = {
   'new-tag'?: string;
 };
 
-export const ArticleForm: React.FC = () => {
+type ArticleFormProps = {
+  blanc: boolean;
+};
+
+export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
   const history = useHistory();
   const { pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
@@ -103,7 +108,9 @@ export const ArticleForm: React.FC = () => {
       <Alert message={getValidationResultErrorMessage(articleError)} />
     ) : null;
   useEffect(() => {
-    if (article) {
+    if (blanc) {
+      dispatch(clearArticle());
+    } else if (article) {
       const tags = addIdToTags(article.tagList);
       setValue('title', article.title);
       setValue('description', article.description);

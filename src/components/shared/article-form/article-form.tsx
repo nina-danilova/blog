@@ -129,7 +129,9 @@ export const ArticleForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['article-form-input']}
+                      className={clsx(styles['article-form-input'], {
+                        [styles['article-form-input--invalid']]: !!errors.title,
+                      })}
                       type="text"
                       placeholder="Title"
                       value={value || ''}
@@ -150,7 +152,9 @@ export const ArticleForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['article-form-input']}
+                      className={clsx(styles['article-form-input'], {
+                        [styles['article-form-input--invalid']]: !!errors.description,
+                      })}
                       type="text"
                       placeholder="Description"
                       value={value || ''}
@@ -173,7 +177,9 @@ export const ArticleForm: React.FC = () => {
                 return (
                   <>
                     <textarea
-                      className={styles['article-form-input']}
+                      className={clsx(styles['article-form-input'], {
+                        [styles['article-form-input--invalid']]: !!errors.body,
+                      })}
                       placeholder="Text"
                       rows={7}
                       value={value || ''}
@@ -200,7 +206,9 @@ export const ArticleForm: React.FC = () => {
                           return (
                             <>
                               <input
-                                className={clsx(styles['article-form-input'], styles['article-form-input--tag'])}
+                                className={clsx(styles['article-form-input'], styles['article-form-input--tag'], {
+                                  [styles['article-form-input--invalid']]: !!errors.tags,
+                                })}
                                 type="text"
                                 placeholder="Tag"
                                 value={value || ''}

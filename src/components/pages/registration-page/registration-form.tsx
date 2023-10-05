@@ -59,7 +59,7 @@ export const RegistrationForm: React.FC = () => {
         return false;
       })
       .required(messageRequired),
-    personalInfoAgreement: yup.string().required(messageRequired),
+    personalInfoAgreement: yup.string().required(messageRequired).oneOf(['true'], messageRequired),
   });
   const {
     control,
@@ -107,7 +107,9 @@ export const RegistrationForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['registration-form-input']}
+                      className={clsx(styles['registration-form-input'], {
+                        [styles['registration-form-input--invalid']]: !!errors.username,
+                      })}
                       type="text"
                       placeholder="Username"
                       value={value || ''}
@@ -128,7 +130,9 @@ export const RegistrationForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['registration-form-input']}
+                      className={clsx(styles['registration-form-input'], {
+                        [styles['registration-form-input--invalid']]: !!errors.email,
+                      })}
                       type="email"
                       placeholder="Email address"
                       value={value || ''}
@@ -149,7 +153,9 @@ export const RegistrationForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['registration-form-input']}
+                      className={clsx(styles['registration-form-input'], {
+                        [styles['registration-form-input--invalid']]: !!errors.password,
+                      })}
                       type="password"
                       placeholder="Password"
                       value={value || ''}
@@ -170,7 +176,9 @@ export const RegistrationForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['registration-form-input']}
+                      className={clsx(styles['registration-form-input'], {
+                        [styles['registration-form-input--invalid']]: !!errors.repeatPassword,
+                      })}
                       type="password"
                       placeholder="Password"
                       value={value || ''}
@@ -206,10 +214,12 @@ export const RegistrationForm: React.FC = () => {
             }}
           />
           <label
-            className={`registration-form-label ${styles['registration-form-label--agreement']}`}
+            className={clsx(styles['registration-form-label--agreement'], {
+              [styles['registration-form-label--invalid']]: !!errors.personalInfoAgreement,
+            })}
             htmlFor="personalInfoAgreement"
           >
-            <p className={`registration-form-label-name ${styles['registration-form-label-name--agreement']}`}>
+            <p className={styles['registration-form-label-name--agreement']}>
               I agree to the processing of my personal information
             </p>
             {errors?.personalInfoAgreement && (

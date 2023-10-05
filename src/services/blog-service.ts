@@ -6,7 +6,12 @@ import { UpdatedProfile } from 'redux-toolkit/profile/profileThunks';
 
 import { setLoginInfo, setRegisterInfo } from './storage-service';
 
-export const getArticle = (id: string, token: null | string = null): Promise<Article> => {
+type GetArticleProps = {
+  id: string;
+  token: string | null;
+};
+
+export const getArticle = ({ id, token }: GetArticleProps): Promise<Article> => {
   const url = `${apiBaseUrl}/articles/${id}`;
   return fetch(url, {
     method: 'GET',
@@ -154,13 +159,19 @@ export type ArticlesWithId = {
   articlesCount: number;
 };
 
-export const getArticles = (currentPage: number): Promise<ArticlesWithId> => {
+type GetArticlesProps = {
+  currentPage: number;
+  token: string | null;
+};
+
+export const getArticles = ({ currentPage, token }: GetArticlesProps): Promise<ArticlesWithId> => {
   const offset = getOffset(currentPage);
   const url = `${apiBaseUrl}/articles?limit=20&offset=${offset}`;
   return fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
     },
   })
     .then(

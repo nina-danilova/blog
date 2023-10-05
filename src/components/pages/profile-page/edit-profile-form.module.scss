@@ -48,6 +48,11 @@
   line-height: $input-placeholder-line-height;
 }
 
+.edit-profile-form-input--invalid {
+  border-color: $error-color;
+  outline-color: $error-color;
+}
+
 .edit-profile-form-input::placeholder {
   color: $grey-6;
 }

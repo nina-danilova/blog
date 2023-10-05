@@ -4,6 +4,7 @@ import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { clsx } from 'clsx';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { updateProfile, EditProfileFormInput } from 'redux-toolkit/profile/profileThunks';
@@ -114,7 +115,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.username,
+                      })}
                       type="text"
                       placeholder="Username"
                       value={value || ''}
@@ -139,7 +142,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.email,
+                      })}
                       type="email"
                       placeholder="Email address"
                       value={value || ''}
@@ -162,7 +167,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.password,
+                      })}
                       type="password"
                       placeholder="New password"
                       value={value || ''}
@@ -187,7 +194,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.image,
+                      })}
                       type="text"
                       placeholder="Avatar image"
                       value={value || ''}

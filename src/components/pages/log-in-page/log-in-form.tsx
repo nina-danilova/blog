@@ -4,6 +4,7 @@ import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { clsx } from 'clsx';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { linkPaths, emailRegEx, messagePattern, messageRequired, passwordRegEx } from 'utilities/constants';
@@ -65,7 +66,9 @@ export const LogInForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['log-in-form-input']}
+                      className={clsx(styles['log-in-form-input'], {
+                        [styles['log-in-form-input--invalid']]: !!errors.email,
+                      })}
                       type="email"
                       placeholder="Email address"
                       value={value || ''}
@@ -86,7 +89,9 @@ export const LogInForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['log-in-form-input']}
+                      className={clsx(styles['log-in-form-input'], {
+                        [styles['log-in-form-input--invalid']]: !!errors.password,
+                      })}
                       type="password"
                       placeholder="Password"
                       value={value || ''}

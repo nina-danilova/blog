@@ -22,8 +22,9 @@ type LoadArticlePayloadProps = {
 export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { rejectValue: ServiceError | unknown }>(
   'articles/loadArticle',
   async ({ id }, { rejectWithValue }) => {
+    const token = getLoginToken();
     try {
-      return await getArticle(id);
+      return await getArticle({ id, token });
     } catch (error) {
       return rejectWithValue(error);
     }

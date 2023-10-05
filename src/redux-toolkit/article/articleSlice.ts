@@ -57,6 +57,9 @@ const articleSlice = createSlice({
     setEditStatus: (state, action: PayloadAction<boolean>) => {
       state.editing = action.payload;
     },
+    clearArticle: (state) => {
+      state.article = null;
+    },
   },
   extraReducers: (builder) => {
     builder

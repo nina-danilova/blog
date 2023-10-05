@@ -1,14 +1,16 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { clsx } from 'clsx';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { linkPaths, emailRegEx, messagePattern, messageRequired, passwordRegEx } from 'utilities/constants';
 import { userLogin, LoginFormInput } from 'redux-toolkit/user/userThunks';
 import { setAuthStatus } from 'services/storage-service';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './log-in-form.module.scss';
 
@@ -28,20 +30,25 @@ export const LogInForm: React.FC = () => {
   });
   const dispatch = useAppDispatch();
   const history = useHistory();
-  const logIn: SubmitHandler<LoginFormInput> = async (data, event) => {
-    const result = await dispatch(userLogin({ event, data }));
+  const logIn: SubmitHandler<LoginFormInput> = async (data: LoginFormInput, event) => {
+    event?.preventDefault();
+    const result = await dispatch(userLogin({ data }));
     if (!result.payload) {
       setAuthStatus(true);
       history.push(pathToHome);
     }
   };
-  const error = useAppSelector((state) => state.user.userError);
+  const error = useAppSelector((state) => state.user.error);
   const errorMessage = error ? (
     <Alert
       message={error.message}
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    error && getValidationResultErrorMessage(error) ? <Alert message={getValidationResultErrorMessage(error)} /> : null;
+  const isLoggingIn = useAppSelector((state) => state.user.loggingIn);
+  const loadSpinner = isLoggingIn ? <Spin /> : null;
   return (
     <>
       <form
@@ -59,7 +66,9 @@ export const LogInForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['log-in-form-input']}
+                      className={clsx(styles['log-in-form-input'], {
+                        [styles['log-in-form-input--invalid']]: !!errors.email,
+                      })}
                       type="email"
                       placeholder="Email address"
                       value={value || ''}
@@ -80,7 +89,9 @@ export const LogInForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['log-in-form-input']}
+                      className={clsx(styles['log-in-form-input'], {
+                        [styles['log-in-form-input--invalid']]: !!errors.password,
+                      })}
                       type="password"
                       placeholder="Password"
                       value={value || ''}
@@ -112,7 +123,9 @@ export const LogInForm: React.FC = () => {
           </p>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

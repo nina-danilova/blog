@@ -51,6 +51,11 @@
   line-height: $input-placeholder-line-height;
 }
 
+.log-in-form-input--invalid {
+  border-color: $error-color;
+  outline-color: $error-color;
+}
+
 .log-in-form-actions {
   display: flex;
   flex-direction: column;

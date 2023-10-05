@@ -14,7 +14,7 @@ export const Navigation: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { pathToSignIn } = linkPaths;
-  const loadProfileError = useAppSelector((state) => state.profile.profileError);
+  const loadProfileError = useAppSelector((state) => state.profile.error);
   const isAuthorized = useAppSelector((state) => state.user.authorized);
   const isAuthorizedBeforeReload = getAuthStatus();
   if (!isAuthorized && isAuthorizedBeforeReload) {

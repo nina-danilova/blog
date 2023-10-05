@@ -52,6 +52,11 @@
   line-height: $input-placeholder-line-height;
 }
 
+.article-form-input--invalid {
+  border-color: $error-color;
+  outline-color: $error-color;
+}
+
 .article-form-input--tag {
   max-width: 276px;
 }

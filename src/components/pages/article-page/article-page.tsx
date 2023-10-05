@@ -26,14 +26,15 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const dispatch = useAppDispatch();
   const article = useAppSelector((state) => state.viewingArticle);
   const isLoading = useAppSelector((state) => state.viewingArticle.loading);
-  const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
-  const loadSpinner = isLoading ? <Spin /> : null;
+  const isDeleting = useAppSelector((state) => state.viewingArticle.deleting);
+  const articleError = useAppSelector((state) => state.viewingArticle.error);
+  const loadSpinner = isLoading || isDeleting ? <Spin /> : null;
   const errorMessage =
-    loadArticleError !== null ? (
+    articleError !== null ? (
       <Alert
         type="error"
         closable={false}
-        message="Article loading error. Please update."
+        message={articleError?.message}
       />
     ) : null;
   const noDataMessage =
@@ -41,7 +42,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
       <Alert
         type="info"
         closable={false}
-        message="There is no relevant data for you. Please update."
+        message="There is no data for you. Please update."
       />
     ) : null;
   useEffect(() => {
@@ -52,16 +53,16 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   }, [id]);
   useEffect(() => {
     if (
-      loadArticleError &&
-      loadArticleError.cause &&
-      loadArticleError.cause.errors &&
-      loadArticleError.cause.errors.error &&
-      loadArticleError.cause.errors.error.status &&
-      loadArticleError.cause.errors.error.status === 401
+      articleError &&
+      articleError.cause &&
+      articleError.cause.errors &&
+      articleError.cause.errors.error &&
+      articleError.cause.errors.error.status &&
+      articleError.cause.errors.error.status === 401
     ) {
       history.push(pathToSignIn);
     }
-  }, [loadArticleError]);
+  }, [articleError]);
   return (
     <>
       {loadSpinner}

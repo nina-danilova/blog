@@ -6,7 +6,12 @@ import { UpdatedProfile } from 'redux-toolkit/profile/profileThunks';
 
 import { setLoginInfo, setRegisterInfo } from './storage-service';
 
-export const getArticle = (id: string, token: null | string = null): Promise<Article> => {
+type GetArticleProps = {
+  id: string;
+  token: string | null;
+};
+
+export const getArticle = ({ id, token }: GetArticleProps): Promise<Article> => {
   const url = `${apiBaseUrl}/articles/${id}`;
   return fetch(url, {
     method: 'GET',
@@ -27,7 +32,7 @@ export const getArticle = (id: string, token: null | string = null): Promise<Art
         );
       },
       (err) => {
-        throw createError('Load article error while getting data through API', err);
+        throw createError('Load article error while getting data through API', { ...err });
       }
     )
     .then((response) => {
@@ -65,7 +70,7 @@ export const getProfile = (token: string): Promise<Profile> => {
         );
       },
       (err) => {
-        throw createError('Load profile error while getting data through API', err);
+        throw createError('Load profile error while getting data through API', { ...err });
       }
     )
     .then((response) => {
@@ -116,7 +121,7 @@ export const setProfile = async ({ data, token = null }: UpdateProfileProps): Pr
         );
       },
       (err) => {
-        throw createError('Set profile error while updating data through API', err);
+        throw createError('Set profile error while updating data through API', { ...err });
       }
     )
     .then((response) => {
@@ -154,13 +159,19 @@ export type ArticlesWithId = {
   articlesCount: number;
 };
 
-export const getArticles = (currentPage: number): Promise<ArticlesWithId> => {
+type GetArticlesProps = {
+  currentPage: number;
+  token: string | null;
+};
+
+export const getArticles = ({ currentPage, token }: GetArticlesProps): Promise<ArticlesWithId> => {
   const offset = getOffset(currentPage);
   const url = `${apiBaseUrl}/articles?limit=20&offset=${offset}`;
   return fetch(url, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
     },
   })
     .then(
@@ -175,7 +186,7 @@ export const getArticles = (currentPage: number): Promise<ArticlesWithId> => {
         );
       },
       (err) => {
-        throw createError('Load articles error while getting data through API', err);
+        throw createError('Load articles error while getting data through API', { ...err });
       }
     )
     .then((response) => {
@@ -224,7 +235,7 @@ export const sendRegisterInfo = async ({ data }: SendRegisterInfoProps): Promise
         );
       },
       (err) => {
-        throw createError('User register error while sending data through API', err);
+        throw createError('User register error while sending data through API', { ...err });
       }
     )
     .then((response) => {
@@ -274,7 +285,7 @@ export const sendLoginInfo = async ({ data, token }: SendLoginInfoProps): Promis
         );
       },
       (err) => {
-        throw createError('User login error while sending data through API', err);
+        throw createError('User login error while sending data through API', { ...err });
       }
     )
     .then((response) => {
@@ -283,6 +294,231 @@ export const sendLoginInfo = async ({ data, token }: SendLoginInfoProps): Promis
         return response.user;
       }
       throw createError('Unknown error of logging-in user');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+type SendArticleProps = {
+  data: {
+    article: {
+      title: string;
+      description: string;
+      body: string;
+      tagList: string[];
+    };
+  };
+  token: string;
+};
+
+export const sendArticle = ({ data, token }: SendArticleProps): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles`;
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Send article error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Send article error while sending data through API', { ...err });
+      }
+    )
+    .then((response) => {
+      if (response.article) {
+        return response.article;
+      }
+      throw createError('Unknown error of sending article');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+type UpdateArticleProps = {
+  slug: string;
+  data: {
+    article: {
+      title: string;
+      description: string;
+      body: string;
+      tagList: string[];
+    };
+  };
+  token: string;
+};
+export const updateArticleOnServer = ({ slug, data, token }: UpdateArticleProps): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles/${slug}`;
+  return fetch(url, {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+    body: JSON.stringify(data),
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Update article error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Update article error while sending data through API', { ...err });
+      }
+    )
+    .then((response) => {
+      if (response.article) {
+        return response.article;
+      }
+      throw createError('Unknown error of updating article');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+type DeleteArticleFromServerProps = {
+  slug: string;
+  token: string;
+};
+
+export const deleteArticleFromServer = ({ slug, token }: DeleteArticleFromServerProps): Promise<void> => {
+  const url = `${apiBaseUrl}/articles/${slug}`;
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return;
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Delete article error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Delete article error while deleting data through API', { ...err });
+      }
+    )
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+type SendFavoritedSlugProps = {
+  slug: string;
+  token: string;
+};
+
+export const sendFavoritedSlug = ({ slug, token }: SendFavoritedSlugProps): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles/${slug}/favorite`;
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Send favorited slug error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Send favorited slug error while sending data through API', { ...err });
+      }
+    )
+    .then((response) => {
+      if (response.article) {
+        return response.article;
+      }
+      throw createError('Unknown error of sending favorited slug');
+    })
+    .catch((error) => {
+      if (error.message) {
+        throw error;
+      }
+      throw createError(error);
+    });
+};
+
+type SendUnfavoritedSlugProps = {
+  slug: string;
+  token: string;
+};
+
+export const sendUnfavoritedSlug = ({ slug, token }: SendUnfavoritedSlugProps): Promise<Article> => {
+  const url = `${apiBaseUrl}/articles/${slug}/favorite`;
+  return fetch(url, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json;charset=utf-8',
+      Authorization: `Token ${token}`,
+    },
+  })
+    .then(
+      async (response) => {
+        if (response.status >= 200 && response.status < 300) {
+          return response.json();
+        }
+        const errorResponse = await response.json();
+        throw createError(
+          `Send unfavorited slug error, code ${response.status.toString()} - error after API answer`,
+          errorResponse
+        );
+      },
+      (err) => {
+        throw createError('Send unfavorited slug error while sending data through API', { ...err });
+      }
+    )
+    .then((response) => {
+      if (response.article) {
+        return response.article;
+      }
+      throw createError('Unknown error of sending unfavorited slug');
     })
     .catch((error) => {
       if (error.message) {

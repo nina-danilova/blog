@@ -1,9 +1,10 @@
 import React, { useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Alert } from 'antd';
+import { Alert, Spin } from 'antd';
 import { useForm, SubmitHandler, Controller } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
+import { clsx } from 'clsx';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { updateProfile, EditProfileFormInput } from 'redux-toolkit/profile/profileThunks';
@@ -20,6 +21,7 @@ import {
   urlRegEx,
   usernameRegEx,
 } from 'utilities/constants';
+import { getValidationResultErrorMessage } from 'utilities/errors';
 
 import styles from './edit-profile-form.module.scss';
 
@@ -57,16 +59,24 @@ export const EditProfileForm: React.FC = () => {
   const history = useHistory();
   const { pathToSignIn } = linkPaths;
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
-    dispatch(updateProfile({ event, data }));
+    event?.preventDefault();
+    dispatch(updateProfile({ data }));
     resetField('password');
   };
-  const profileError = useAppSelector((state) => state.profile.profileError);
+  const profileError = useAppSelector((state) => state.profile.error);
   const errorMessage = profileError ? (
     <Alert
       message={profileError.message}
       type="error"
     />
   ) : null;
+  const validationResultErrorMessage =
+    profileError && getValidationResultErrorMessage(profileError) ? (
+      <Alert message={getValidationResultErrorMessage(profileError)} />
+    ) : null;
+  const isLoading = useAppSelector((state) => state.profile.loadingProfile);
+  const isUpdating = useAppSelector((state) => state.profile.updatingProfile);
+  const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
   useEffect(() => {
     setValue('username', userName);
   }, [userName]);
@@ -105,7 +115,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.username,
+                      })}
                       type="text"
                       placeholder="Username"
                       value={value || ''}
@@ -130,7 +142,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.email,
+                      })}
                       type="email"
                       placeholder="Email address"
                       value={value || ''}
@@ -153,7 +167,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.password,
+                      })}
                       type="password"
                       placeholder="New password"
                       value={value || ''}
@@ -178,7 +194,9 @@ export const EditProfileForm: React.FC = () => {
                 return (
                   <>
                     <input
-                      className={styles['edit-profile-form-input']}
+                      className={clsx(styles['edit-profile-form-input'], {
+                        [styles['edit-profile-form-input--invalid']]: !!errors.image,
+                      })}
                       type="text"
                       placeholder="Avatar image"
                       value={value || ''}
@@ -202,7 +220,9 @@ export const EditProfileForm: React.FC = () => {
           </button>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
+      {validationResultErrorMessage}
     </>
   );
 };

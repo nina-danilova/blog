@@ -1,31 +1,3 @@
-export enum actions {
-  LOAD_ARTICLE_START = 'LOAD_ARTICLE_START',
-  LOAD_ARTICLE_SUCCESS = 'LOAD_ARTICLE_SUCCESS',
-  LOAD_ARTICLE_ERROR = 'LOAD_ARTICLE_ERROR',
-  SET_SLUG = 'SET_SLUG',
-  CREATE_ARTICLE = 'CREATE_ARTICLE',
-  LOAD_ARTICLES_START = 'LOAD_ARTICLES_START',
-  LOAD_ARTICLES_SUCCESS = 'LOAD_ARTICLES_SUCCESS',
-  LOAD_ARTICLES_ERROR = 'LOAD_ARTICLES_ERROR',
-  CHANGE_CURRENT_PAGE = 'CHANGE_CURRENT_PAGE',
-  LOAD_PROFILE_START = 'LOAD_PROFILE_START',
-  LOAD_PROFILE_SUCCESS = 'LOAD_PROFILE_SUCCESS',
-  LOAD_PROFILE_ERROR = 'LOAD_PROFILE_ERROR',
-  UPDATE_PROFILE_START = 'UPDATE_PROFILE_START',
-  UPDATE_PROFILE_SUCCESS = 'UPDATE_PROFILE_SUCCESS',
-  UPDATE_PROFILE_ERROR = 'UPDATE_PROFILE_ERROR',
-  UPDATE_PROFILE_FORM_USER_NAME = 'UPDATE_PROFILE_FORM_USER_NAME',
-  UPDATE_PROFILE_FORM_EMAIL = 'UPDATE_PROFILE_FORM_EMAIL',
-  UPDATE_PROFILE_FORM_IMAGE_URL = 'UPDATE_PROFILE_FORM_IMAGE_URL',
-  USER_LOG_OUT = 'USER_LOG_OUT',
-  USER_REGISTER_START = 'USER_REGISTER_START',
-  USER_REGISTER_SUCCESS = 'USER_REGISTER_SUCCESS',
-  USER_REGISTER_ERROR = 'USER_REGISTER_ERROR',
-  USER_LOGIN_START = 'USER_LOGIN_START',
-  USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS',
-  USER_LOGIN_ERROR = 'USER_LOGIN_ERROR',
-}
-
 export enum linkPaths {
   pathToSignIn = '/sign-in',
   pathToSignUp = '/sign-up',
@@ -34,9 +6,10 @@ export enum linkPaths {
   pathToHome = '/',
   pathToArticles = '/articles/',
   pathToArticle = '/articles/:id',
+  pathToEditArticle = '/articles/:id/edit',
 }
 
-export const apiBaseUrl = 'https://blog.kata.academy/api'; /* 'https://api.realworld.io/api'; */
+export const apiBaseUrl = 'https://blog.kata.academy/api';
 export const usernameRegEx = /^[a-z0-9]*$/;
 export const emailRegEx = /^(?!.*@.*@.*$)(?!.*@.*--.*\..*$)(?!.*@.*-\..*$)(?!.*@.*-$)((.*)?@.+(\..{1,11})?)$/;
 export const passwordRegEx = /^[a-z0-9]*$/;

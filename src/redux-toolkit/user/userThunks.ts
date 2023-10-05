@@ -15,7 +15,6 @@ export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispa
 );
 
 type UserRegisterPayloadProps = {
-  event;
   data: {
     username: string;
     email: string;
@@ -25,8 +24,7 @@ type UserRegisterPayloadProps = {
 
 export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { rejectValue: ServiceError | unknown }>(
   'user/userRegister',
-  async ({ event, data: formData }, { rejectWithValue }) => {
-    event.preventDefault();
+  async ({ data: formData }, { rejectWithValue }) => {
     const data = {
       user: {
         username: formData.username,
@@ -48,7 +46,6 @@ export type LoginFormInput = {
 };
 
 type UserLoginPayloadProps = {
-  event;
   data: LoginFormInput;
 };
 
@@ -59,8 +56,7 @@ export const userLogin = createAsyncThunk<
     dispatch: AppDispatch;
     rejectValue: ServiceError | unknown;
   }
->('user/userLogin', async ({ event, data: formData }, { dispatch, rejectWithValue }) => {
-  event.preventDefault();
+>('user/userLogin', async ({ data: formData }, { dispatch, rejectWithValue }) => {
   const data = {
     user: {
       email: formData.email,

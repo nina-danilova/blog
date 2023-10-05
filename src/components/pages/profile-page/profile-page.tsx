@@ -12,7 +12,7 @@ export const ProfilePage: React.FC = () => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const { pathToSignIn } = linkPaths;
-  const loadProfileError = useAppSelector((state) => state.profile.profileError);
+  const loadProfileError = useAppSelector((state) => state.profile.error);
 
   useEffect(() => {
     dispatch(loadProfile());

@@ -10,12 +10,21 @@ import { NewArticlePage } from 'components/pages/new-article-page';
 import { linkPaths } from 'utilities/constants';
 import { PrivateRoute } from 'components/shared/private-route';
 import { NotFoundPage } from 'components/pages/not-found-page';
+import { EditArticlePageWithRouter } from 'components/pages/edit-article-page';
 
 import styles from './main.module.scss';
 
 export const Main: React.FC = () => {
-  const { pathToArticle, pathToArticles, pathToSignIn, pathToSignUp, pathToNewArticle, pathToProfile, pathToHome } =
-    linkPaths;
+  const {
+    pathToArticle,
+    pathToArticles,
+    pathToSignIn,
+    pathToSignUp,
+    pathToNewArticle,
+    pathToProfile,
+    pathToHome,
+    pathToEditArticle,
+  } = linkPaths;
   return (
     <main className={styles.main}>
       <Switch>
@@ -32,6 +41,7 @@ export const Main: React.FC = () => {
         <Route
           path={pathToArticle}
           component={ArticlePageWithRouter}
+          exact
         />
         <Route
           path={pathToSignIn}
@@ -48,6 +58,10 @@ export const Main: React.FC = () => {
         <PrivateRoute
           path={pathToNewArticle}
           component={NewArticlePage}
+        />
+        <PrivateRoute
+          path={pathToEditArticle}
+          component={EditArticlePageWithRouter}
         />
         <Route render={NotFoundPage} />
       </Switch>

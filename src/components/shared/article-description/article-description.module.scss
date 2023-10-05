@@ -49,6 +49,10 @@
   background-repeat: no-repeat;
 }
 
+.article-like-button-name--favorited::before {
+  background-image: url('../../../assets/icons/icon-like-pressed.svg');
+}
+
 .article-tag-list {
   display: flex;
   flex-wrap: wrap;

@@ -20,3 +20,17 @@ export const createError = (message: string, body: ErrorCause | null = null): Se
     cause: body,
   };
 };
+
+export const getValidationResultErrorMessage = (errorObject: {
+  name?: string;
+  message?: string;
+  cause?: ErrorCause | null;
+}): string | null => {
+  if (errorObject && errorObject.cause && errorObject.cause.errors) {
+    const object = { ...errorObject.cause.errors };
+    const entries = Object.entries(object);
+    const message = entries.map(([name, value]) => `${name} ${value}`).join(' ');
+    return message;
+  }
+  return null;
+};

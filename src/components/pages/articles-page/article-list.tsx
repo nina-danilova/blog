@@ -58,7 +58,7 @@ export const ArticleList: React.FC = () => {
       {noDataMessage}
       <ul className={styles['article-list']}>
         {articleList.map((article) => (
-          <li key={`${article.id}-${article.createdAt}`}>
+          <li key={`${article.slug}-${article.createdAt}`}>
             <ArticleCardPreview article={article} />
           </li>
         ))}

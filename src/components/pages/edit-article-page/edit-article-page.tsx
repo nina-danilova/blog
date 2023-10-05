@@ -2,11 +2,11 @@ import React, { useEffect } from 'react';
 import { withRouter, useHistory } from 'react-router-dom';
 import { Alert } from 'antd';
 
-import { setEditStatus, setSlug } from '../../../redux-toolkit/article/articleSlice';
-import { loadArticle } from '../../../redux-toolkit/article/articleThunks';
-import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
-import styles from '../article-page/article-page.module.scss';
-import { ArticleForm } from '../../shared/article-form';
+import { setEditStatus, setSlug } from 'redux-toolkit/article/articleSlice';
+import { loadArticle } from 'redux-toolkit/article/articleThunks';
+import { useAppDispatch, useAppSelector } from 'hooks/hooks';
+import styles from 'components/pages/article-page/article-page.module.scss';
+import { ArticleForm } from 'components/shared/article-form';
 
 type EditArticlePageProps = {
   match: {

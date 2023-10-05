@@ -1,23 +1,27 @@
 # blog
 
-Блог-платформа. Вывод статей, вывод отдельной статьи, регистрация, авторизация,
-обновление профиля.
+### Блог-платформа
+- Вывод статей
+- Вывод, создание, обновление, удаление статьи
+- Регистрация, авторизация, обновление профиля.
+
 Верстка фиксированная.
 
 Приложение развернуто на vercel - blog-livid-phi.vercel.app
 
-Использованы
+### Использованы
 - Git
 - React
 - React Hooks
 - React Hook Form
-- yup
 - React Router
 - Redux
 - Redux Thunk
+- Redux Toolkit
 - TypeScript
 - SASS
 - CSS modules
 - clsx
+- yup
 - Markdown to JSX
 - Figma

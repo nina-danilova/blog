@@ -4,8 +4,9 @@ import { clsx } from 'clsx';
 
 import { addIdToTags } from 'utilities/tags';
 import { useAppDispatch, useAppSelector } from 'hooks/hooks';
-import { favoriteArticle, loadArticle, unfavoriteArticle } from 'redux-toolkit/article/articleThunks';
-import { loadArticles } from 'redux-toolkit/articles/articlesThunks';
+import { favoriteArticle, unfavoriteArticle } from 'redux-toolkit/article/articleThunks';
+import { setLikeToArticle } from 'redux-toolkit/articles/articlesSlice';
+import { setLikeToViewingArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-description.module.scss';
 
@@ -27,8 +28,8 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   favorited,
 }) => {
   const dispatch = useAppDispatch();
-  const isAuthorized = useAppSelector((state) => state.user.authorized);
-  const currentPage = useAppSelector((state) => state.articles.currentPage);
+  const isAuthorized = useAppSelector((state) => state.user.isAuthorized);
+  const articleList = useAppSelector((state) => state.articles.articleList);
   const viewingArticleSlug = useAppSelector((state) => state.viewingArticle.slug);
   const pathToArticle = `/articles/${slug}`;
   const preparedTags = addIdToTags([...tagList]);
@@ -40,6 +41,38 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
       {tag.name}
     </span>
   ));
+  const likeArticle = async () => {
+    const result = await dispatch(favoriteArticle(slug));
+    if (!result || !result.payload) {
+      return;
+    }
+    if (!result.type.endsWith('fulfilled')) {
+      return;
+    }
+    if (articleList.length) {
+      const index = articleList.findIndex((article) => article.slug === slug);
+      dispatch(setLikeToArticle({ isLiked: true, index, counter: 1 }));
+    }
+    if (viewingArticleSlug && viewingArticleSlug === slug) {
+      dispatch(setLikeToViewingArticle(result.payload));
+    }
+  };
+  const dislikeArticle = async () => {
+    const result = await dispatch(unfavoriteArticle(slug));
+    if (!result || !result.payload) {
+      return;
+    }
+    if (!result.type.endsWith('fulfilled')) {
+      return;
+    }
+    if (articleList.length) {
+      const index = articleList.findIndex((article) => article.slug === slug);
+      dispatch(setLikeToArticle({ isLiked: false, index, counter: -1 }));
+    }
+    if (viewingArticleSlug && viewingArticleSlug === slug) {
+      dispatch(setLikeToViewingArticle(result.payload));
+    }
+  };
   const history = useHistory();
   const onTitleClick = () => {
     history.push(pathToArticle);
@@ -47,25 +80,8 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
   const onTitleKeyDown = () => {
     history.push(pathToArticle);
   };
-  const isDisabled = !isAuthorized;
   const onLikeButtonClick = async () => {
-    if (!favorited) {
-      const result = await dispatch(favoriteArticle(slug));
-      if (result.type.endsWith('fulfilled')) {
-        await dispatch(loadArticles({ currentPage }));
-        if (viewingArticleSlug === slug) {
-          await dispatch(loadArticle({ id: slug }));
-        }
-      }
-    } else {
-      const result = await dispatch(unfavoriteArticle(slug));
-      if (result.type.endsWith('fulfilled')) {
-        await dispatch(loadArticles({ currentPage }));
-        if (viewingArticleSlug === slug) {
-          await dispatch(loadArticle({ id: slug }));
-        }
-      }
-    }
+    return favorited ? dislikeArticle() : likeArticle();
   };
   return (
     <div className={styles['article-description']}>
@@ -82,7 +98,7 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
           className={styles['article-like-button']}
           type="button"
           onClick={onLikeButtonClick}
-          disabled={isDisabled}
+          disabled={!isAuthorized}
         >
           <span
             className={clsx(styles['article-like-button-name'], {

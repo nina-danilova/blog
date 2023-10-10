@@ -29,8 +29,14 @@ export const getValidationResultErrorMessage = (errorObject: {
   if (errorObject && errorObject.cause && errorObject.cause.errors) {
     const object = { ...errorObject.cause.errors };
     const entries = Object.entries(object);
-    const message = entries.map(([name, value]) => `${name} ${value}`).join(' ');
-    return message;
+    return entries.map(([name, value]) => `${name} ${value}`).join(' ');
   }
   return null;
+};
+
+export const hasError401 = (errorObject: ServiceError | null) => {
+  if (errorObject !== null) {
+    return errorObject.cause?.errors?.error?.status === 401;
+  }
+  return false;
 };

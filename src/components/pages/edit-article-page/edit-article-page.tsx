@@ -23,7 +23,7 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
   const userName = useAppSelector((state) => state.profile.userName);
   const viewingArticle = useAppSelector((state) => state.viewingArticle);
   const article = useAppSelector((state) => state.viewingArticle.article);
-  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
+  const isLoading = useAppSelector((state) => state.viewingArticle.isLoading);
   const loadArticleError = useAppSelector((state) => state.viewingArticle.error);
   const errorMessage =
     loadArticleError !== null ? (
@@ -57,7 +57,7 @@ const EditArticlePage: React.FC<EditArticlePageProps> = ({ match }) => {
       {errorMessage}
       {noDataMessage}
       <h1 className={styles['visually-hidden']}>Blog - Editing article</h1>
-      <ArticleForm blanc={false} />
+      <ArticleForm isBlanc={false} />
     </>
   );
 };

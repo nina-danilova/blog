@@ -9,22 +9,25 @@ import { deleteArticle } from 'redux-toolkit/article/articleThunks';
 
 import styles from './article-actions.module.scss';
 
-const onCancelDelete = () => {
-  message.error('Deleting article cancelled');
-};
-
 export const ArticleActions: React.FC = () => {
   const { pathToArticles } = linkPaths;
   const history = useHistory();
   const dispatch = useAppDispatch();
   const slug = useAppSelector((state) => state.viewingArticle.slug);
+  const isDeleting = useAppSelector((state) => state.viewingArticle.isDeleting);
   const onConfirmDelete = async () => {
+    if (isDeleting) {
+      return;
+    }
     if (slug) {
       const result = await dispatch(deleteArticle(slug));
       if (!result.payload) {
         history.push(pathToArticles);
       }
     }
+  };
+  const onCancelDelete = () => {
+    message.error('Deleting article cancelled');
   };
   return (
     <ul className={styles['article-actions-list']}>
@@ -40,6 +43,7 @@ export const ArticleActions: React.FC = () => {
           <Button
             danger
             className={clsx(styles['article-actions-button'])}
+            disabled={isDeleting}
           >
             Delete
           </Button>

@@ -33,13 +33,13 @@ export const clearLoginInfo = (): void => {
   removeFromStorage('lastEmail');
 };
 
-export const getAuthStatus = (): boolean => {
-  return getFromStorage('userAuthorized') === 'true';
+export const hasAuthStatus = (): boolean => {
+  return getFromStorage('isUserAuthorized') === 'true';
 };
 
-export const setAuthStatus = (status: boolean): void => {
-  setToStorage('userAuthorized', `${status}`);
-  if (!status) {
+export const setAuthStatus = (isAuthorized: boolean): void => {
+  setToStorage('isUserAuthorized', `${isAuthorized}`);
+  if (!isAuthorized) {
     clearLoginInfo();
   }
 };

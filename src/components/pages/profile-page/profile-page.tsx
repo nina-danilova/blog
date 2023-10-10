@@ -4,6 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from 'hooks/hooks';
 import { loadProfile } from 'redux-toolkit/profile/profileThunks';
 import { linkPaths } from 'utilities/constants';
+import { hasError401 } from 'utilities/errors';
 
 import styles from './profile-page.module.scss';
 import { EditProfileForm } from './edit-profile-form';
@@ -18,14 +19,7 @@ export const ProfilePage: React.FC = () => {
     dispatch(loadProfile());
   }, []);
   useEffect(() => {
-    if (
-      loadProfileError &&
-      loadProfileError.cause &&
-      loadProfileError.cause.errors &&
-      loadProfileError.cause.errors.error &&
-      loadProfileError.cause.errors.error.status &&
-      loadProfileError.cause.errors.error.status === 401
-    ) {
+    if (hasError401(loadProfileError)) {
       history.push(pathToSignIn);
     }
   }, [loadProfileError]);

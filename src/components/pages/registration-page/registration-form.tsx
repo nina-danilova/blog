@@ -80,10 +80,13 @@ export const RegistrationForm: React.FC = () => {
     userError && getValidationResultErrorMessage(userError) ? (
       <Alert message={getValidationResultErrorMessage(userError)} />
     ) : null;
-  const isRegistering = useAppSelector((state) => state.user.registering);
+  const isRegistering = useAppSelector((state) => state.user.isRegistering);
   const loadSpinner = isRegistering ? <Spin /> : null;
   const history = useHistory();
   const registerUser: SubmitHandler<RegistrationFormInput> = async (data: RegistrationFormInput, event) => {
+    if (isRegistering) {
+      return;
+    }
     event?.preventDefault();
     const result = await dispatch(userRegister({ data }));
     if (!result.payload) {
@@ -231,6 +234,7 @@ export const RegistrationForm: React.FC = () => {
           <button
             type="submit"
             className={styles['registration-form-button']}
+            disabled={isRegistering}
           >
             Create
           </button>

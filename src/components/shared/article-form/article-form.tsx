@@ -28,18 +28,25 @@ export type ArticleFormInput = {
 };
 
 type ArticleFormProps = {
-  blanc: boolean;
+  isBlanc: boolean;
 };
 
-export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
+export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => {
   const history = useHistory();
   const { pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
-  const isEditing = useAppSelector((state) => state.viewingArticle.editing);
+  const isEditing = useAppSelector((state) => state.viewingArticle.isEditing);
   const formTitle = isEditing ? 'Edit article' : 'Create new article';
   const article = useAppSelector((state) => state.viewingArticle.article);
   const slug = useAppSelector((state) => state.viewingArticle.slug);
+  const isLoading = useAppSelector((state) => state.viewingArticle.isLoading);
+  const isSending = useAppSelector((state) => state.viewingArticle.isSending);
+  const isUpdating = useAppSelector((state) => state.viewingArticle.isUpdating);
+
   const handleArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
+    if (isLoading || isSending || isUpdating) {
+      return;
+    }
     event?.preventDefault();
     if (isEditing && slug) {
       const result = await dispatch(updateArticle({ slug, data }));
@@ -93,10 +100,8 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
   const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
-  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
-  const isUpdating = useAppSelector((state) => state.viewingArticle.updating);
   const articleError = useAppSelector((state) => state.viewingArticle.error);
-  const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
+  const loadSpinner = isLoading || isSending || isUpdating ? <Spin /> : null;
   const errorMessage = articleError ? (
     <Alert
       message={articleError.message}
@@ -108,7 +113,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
       <Alert message={getValidationResultErrorMessage(articleError)} />
     ) : null;
   useEffect(() => {
-    if (blanc) {
+    if (isBlanc) {
       dispatch(clearArticle());
     } else if (article) {
       const tags = addIdToTags(article.tagList);
@@ -290,6 +295,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
           <button
             type="submit"
             className={styles['article-form-button']}
+            disabled={isLoading || isSending || isUpdating}
           >
             Send
           </button>

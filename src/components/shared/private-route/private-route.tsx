@@ -11,7 +11,7 @@ type PrivateRouteProps = {
 
 export const PrivateRoute: React.FC<PrivateRouteProps> = ({ component, path }) => {
   const { pathToSignIn } = linkPaths;
-  const isAuthorized = useAppSelector((state) => state.user.authorized);
+  const isAuthorized = useAppSelector((state) => state.user.isAuthorized);
   if (isAuthorized) {
     return (
       <Route

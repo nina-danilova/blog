@@ -15,6 +15,7 @@ import { getValidationResultErrorMessage } from 'utilities/errors';
 import styles from './log-in-form.module.scss';
 
 export const LogInForm: React.FC = () => {
+  const isLoggingIn = useAppSelector((state) => state.user.isLoggingIn);
   const { pathToSignUp, pathToHome } = linkPaths;
   const schema = yup.object().shape({
     email: yup.string().matches(emailRegEx, { message: messagePattern }).required(messageRequired),
@@ -31,6 +32,9 @@ export const LogInForm: React.FC = () => {
   const dispatch = useAppDispatch();
   const history = useHistory();
   const logIn: SubmitHandler<LoginFormInput> = async (data: LoginFormInput, event) => {
+    if (isLoggingIn) {
+      return;
+    }
     event?.preventDefault();
     const result = await dispatch(userLogin({ data }));
     if (!result.payload) {
@@ -47,7 +51,6 @@ export const LogInForm: React.FC = () => {
   ) : null;
   const validationResultErrorMessage =
     error && getValidationResultErrorMessage(error) ? <Alert message={getValidationResultErrorMessage(error)} /> : null;
-  const isLoggingIn = useAppSelector((state) => state.user.loggingIn);
   const loadSpinner = isLoggingIn ? <Spin /> : null;
   return (
     <>
@@ -108,6 +111,7 @@ export const LogInForm: React.FC = () => {
           <button
             type="submit"
             className={styles['log-in-form-button']}
+            disabled={isLoggingIn}
           >
             Login
           </button>

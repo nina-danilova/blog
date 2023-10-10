@@ -1,10 +1,28 @@
 import { apiBaseUrl } from 'utilities/constants';
-import { createError } from 'utilities/errors';
+import { createError, ServiceError } from 'utilities/errors';
 import { Article } from 'redux-toolkit/article/articleSlice';
 import { Profile } from 'redux-toolkit/profile/profileSlice';
 import { UpdatedProfile } from 'redux-toolkit/profile/profileThunks';
 
 import { setLoginInfo, setRegisterInfo } from './storage-service';
+
+export const handleError = async (error: ServiceError | string) => {
+  if (typeof error === 'object') {
+    throw error;
+  }
+  throw createError(error);
+};
+
+const handleResponse = async (response: Response, functionName: string): Promise<any> => {
+  if (response.status >= 200 && response.status < 300) {
+    return response.json();
+  }
+  const errorResponse = await response.json();
+  throw createError(
+    `${functionName} function error, code ${response.status.toString()} - error after API answer`,
+    errorResponse
+  );
+};
 
 type GetArticleProps = {
   id: string;
@@ -22,14 +40,7 @@ export const getArticle = ({ id, token }: GetArticleProps): Promise<Article> => 
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Load article error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Load article');
       },
       (err) => {
         throw createError('Load article error while getting data through API', { ...err });
@@ -42,10 +53,7 @@ export const getArticle = ({ id, token }: GetArticleProps): Promise<Article> => 
       throw createError('Unknown error of loading article');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -60,14 +68,7 @@ export const getProfile = (token: string): Promise<Profile> => {
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Load profile error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Load profile');
       },
       (err) => {
         throw createError('Load profile error while getting data through API', { ...err });
@@ -80,10 +81,7 @@ export const getProfile = (token: string): Promise<Profile> => {
       throw createError('Unknown error of loading profile');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -111,14 +109,7 @@ export const setProfile = async ({ data, token = null }: UpdateProfileProps): Pr
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Set profile error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Set profile');
       },
       (err) => {
         throw createError('Set profile error while updating data through API', { ...err });
@@ -132,10 +123,7 @@ export const setProfile = async ({ data, token = null }: UpdateProfileProps): Pr
       throw createError('Unknown error of setting profile');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -176,14 +164,7 @@ export const getArticles = ({ currentPage, token }: GetArticlesProps): Promise<A
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Load articles error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Load articles');
       },
       (err) => {
         throw createError('Load articles error while getting data through API', { ...err });
@@ -197,10 +178,7 @@ export const getArticles = ({ currentPage, token }: GetArticlesProps): Promise<A
       throw createError('Unknown error of loading articles');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -225,14 +203,7 @@ export const sendRegisterInfo = async ({ data }: SendRegisterInfoProps): Promise
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `User register error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'User register');
       },
       (err) => {
         throw createError('User register error while sending data through API', { ...err });
@@ -246,10 +217,7 @@ export const sendRegisterInfo = async ({ data }: SendRegisterInfoProps): Promise
       }
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -275,14 +243,7 @@ export const sendLoginInfo = async ({ data, token }: SendLoginInfoProps): Promis
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `User login error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'User login');
       },
       (err) => {
         throw createError('User login error while sending data through API', { ...err });
@@ -296,10 +257,7 @@ export const sendLoginInfo = async ({ data, token }: SendLoginInfoProps): Promis
       throw createError('Unknown error of logging-in user');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -327,14 +285,7 @@ export const sendArticle = ({ data, token }: SendArticleProps): Promise<Article>
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Send article error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Send article');
       },
       (err) => {
         throw createError('Send article error while sending data through API', { ...err });
@@ -347,10 +298,7 @@ export const sendArticle = ({ data, token }: SendArticleProps): Promise<Article>
       throw createError('Unknown error of sending article');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -378,14 +326,7 @@ export const updateArticleOnServer = ({ slug, data, token }: UpdateArticleProps)
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Update article error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Update article');
       },
       (err) => {
         throw createError('Update article error while sending data through API', { ...err });
@@ -398,10 +339,7 @@ export const updateArticleOnServer = ({ slug, data, token }: UpdateArticleProps)
       throw createError('Unknown error of updating article');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -421,24 +359,14 @@ export const deleteArticleFromServer = ({ slug, token }: DeleteArticleFromServer
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return;
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Delete article error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Delete article');
       },
       (err) => {
         throw createError('Delete article error while deleting data through API', { ...err });
       }
     )
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -458,14 +386,7 @@ export const sendFavoritedSlug = ({ slug, token }: SendFavoritedSlugProps): Prom
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Send favorited slug error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Send favorited slug');
       },
       (err) => {
         throw createError('Send favorited slug error while sending data through API', { ...err });
@@ -478,10 +399,7 @@ export const sendFavoritedSlug = ({ slug, token }: SendFavoritedSlugProps): Prom
       throw createError('Unknown error of sending favorited slug');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };
 
@@ -501,14 +419,7 @@ export const sendUnfavoritedSlug = ({ slug, token }: SendUnfavoritedSlugProps): 
   })
     .then(
       async (response) => {
-        if (response.status >= 200 && response.status < 300) {
-          return response.json();
-        }
-        const errorResponse = await response.json();
-        throw createError(
-          `Send unfavorited slug error, code ${response.status.toString()} - error after API answer`,
-          errorResponse
-        );
+        return handleResponse(response, 'Send unfavorited slug');
       },
       (err) => {
         throw createError('Send unfavorited slug error while sending data through API', { ...err });
@@ -521,9 +432,6 @@ export const sendUnfavoritedSlug = ({ slug, token }: SendUnfavoritedSlugProps): 
       throw createError('Unknown error of sending unfavorited slug');
     })
     .catch((error) => {
-      if (error.message) {
-        throw error;
-      }
-      throw createError(error);
+      return handleError(error);
     });
 };

@@ -21,7 +21,7 @@ import {
   urlRegEx,
   usernameRegEx,
 } from 'utilities/constants';
-import { getValidationResultErrorMessage } from 'utilities/errors';
+import { getValidationResultErrorMessage, hasError401 } from 'utilities/errors';
 
 import styles from './edit-profile-form.module.scss';
 
@@ -29,6 +29,8 @@ export const EditProfileForm: React.FC = () => {
   const userName = useAppSelector((state) => state.profile.userName) || '';
   const userImage = useAppSelector((state) => state.profile.image) || '';
   const userEmail = useAppSelector((state) => state.profile.email) || '';
+  const isLoading = useAppSelector((state) => state.profile.isLoading);
+  const isUpdating = useAppSelector((state) => state.profile.isUpdating);
   const schema = yup.object().shape({
     username: yup
       .string()
@@ -59,6 +61,9 @@ export const EditProfileForm: React.FC = () => {
   const history = useHistory();
   const { pathToSignIn } = linkPaths;
   const updateUserProfile: SubmitHandler<EditProfileFormInput> = (data, event) => {
+    if (isLoading || isUpdating) {
+      return;
+    }
     event?.preventDefault();
     dispatch(updateProfile({ data }));
     resetField('password');
@@ -74,8 +79,6 @@ export const EditProfileForm: React.FC = () => {
     profileError && getValidationResultErrorMessage(profileError) ? (
       <Alert message={getValidationResultErrorMessage(profileError)} />
     ) : null;
-  const isLoading = useAppSelector((state) => state.profile.loadingProfile);
-  const isUpdating = useAppSelector((state) => state.profile.updatingProfile);
   const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
   useEffect(() => {
     setValue('username', userName);
@@ -87,14 +90,7 @@ export const EditProfileForm: React.FC = () => {
     setValue('image', userImage);
   }, [userImage]);
   useEffect(() => {
-    if (
-      profileError &&
-      profileError.cause &&
-      profileError.cause.errors &&
-      profileError.cause.errors.error &&
-      profileError.cause.errors.error.status &&
-      profileError.cause.errors.error.status === 401
-    ) {
+    if (hasError401(profileError)) {
       history.push(pathToSignIn);
     }
   }, [profileError]);
@@ -215,6 +211,7 @@ export const EditProfileForm: React.FC = () => {
           <button
             type="submit"
             className={styles['edit-profile-form-button']}
+            disabled={isLoading || isUpdating}
           >
             Save
           </button>

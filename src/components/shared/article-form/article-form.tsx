@@ -4,16 +4,16 @@ import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-fo
 import { Alert, Spin } from 'antd';
 import { clsx } from 'clsx';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle, updateArticle } from 'redux-toolkit/article/articleThunks';
-import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
+import { linkPaths } from 'utilities/constants';
 import { addIdToTags } from 'utilities/tags';
 import { getValidationResultErrorMessage } from 'utilities/errors';
 import { clearArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-form.module.scss';
+import { schema } from './articleFormSchema';
 
 export type Tag = {
   name: string;
@@ -60,17 +60,6 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => 
       }
     }
   };
-  const schema = yup.object().shape({
-    title: yup.string().max(200, messageTitleMaxLength).required(messageRequired),
-    description: yup.string().required(messageRequired),
-    body: yup.string().required(messageRequired),
-    tags: yup.array(
-      yup.object().shape({
-        name: yup.string().max(20, messageTagMaxLength).required(messageRequired),
-      })
-    ),
-    'new-tag': yup.string(),
-  });
   const {
     formState: { errors },
     handleSubmit: onFormSubmit,

@@ -8,7 +8,7 @@ import {
   sendUnfavoritedSlug,
   updateArticleOnServer,
 } from 'services/blog-service';
-import { createError, ServiceError } from 'utilities/errors';
+import { createError, isErrorServiceError, ServiceError } from 'utilities/errors';
 import { ArticleFormInput, Tag } from 'components/shared/article-form/article-form';
 import { getLoginToken } from 'services/storage-service';
 
@@ -32,7 +32,10 @@ export const loadArticle = createAsyncThunk<Article, LoadArticlePayloadProps, { 
     try {
       return await getArticle({ id, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -61,7 +64,10 @@ export const createArticle = createAsyncThunk<Article, SendArticlePayloadProps, 
     try {
       return await sendArticle({ data, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -91,7 +97,10 @@ export const updateArticle = createAsyncThunk<Article, UpdateArticlePayloadProps
     try {
       return await updateArticleOnServer({ slug, data, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -107,7 +116,10 @@ export const deleteArticle = createAsyncThunk<void, string, { rejectValue: Servi
     try {
       return await deleteArticleFromServer({ slug, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -123,7 +135,10 @@ export const favoriteArticle = createAsyncThunk<Article, string, { rejectValue: 
     try {
       return await sendFavoritedSlug({ slug, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -139,7 +154,10 @@ export const unfavoriteArticle = createAsyncThunk<Article, string, { rejectValue
     try {
       return await sendUnfavoritedSlug({ slug, token });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );

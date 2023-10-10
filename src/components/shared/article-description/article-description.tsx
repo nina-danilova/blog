@@ -6,7 +6,7 @@ import { addIdToTags } from 'utilities/tags';
 import { useAppDispatch, useAppSelector } from 'hooks/hooks';
 import { favoriteArticle, unfavoriteArticle } from 'redux-toolkit/article/articleThunks';
 import { setLikeToArticle } from 'redux-toolkit/articles/articlesSlice';
-import { setLikeToViewingArticle } from 'redux-toolkit/article/articleSlice';
+import { Article, setLikeToViewingArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-description.module.scss';
 
@@ -42,7 +42,7 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
     </span>
   ));
   const likeArticle = async () => {
-    const result = await dispatch(favoriteArticle(slug));
+    const result = (await dispatch(favoriteArticle(slug))) as { payload: Article; type: string };
     if (!result || !result.payload) {
       return;
     }
@@ -58,7 +58,7 @@ const ArticleDescription: React.FC<ArticleDescriptionProps> = ({
     }
   };
   const dislikeArticle = async () => {
-    const result = await dispatch(unfavoriteArticle(slug));
+    const result = (await dispatch(unfavoriteArticle(slug))) as { payload: Article; type: string };
     if (!result || !result.payload) {
       return;
     }

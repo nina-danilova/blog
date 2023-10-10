@@ -35,7 +35,7 @@ export const getValidationResultErrorMessage = (errorObject: {
 };
 
 export const hasError401 = (errorObject: ServiceError | null) => {
-  if (errorObject !== null) {
+  if (errorObject) {
     return errorObject.cause?.errors?.error?.status === 401;
   }
   return false;

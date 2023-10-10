@@ -14,6 +14,9 @@ import { clearArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-form.module.scss';
 import { schema } from './articleFormSchema';
+import { FormInput } from './form-input';
+import { FormTextarea } from './form-textarea';
+import { FormTagList } from './form-tag-list';
 
 export type Tag = {
   name: string;
@@ -83,9 +86,6 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => 
   const clearTag = () => {
     setTag('');
   };
-  const removeTag = (index: number) => () => {
-    remove(index);
-  };
   const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
@@ -114,129 +114,41 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => 
   }, [article]);
   return (
     <>
-      {loadSpinner}
       <form
         className={styles['article-form']}
         onSubmit={onFormSubmit(handleArticle)}
       >
         <p className={styles['article-form-title']}>{formTitle}</p>
         <div className={styles['article-form-input-group']}>
-          <label>
-            <p className={styles['article-form-label-name']}>Title</p>
-            <Controller
-              name="title"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <input
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.title,
-                      })}
-                      type="text"
-                      placeholder="Title"
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.title && <p className={styles['article-form-error']}>{errors.title.message}</p>}
-                  </>
-                );
-              }}
-            />
-          </label>
-          <label>
-            <p className={styles['article-form-label-name']}>Short description</p>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <input
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.description,
-                      })}
-                      type="text"
-                      placeholder="Description"
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.description && (
-                      <p className={styles['article-form-error']}>{errors.description.message}</p>
-                    )}
-                  </>
-                );
-              }}
-            />
-          </label>
-          <label>
-            <p className={styles['article-form-label-name']}>Text</p>
-            <Controller
-              name="body"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <textarea
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.body,
-                      })}
-                      placeholder="Text"
-                      rows={7}
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.body && <p className={styles['article-form-error']}>{errors.body.message}</p>}
-                  </>
-                );
-              }}
-            />
-          </label>
+          <FormInput
+            labelName="Title"
+            name="title"
+            control={control}
+            errorsObject={errors}
+          />
+          <FormInput
+            labelName="Short description"
+            name="description"
+            control={control}
+            errorsObject={errors}
+          />
+          <FormTextarea
+            labelName="Text"
+            name="body"
+            control={control}
+            errorsObject={errors}
+            rowCount={7}
+          />
           <div>
             <p className={styles['article-form-label-name']}>Tags</p>
             <div className={styles['article-form-tag-group']}>
               <ul className={styles['article-form-tag-list']}>
-                {fields.map((item, index) => (
-                  <li key={item.id}>
-                    <label className={styles['article-form-tag']}>
-                      <p className={styles['visually-hidden']}>{`tags.${index}`}</p>
-                      <Controller
-                        name={`tags.${index}.name` as const}
-                        control={control}
-                        render={({ field: { onChange, value } }) => {
-                          return (
-                            <>
-                              <input
-                                className={clsx(styles['article-form-input'], styles['article-form-input--tag'], {
-                                  [styles['article-form-input--invalid']]: !!errors.tags,
-                                })}
-                                type="text"
-                                placeholder="Tag"
-                                value={value || ''}
-                                onChange={onChange}
-                              />
-                              <button
-                                className={clsx(
-                                  styles['article-form-tag-button'],
-                                  styles['article-form-tag-button--delete']
-                                )}
-                                type="button"
-                                onClick={removeTag(index)}
-                              >
-                                Delete
-                              </button>
-                              {errors.tags?.[index] && (
-                                <span className={styles['article-form-error']}>
-                                  {errors.tags?.[index]?.name?.message}
-                                </span>
-                              )}
-                            </>
-                          );
-                        }}
-                      />
-                    </label>
-                  </li>
-                ))}
+                <FormTagList
+                  control={control}
+                  errorsObject={errors}
+                  fields={fields}
+                  remove={remove}
+                />
                 <li>
                   <label className={styles['article-form-tag']}>
                     <p className={styles['visually-hidden']}>New tag</p>
@@ -290,6 +202,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => 
           </button>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
       {validationResultErrorMessage}
     </>

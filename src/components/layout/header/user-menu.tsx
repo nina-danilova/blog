@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, useHistory } from 'react-router-dom';
 
-import { useAppDispatch } from 'hooks/hooks';
+import { useAppDispatch, useAppSelector } from 'hooks/hooks';
 import { userLogOut } from 'redux-toolkit/user/userThunks';
 import { linkPaths } from 'utilities/constants';
 
@@ -12,7 +12,11 @@ export const UserMenu: React.FC = () => {
   const { pathToNewArticle, pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
   const history = useHistory();
+  const isLoggingOut = useAppSelector((state) => state.user.isLoggingOut);
   const onLogOutButtonClick = () => {
+    if (isLoggingOut) {
+      return;
+    }
     dispatch(userLogOut());
     history.push(pathToHome);
   };
@@ -34,6 +38,7 @@ export const UserMenu: React.FC = () => {
           type="button"
           className={styles['button-log-out']}
           onClick={onLogOutButtonClick}
+          disabled={isLoggingOut}
         >
           Log Out
         </button>

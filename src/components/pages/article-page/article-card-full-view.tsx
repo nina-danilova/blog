@@ -10,7 +10,7 @@ import { ArticleActions } from './article-actions';
 
 export const ArticleCardFullView: React.FC = () => {
   const article = useAppSelector((state) => state.viewingArticle.article);
-  const isAuthorized = useAppSelector((state) => state.user.authorized);
+  const isAuthorized = useAppSelector((state) => state.user.isAuthorized);
   const userName = useAppSelector((state) => state.profile.userName);
   if (!article) return null;
   const { author, description, favoritesCount, favorited, tagList, title, createdAt, body, slug } = article;

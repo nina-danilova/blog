@@ -5,6 +5,7 @@ import { useHistory } from 'react-router-dom';
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { loadArticles } from 'redux-toolkit/articles/articlesThunks';
 import { linkPaths } from 'utilities/constants';
+import { hasError401 } from 'utilities/errors';
 
 import styles from './article-list.module.scss';
 import { ArticleCardPreview } from './article-card-preview';
@@ -15,7 +16,7 @@ export const ArticleList: React.FC = () => {
   const { pathToSignIn } = linkPaths;
   const currentPage = useAppSelector((state) => state.articles.currentPage);
   const articleList = useAppSelector((state) => state.articles.articleList);
-  const isLoading = useAppSelector((state) => state.articles.loading);
+  const isLoading = useAppSelector((state) => state.articles.isLoading);
   const loadArticlesError = useAppSelector((state) => state.articles.error);
   const loadSpinner = isLoading ? <Spin /> : null;
   const errorMessage =
@@ -40,14 +41,7 @@ export const ArticleList: React.FC = () => {
     }
   }, [currentPage]);
   useEffect(() => {
-    if (
-      loadArticlesError &&
-      loadArticlesError.cause &&
-      loadArticlesError.cause.errors &&
-      loadArticlesError.cause.errors.error &&
-      loadArticlesError.cause.errors.error.status &&
-      loadArticlesError.cause.errors.error.status === 401
-    ) {
+    if (hasError401(loadArticlesError)) {
       history.push(pathToSignIn);
     }
   }, [loadArticlesError]);

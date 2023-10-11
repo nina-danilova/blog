@@ -6,6 +6,7 @@ import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { setSlug } from 'redux-toolkit/article/articleSlice';
 import { loadArticle } from 'redux-toolkit/article/articleThunks';
 import { linkPaths } from 'utilities/constants';
+import { hasError401 } from 'utilities/errors';
 
 import styles from './article-page.module.scss';
 import { ArticleCardFullView } from './article-card-full-view';
@@ -25,8 +26,8 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
   const history = useHistory();
   const dispatch = useAppDispatch();
   const article = useAppSelector((state) => state.viewingArticle);
-  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
-  const isDeleting = useAppSelector((state) => state.viewingArticle.deleting);
+  const isLoading = useAppSelector((state) => state.viewingArticle.isLoading);
+  const isDeleting = useAppSelector((state) => state.viewingArticle.isDeleting);
   const articleError = useAppSelector((state) => state.viewingArticle.error);
   const loadSpinner = isLoading || isDeleting ? <Spin /> : null;
   const errorMessage =
@@ -52,14 +53,7 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ match }) => {
     }
   }, [id]);
   useEffect(() => {
-    if (
-      articleError &&
-      articleError.cause &&
-      articleError.cause.errors &&
-      articleError.cause.errors.error &&
-      articleError.cause.errors.error.status &&
-      articleError.cause.errors.error.status === 401
-    ) {
+    if (hasError401(articleError)) {
       history.push(pathToSignIn);
     }
   }, [articleError]);

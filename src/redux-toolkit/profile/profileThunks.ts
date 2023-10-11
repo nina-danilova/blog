@@ -2,11 +2,11 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 
 import { getLoginToken } from 'services/storage-service';
 import { getProfile, setProfile } from 'services/blog-service';
-import { createError, ServiceError } from 'utilities/errors';
+import { createError, isErrorServiceError, ServiceError } from 'utilities/errors';
 
 import { Profile } from './profileSlice';
 
-export const loadProfile = createAsyncThunk<Profile, undefined, { rejectValue: ServiceError | unknown }>(
+export const loadProfile = createAsyncThunk<Profile, undefined, { rejectValue: ServiceError }>(
   'profile/loadProfile',
   async (_, { rejectWithValue }) => {
     const token = getLoginToken();
@@ -17,7 +17,10 @@ export const loadProfile = createAsyncThunk<Profile, undefined, { rejectValue: S
     try {
       return await getProfile(token);
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -39,7 +42,7 @@ export const updateProfile = createAsyncThunk<
   UpdatedProfile,
   UpdateProfilePayloadProps,
   {
-    rejectValue: ServiceError | unknown;
+    rejectValue: ServiceError;
   }
 >('profile/updateProfile', async ({ data: formData }, { rejectWithValue }) => {
   const token = getLoginToken();
@@ -54,6 +57,9 @@ export const updateProfile = createAsyncThunk<
   try {
     return await setProfile({ data, token });
   } catch (error) {
-    return rejectWithValue(error);
+    if (isErrorServiceError(error)) {
+      return rejectWithValue(error);
+    }
+    throw error;
   }
 });

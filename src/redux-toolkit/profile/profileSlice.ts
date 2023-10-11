@@ -20,8 +20,8 @@ export type ProfileSliceState = {
   email: string;
   image: string;
   bio: string;
-  loadingProfile: boolean;
-  updatingProfile: boolean;
+  isLoading: boolean;
+  isUpdating: boolean;
   error: null | ServiceError;
 };
 
@@ -30,8 +30,8 @@ const initialState: ProfileSliceState = {
   email: '',
   image: '',
   bio: '',
-  loadingProfile: false,
-  updatingProfile: false,
+  isLoading: false,
+  isUpdating: false,
   error: null,
 };
 
@@ -51,11 +51,11 @@ const profileSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(loadProfile.pending, (state) => {
-        state.loadingProfile = true;
+        state.isLoading = true;
         state.error = null;
       })
       .addCase(loadProfile.fulfilled, (state, action) => {
-        state.loadingProfile = false;
+        state.isLoading = false;
         state.userName = action.payload.username;
         state.email = action.payload.email;
         state.bio = action.payload.bio || '';
@@ -63,19 +63,19 @@ const profileSlice = createSlice({
         state.error = null;
       })
       .addCase(updateProfile.pending, (state) => {
-        state.updatingProfile = true;
+        state.isUpdating = true;
         state.error = null;
       })
       .addCase(updateProfile.fulfilled, (state, action) => {
-        state.updatingProfile = false;
+        state.isUpdating = false;
         state.userName = action.payload.username;
         state.image = action.payload.image || '';
         state.email = action.payload.email;
         state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
-        state.loadingProfile = false;
-        state.updatingProfile = false;
+        state.isLoading = false;
+        state.isUpdating = false;
         state.error = action.payload;
       });
   },

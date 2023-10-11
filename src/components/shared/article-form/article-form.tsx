@@ -4,16 +4,19 @@ import { useForm, SubmitHandler, Controller, useFieldArray } from 'react-hook-fo
 import { Alert, Spin } from 'antd';
 import { clsx } from 'clsx';
 import { yupResolver } from '@hookform/resolvers/yup';
-import * as yup from 'yup';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { createArticle, updateArticle } from 'redux-toolkit/article/articleThunks';
-import { linkPaths, messageRequired, messageTagMaxLength, messageTitleMaxLength } from 'utilities/constants';
+import { linkPaths } from 'utilities/constants';
 import { addIdToTags } from 'utilities/tags';
 import { getValidationResultErrorMessage } from 'utilities/errors';
 import { clearArticle } from 'redux-toolkit/article/articleSlice';
 
 import styles from './article-form.module.scss';
+import { schema } from './articleFormSchema';
+import { FormInput } from './form-input';
+import { FormTextarea } from './form-textarea';
+import { FormTagList } from './form-tag-list';
 
 export type Tag = {
   name: string;
@@ -28,18 +31,25 @@ export type ArticleFormInput = {
 };
 
 type ArticleFormProps = {
-  blanc: boolean;
+  isBlanc: boolean;
 };
 
-export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
+export const ArticleForm: React.FC<ArticleFormProps> = ({ isBlanc = false }) => {
   const history = useHistory();
   const { pathToHome } = linkPaths;
   const dispatch = useAppDispatch();
-  const isEditing = useAppSelector((state) => state.viewingArticle.editing);
+  const isEditing = useAppSelector((state) => state.viewingArticle.isEditing);
   const formTitle = isEditing ? 'Edit article' : 'Create new article';
   const article = useAppSelector((state) => state.viewingArticle.article);
   const slug = useAppSelector((state) => state.viewingArticle.slug);
+  const isLoading = useAppSelector((state) => state.viewingArticle.isLoading);
+  const isSending = useAppSelector((state) => state.viewingArticle.isSending);
+  const isUpdating = useAppSelector((state) => state.viewingArticle.isUpdating);
+
   const handleArticle: SubmitHandler<ArticleFormInput> = async (data, event) => {
+    if (isLoading || isSending || isUpdating) {
+      return;
+    }
     event?.preventDefault();
     if (isEditing && slug) {
       const result = await dispatch(updateArticle({ slug, data }));
@@ -53,17 +63,6 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
       }
     }
   };
-  const schema = yup.object().shape({
-    title: yup.string().max(200, messageTitleMaxLength).required(messageRequired),
-    description: yup.string().required(messageRequired),
-    body: yup.string().required(messageRequired),
-    tags: yup.array(
-      yup.object().shape({
-        name: yup.string().max(20, messageTagMaxLength).required(messageRequired),
-      })
-    ),
-    'new-tag': yup.string(),
-  });
   const {
     formState: { errors },
     handleSubmit: onFormSubmit,
@@ -87,16 +86,11 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
   const clearTag = () => {
     setTag('');
   };
-  const removeTag = (index: number) => () => {
-    remove(index);
-  };
   const onChangeTag = (event: { target: { value: React.SetStateAction<string> } }) => {
     setTag(event.target.value);
   };
-  const isLoading = useAppSelector((state) => state.viewingArticle.loading);
-  const isUpdating = useAppSelector((state) => state.viewingArticle.updating);
   const articleError = useAppSelector((state) => state.viewingArticle.error);
-  const loadSpinner = isLoading || isUpdating ? <Spin /> : null;
+  const loadSpinner = isLoading || isSending || isUpdating ? <Spin /> : null;
   const errorMessage = articleError ? (
     <Alert
       message={articleError.message}
@@ -108,7 +102,7 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
       <Alert message={getValidationResultErrorMessage(articleError)} />
     ) : null;
   useEffect(() => {
-    if (blanc) {
+    if (isBlanc) {
       dispatch(clearArticle());
     } else if (article) {
       const tags = addIdToTags(article.tagList);
@@ -120,129 +114,41 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
   }, [article]);
   return (
     <>
-      {loadSpinner}
       <form
         className={styles['article-form']}
         onSubmit={onFormSubmit(handleArticle)}
       >
         <p className={styles['article-form-title']}>{formTitle}</p>
         <div className={styles['article-form-input-group']}>
-          <label>
-            <p className={styles['article-form-label-name']}>Title</p>
-            <Controller
-              name="title"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <input
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.title,
-                      })}
-                      type="text"
-                      placeholder="Title"
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.title && <p className={styles['article-form-error']}>{errors.title.message}</p>}
-                  </>
-                );
-              }}
-            />
-          </label>
-          <label>
-            <p className={styles['article-form-label-name']}>Short description</p>
-            <Controller
-              name="description"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <input
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.description,
-                      })}
-                      type="text"
-                      placeholder="Description"
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.description && (
-                      <p className={styles['article-form-error']}>{errors.description.message}</p>
-                    )}
-                  </>
-                );
-              }}
-            />
-          </label>
-          <label>
-            <p className={styles['article-form-label-name']}>Text</p>
-            <Controller
-              name="body"
-              control={control}
-              render={({ field: { onChange, value } }) => {
-                return (
-                  <>
-                    <textarea
-                      className={clsx(styles['article-form-input'], {
-                        [styles['article-form-input--invalid']]: !!errors.body,
-                      })}
-                      placeholder="Text"
-                      rows={7}
-                      value={value || ''}
-                      onChange={onChange}
-                    />
-                    {errors?.body && <p className={styles['article-form-error']}>{errors.body.message}</p>}
-                  </>
-                );
-              }}
-            />
-          </label>
+          <FormInput
+            labelName="Title"
+            name="title"
+            control={control}
+            errorsObject={errors}
+          />
+          <FormInput
+            labelName="Short description"
+            name="description"
+            control={control}
+            errorsObject={errors}
+          />
+          <FormTextarea
+            labelName="Text"
+            name="body"
+            control={control}
+            errorsObject={errors}
+            rowCount={7}
+          />
           <div>
             <p className={styles['article-form-label-name']}>Tags</p>
             <div className={styles['article-form-tag-group']}>
               <ul className={styles['article-form-tag-list']}>
-                {fields.map((item, index) => (
-                  <li key={item.id}>
-                    <label className={styles['article-form-tag']}>
-                      <p className={styles['visually-hidden']}>{`tags.${index}`}</p>
-                      <Controller
-                        name={`tags.${index}.name` as const}
-                        control={control}
-                        render={({ field: { onChange, value } }) => {
-                          return (
-                            <>
-                              <input
-                                className={clsx(styles['article-form-input'], styles['article-form-input--tag'], {
-                                  [styles['article-form-input--invalid']]: !!errors.tags,
-                                })}
-                                type="text"
-                                placeholder="Tag"
-                                value={value || ''}
-                                onChange={onChange}
-                              />
-                              <button
-                                className={clsx(
-                                  styles['article-form-tag-button'],
-                                  styles['article-form-tag-button--delete']
-                                )}
-                                type="button"
-                                onClick={removeTag(index)}
-                              >
-                                Delete
-                              </button>
-                              {errors.tags?.[index] && (
-                                <span className={styles['article-form-error']}>
-                                  {errors.tags?.[index]?.name?.message}
-                                </span>
-                              )}
-                            </>
-                          );
-                        }}
-                      />
-                    </label>
-                  </li>
-                ))}
+                <FormTagList
+                  control={control}
+                  errorsObject={errors}
+                  fields={fields}
+                  remove={remove}
+                />
                 <li>
                   <label className={styles['article-form-tag']}>
                     <p className={styles['visually-hidden']}>New tag</p>
@@ -290,11 +196,13 @@ export const ArticleForm: React.FC<ArticleFormProps> = ({ blanc = false }) => {
           <button
             type="submit"
             className={styles['article-form-button']}
+            disabled={isLoading || isSending || isUpdating}
           >
             Send
           </button>
         </div>
       </form>
+      {loadSpinner}
       {errorMessage}
       {validationResultErrorMessage}
     </>

@@ -12,7 +12,7 @@ const isError = (action: AnyAction) => {
 export type ArticleList = Article[];
 
 type ArticlesSliceState = {
-  loading: boolean;
+  isLoading: boolean;
   error: null | ServiceError;
   articleList: ArticleList;
   articlesCount: number;
@@ -20,11 +20,17 @@ type ArticlesSliceState = {
 };
 
 const initialState: ArticlesSliceState = {
-  loading: false,
+  isLoading: false,
   error: null,
   articleList: [],
   articlesCount: 0,
   currentPage: 1,
+};
+
+type SetLikeProps = {
+  isLiked: boolean;
+  index: number;
+  counter: number;
 };
 
 const articlesSlice = createSlice({
@@ -34,26 +40,30 @@ const articlesSlice = createSlice({
     changeCurrentPage: (state, action: PayloadAction<number>) => {
       state.currentPage = action.payload;
     },
+    setLikeToArticle: (state, action: PayloadAction<SetLikeProps>) => {
+      state.articleList[action.payload.index].favorited = action.payload.isLiked;
+      state.articleList[action.payload.index].favoritesCount += action.payload.counter;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(loadArticles.pending, (state) => {
-        state.loading = true;
+        state.isLoading = true;
         state.articleList = [];
         state.error = null;
       })
       .addCase(loadArticles.fulfilled, (state, action) => {
-        state.loading = false;
+        state.isLoading = false;
         state.articleList = action.payload.articles;
         state.articlesCount = action.payload.articlesCount;
         state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
-        state.loading = false;
+        state.isLoading = false;
         state.error = action.payload;
       });
   },
 });
 
 export const articlesSliceReducer = articlesSlice.reducer;
-export const { changeCurrentPage } = articlesSlice.actions;
+export const { changeCurrentPage, setLikeToArticle } = articlesSlice.actions;

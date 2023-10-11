@@ -4,7 +4,7 @@ import { sendLoginInfo, sendRegisterInfo } from 'services/blog-service';
 import { getRegisterToken, setAuthStatus } from 'services/storage-service';
 import { clearProfile, addInfoToProfile } from 'redux-toolkit/profile/profileSlice';
 import { AppDispatch } from 'redux-toolkit';
-import { createError, ServiceError } from 'utilities/errors';
+import { createError, isErrorServiceError, ServiceError } from 'utilities/errors';
 
 export const userLogOut = createAsyncThunk<void, undefined, { dispatch: AppDispatch }>(
   'user/userLogOut',
@@ -22,7 +22,7 @@ type UserRegisterPayloadProps = {
   };
 };
 
-export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { rejectValue: ServiceError | unknown }>(
+export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { rejectValue: ServiceError }>(
   'user/userRegister',
   async ({ data: formData }, { rejectWithValue }) => {
     const data = {
@@ -35,7 +35,10 @@ export const userRegister = createAsyncThunk<void, UserRegisterPayloadProps, { r
     try {
       return await sendRegisterInfo({ data });
     } catch (error) {
-      return rejectWithValue(error);
+      if (isErrorServiceError(error)) {
+        return rejectWithValue(error);
+      }
+      throw error;
     }
   }
 );
@@ -54,7 +57,7 @@ export const userLogin = createAsyncThunk<
   UserLoginPayloadProps,
   {
     dispatch: AppDispatch;
-    rejectValue: ServiceError | unknown;
+    rejectValue: ServiceError;
   }
 >('user/userLogin', async ({ data: formData }, { dispatch, rejectWithValue }) => {
   const data = {
@@ -78,6 +81,9 @@ export const userLogin = createAsyncThunk<
     );
     return Promise.resolve();
   } catch (error) {
-    return rejectWithValue(error);
+    if (isErrorServiceError(error)) {
+      return rejectWithValue(error);
+    }
+    throw error;
   }
 });

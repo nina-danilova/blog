@@ -3,9 +3,10 @@ import { useHistory } from 'react-router-dom';
 
 import { useAppSelector, useAppDispatch } from 'hooks/hooks';
 import { loadProfile } from 'redux-toolkit/profile/profileThunks';
-import { getAuthStatus } from 'services/storage-service';
+import { hasAuthStatus } from 'services/storage-service';
 import { toggleAuth } from 'redux-toolkit/user/userSlice';
 import { linkPaths } from 'utilities/constants';
+import { hasError401 } from 'utilities/errors';
 
 import { NavMenu } from './nav-menu';
 import { UserMenu } from './user-menu';
@@ -15,22 +16,15 @@ export const Navigation: React.FC = () => {
   const dispatch = useAppDispatch();
   const { pathToSignIn } = linkPaths;
   const loadProfileError = useAppSelector((state) => state.profile.error);
-  const isAuthorized = useAppSelector((state) => state.user.authorized);
-  const isAuthorizedBeforeReload = getAuthStatus();
+  const isAuthorized = useAppSelector((state) => state.user.isAuthorized);
+  const isAuthorizedBeforeReload = hasAuthStatus();
   if (!isAuthorized && isAuthorizedBeforeReload) {
     dispatch(toggleAuth());
     dispatch(loadProfile());
   }
   const navMenu = isAuthorized || isAuthorizedBeforeReload ? <UserMenu /> : <NavMenu />;
   useEffect(() => {
-    if (
-      loadProfileError &&
-      loadProfileError.cause &&
-      loadProfileError.cause.errors &&
-      loadProfileError.cause.errors.error &&
-      loadProfileError.cause.errors.error.status &&
-      loadProfileError.cause.errors.error.status === 401
-    ) {
+    if (hasError401(loadProfileError)) {
       history.push(pathToSignIn);
     }
   }, [loadProfileError]);

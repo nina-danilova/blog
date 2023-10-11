@@ -14,18 +14,20 @@ const isError = (action: AnyAction) => {
 };
 
 type UserSliceState = {
-  registering: boolean;
-  loggingIn: boolean;
+  isRegistering: boolean;
+  isLoggingIn: boolean;
+  isLoggingOut: boolean;
   error: null | ServiceError;
-  authorized: boolean;
+  isAuthorized: boolean;
   profile: undefined | ProfileSliceState;
 };
 
 const initialState: UserSliceState = {
-  registering: false,
-  loggingIn: false,
+  isRegistering: false,
+  isLoggingIn: false,
+  isLoggingOut: false,
   error: null,
-  authorized: false,
+  isAuthorized: false,
   profile: undefined,
 };
 
@@ -34,35 +36,41 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     toggleAuth: (state) => {
-      state.authorized = !state.authorized;
+      state.isAuthorized = !state.isAuthorized;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(userRegister.pending, (state) => {
-        state.registering = true;
+        state.isRegistering = true;
         state.error = null;
       })
       .addCase(userRegister.fulfilled, (state) => {
-        state.registering = false;
+        state.isRegistering = false;
         state.error = null;
       })
       .addCase(userLogin.pending, (state) => {
-        state.loggingIn = true;
+        state.isLoggingIn = true;
         state.error = null;
       })
       .addCase(userLogin.fulfilled, (state) => {
-        state.loggingIn = false;
-        state.authorized = true;
+        state.isLoggingIn = false;
+        state.isAuthorized = true;
+        state.error = null;
+      })
+      .addCase(userLogOut.pending, (state) => {
+        state.isLoggingOut = true;
         state.error = null;
       })
       .addCase(userLogOut.fulfilled, (state) => {
-        state.authorized = false;
+        state.isLoggingOut = false;
+        state.isAuthorized = false;
         state.error = null;
       })
       .addMatcher(isError, (state, action: PayloadAction<ServiceError>) => {
-        state.registering = false;
-        state.loggingIn = false;
+        state.isRegistering = false;
+        state.isLoggingIn = false;
+        state.isLoggingOut = false;
         state.error = action.payload;
       });
   },
